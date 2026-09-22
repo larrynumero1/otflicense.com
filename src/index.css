@@ -1,5 +1,117 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Mono:wght@400;700&family=Abril+Fatface&family=Pacifico&family=Roboto+Condensed:wght@700&family=UnifrakturMaguntia&display=swap');
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Dukat';
+  src: url('/fonts/alvadukat.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ella';
+  src: url('/fonts/casparella.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Last Call';
+  src: url('/fonts/emmalastcall.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'XOXO';
+  src: url('/fonts/emmaxoxo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Liljan';
+  src: url('/fonts/enyaliljan.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kurir';
+  src: url('/fonts/fahedkurir.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Galanite';
+  src: url('/fonts/hannahgalanite.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Facit';
+  src: url('/fonts/jesperfacit.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Mormor';
+  src: url('/fonts/lawrencemormor.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Brus';
+  src: url('/fonts/linnbrus.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Crypto';
+  src: url('/fonts/lovisacrypto.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Uber';
+  src: url('/fonts/siljeuber.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cheiron';
+  src: url('/fonts/simoncheiron.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Svek';
+  src: url('/fonts/tindrasvek.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sonja';
+  src: url('/fonts/vesonja.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BIP';
+  src: url('/fonts/vivibip.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* Always reserve the vertical scrollbar gutter so the viewport width never
    changes between short and tall pages — otherwise centered/right-aligned
@@ -14,6 +126,30 @@ html {
   100% { transform: translateX(-50%); }
 }
 
+/* Reveals a band left-to-right, as if the row is being written out */
+@keyframes revealWidth {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+/* Enters from the left, travels right */
+@keyframes marqueeReverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Travels upward (enters from the bottom) */
+@keyframes marqueeUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* Travels downward (enters from the top) */
+@keyframes marqueeDown {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.15; }
@@ -21,6 +157,12 @@ html {
 
 .cell {
   transition: width 0.2s ease;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 10px;
+  text-decoration-thickness: 3px;
 }
 
 /* Wider start-page slider (reuses the size-slider thumb styling) */
