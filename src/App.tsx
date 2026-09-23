@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type React from "react";
+import * as opentype from "opentype.js";
 import img1 from "./imports/_1.png";
 import img2 from "./imports/2.png";
 import img3 from "./imports/3.png";
@@ -43,22 +44,22 @@ function starburstPath(cx: number, cy: number, spikes: number, outerR: number, i
 }
 
 const typefaces = [
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: img1, font: "'Dukat', sans-serif" },
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#0074ff", fg: W, img: img2, font: "'Ella', sans-serif" },
-  { name: "Last Call",    designer: "Emma Ljungkvist",    klass: "VK27", bg: "#ff1d38", fg: W, img: img3, font: "'Last Call', sans-serif" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#00ab53", fg: W, img: img4, font: "'XOXO', sans-serif" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#fff800", fg: B, img: img5, font: "'Liljan', sans-serif" },
-  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#c3872f", fg: W, img: img6, font: "'Kurir', sans-serif" },
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#ff5756", fg: W, img: img7, font: "'Galanite', sans-serif" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff2cb2", fg: W, img: img8, font: "'Facit', sans-serif" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#0074ff", fg: W, img: img9, font: "'Mormor', sans-serif" },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#ff1d38", fg: W, img: img1, font: "'Brus', sans-serif" },
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#00ab53", fg: W, img: img2, font: "'Crypto', sans-serif" },
-  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#fff800", fg: B, img: img3, font: "'Uber', sans-serif" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: img4, font: "'Cheiron', sans-serif" },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#ff5756", fg: W, img: img5, font: "'Svek', sans-serif" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#ff2cb2", fg: W, img: img6, font: "'Sonja', sans-serif" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#0074ff", fg: W, img: img7, font: "'BIP', sans-serif" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: img1, font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#0074ff", fg: W, img: img2, font: "'Ella', sans-serif", file: "/fonts/casparella.ttf" },
+  { name: "Last Call",    designer: "Emma Ljungkvist",    klass: "VK27", bg: "#ff1d38", fg: W, img: img3, font: "'Last Call', sans-serif", file: "/fonts/emmalastcall.ttf" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#00ab53", fg: W, img: img4, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#fff800", fg: B, img: img5, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf" },
+  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#c3872f", fg: W, img: img6, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#ff5756", fg: W, img: img7, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff2cb2", fg: W, img: img8, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#0074ff", fg: W, img: img9, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor.otf" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#ff1d38", fg: W, img: img1, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#00ab53", fg: W, img: img2, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf" },
+  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#fff800", fg: B, img: img3, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: img4, font: "'Cheiron', sans-serif", file: "/fonts/simoncheiron.ttf" },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#ff5756", fg: W, img: img5, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#ff2cb2", fg: W, img: img6, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#0074ff", fg: W, img: img7, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf" },
 ];
 
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
@@ -555,12 +556,51 @@ function WipCarousel({ panelText, font }: { panelText: string; font: string }) {
 
 type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 
+// Renders a single line of preview text as an SVG path built from the loaded
+// font. Any character absent from the font's cmap is drawn with the font's own
+// .notdef glyph (opentype.js substitutes it automatically) rather than falling
+// back to another typeface.
+function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
+  font: opentype.Font;
+  text: string;
+  fontSizePx: number;
+  lineHeightPx: number;
+  fill: string;
+}) {
+  const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
+  // Baseline placement inside the line box mirrors CSS half-leading.
+  const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
+  const width = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
+  const d = text ? font.getPath(text, 0, baselineY, fontSizePx).toPathData(2) : "";
+  return (
+    <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
+      {d && <path d={d} fill={fill} />}
+    </svg>
+  );
+}
+
 function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page) => void }) {
   const face = typefaces.find((f) => f.name === name);
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
   const [size, setSize] = useState(6); // rem — controls the big preview text
+  const [font, setFont] = useState<opentype.Font | null>(null);
+
+  // Parse the actual font file with opentype.js so we can draw glyphs (and the
+  // font's own .notdef) ourselves instead of relying on CSS font fallback.
+  useEffect(() => {
+    let cancelled = false;
+    setFont(null);
+    if (face?.file) {
+      opentype.load(face.file, (err, f) => {
+        if (!cancelled && !err && f) setFont(f);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [name]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
@@ -643,20 +683,57 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "4rem 2rem 1rem" }}>
-            <textarea
-              value={top}
-              onChange={(e) => {
-                if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
-              }}
-              rows={previewLines}
-              style={{
-                ...fieldBase,
-                fontSize: `${size}rem`,
-                lineHeight: 1.3,
-                textAlign: "center",
-                height: `${previewLines * size * 1.3 + size * 0.35}rem`,
-              }}
-            />
+            <div style={{ position: "relative", width: "100%" }}>
+              <textarea
+                value={top}
+                onChange={(e) => {
+                  if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
+                }}
+                rows={previewLines}
+                style={{
+                  ...fieldBase,
+                  display: "block",
+                  padding: 2,
+                  fontSize: `${size}rem`,
+                  lineHeight: 1.3,
+                  textAlign: "center",
+                  height: `${previewLines * size * 1.3 + size * 0.35}rem`,
+                  // Once the font is parsed the SVG overlay draws the glyphs, so
+                  // hide the textarea's own text (caret stays visible). Until then
+                  // fall back to normal rendering so text is never invisible.
+                  color: font ? "transparent" : panelText,
+                  caretColor: panelText,
+                }}
+              />
+              {/* Purely visual overlay — draws the real glyphs on top of the
+                  transparent textarea, aligned to the same box/padding/metrics. */}
+              {font && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    boxSizing: "border-box",
+                    padding: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  {top.split("\n").map((line, idx) => (
+                    <GlyphLine
+                      key={idx}
+                      font={font}
+                      text={line}
+                      fontSizePx={size * 16}
+                      lineHeightPx={size * 16 * 1.3}
+                      fill={panelText}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <div style={{ paddingBottom: "2.5rem" }} />
         </div>
