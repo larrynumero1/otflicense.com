@@ -18,7 +18,6 @@ type Page =
   | { id: "about" }
   | { id: "licensing" }
   | { id: "contact" }
-  | { id: "subscribe" }
   | { id: "typeface"; name: string };
 
 type Edge = "top" | "bottom" | "left" | "right";
@@ -239,7 +238,7 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
   );
 }
 
-function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void }) {
+function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "6rem" }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string }) {
   const linkStyle: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: fg, background: "none", border: "none", cursor: "pointer", padding: 0 };
   return (
     <nav
@@ -263,7 +262,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand }: { onNavigate:
         <img
           src={logo}
           alt={BRAND}
-          style={{ height: "6rem", display: "block", filter: fg === "#fff" ? "invert(1)" : "none" }}
+          style={{ height: logoHeight, display: "block", filter: fg === "#fff" ? "invert(1)" : "none" }}
         />
       </button>
       <button onClick={() => onNavigate({ id: "contact" })} className="nav-link" style={linkStyle}>FAQ</button>
@@ -282,22 +281,22 @@ const PAGE_TEXT: Record<string, string> = {
     "Buy and license our typefaces for desktop, web, app, and broadcast use. Support the foundry directly and get new releases, work-in-progress cuts, and the occasional free trial weight. Head over to our Gumroad to purchase and follow along.",
 };
 
-function SubscribeFooter({ onNavigate, bg = "#fff", hoverColor }: { onNavigate: (p: Page) => void; bg?: string; hoverColor?: string }) {
+function SubscribeFooter({ bg = "#fff", hoverColor, textColor }: { bg?: string; hoverColor?: string; textColor?: string }) {
   return (
     <div style={{ background: bg, padding: "1rem 2.5rem 2rem", display: "flex", justifyContent: "center", transition: "background 0.25s ease" }}>
-      <StarBuyButton onNavigate={onNavigate} hoverColor={hoverColor} size={380} />
+      <StarBuyButton hoverColor={hoverColor} textColor={textColor} size={380} />
     </div>
   );
 }
 
-function StarBuyButton({ onNavigate, fixed = false, hoverColor, size = 200 }: { onNavigate: (p: Page) => void; fixed?: boolean; hoverColor?: string; size?: number }) {
+function StarBuyButton({ fixed = false, hoverColor, size = 200, textColor = "#000" }: { fixed?: boolean; hoverColor?: string; size?: number; textColor?: string }) {
   const [hover, setHover] = useState(false);
   const [randColor, setRandColor] = useState(PALETTE[0]);
   const color = hoverColor ?? randColor;
   const star = starburstPath(100, 100, 20, 96, 74);
   return (
     <button
-      onClick={() => onNavigate({ id: "subscribe" })}
+      onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")}
       onMouseEnter={() => {
         if (!hoverColor) setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -330,7 +329,7 @@ function StarBuyButton({ onNavigate, fixed = false, hoverColor, size = 200 }: { 
           fontFamily: "Arial, sans-serif",
           fontWeight: "bold",
           fontSize: `${(size / 200) * 1.6}rem`,
-          color: "#000",
+          color: textColor,
           whiteSpace: "nowrap",
           textDecoration: hover ? "underline" : "none",
           textUnderlineOffset: 10,
@@ -560,8 +559,21 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   const face = typefaces.find((f) => f.name === name);
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
-  const [top, setTop] = useState(name);
+  const [top, setTop] = useState("");
   const [size, setSize] = useState(6); // rem — controls the big preview text
+
+  // Type the typeface name into the preview window on entry.
+  useEffect(() => {
+    let i = 0;
+    setTop("");
+    const id = setInterval(() => {
+      i++;
+      setTop(name.slice(0, i));
+      if (i >= name.length) clearInterval(id);
+    }, 100);
+    return () => clearInterval(id);
+  }, [name]);
+
   if (!face) return null;
 
   // Fit a single row by default; grow with each added line, up to four.
@@ -589,7 +601,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
-      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} />
+      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" />
       <div className="flex-1 flex flex-col px-10" style={{ gap: GAP, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, size slider in the top-left corner */}
         <div style={{ position: "relative", background: panelBg, transition: "background 0.25s ease" }}>
@@ -685,10 +697,10 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
         {/* Gumroad purchase widget */}
         <div style={{ marginTop: GAP, display: "flex", justifyContent: "center" }}>
-          <GumroadEmbed url="https://otflicenser.gumroad.com/l/facitsans" />
+          <GumroadEmbed url="https://otflicense.gumroad.com/l/facitsans" />
         </div>
       </div>
-      <SubscribeFooter onNavigate={onNavigate} bg={pageBg} hoverColor={face.bg} />
+      <SubscribeFooter bg={pageBg} hoverColor={face.bg} textColor={pageText} />
     </div>
   );
 }
@@ -706,11 +718,13 @@ function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
   const hPhrases = ["Convenient", "typefaces", "designed", "by students", "from Beckmans", "College of Design"];
   const vPhrases = ["Open till late", "24/7", "Open 7 days", "24 hrs", "Your one-stop-shop", "Buy now"];
 
-  // Two identical halves (2 × phrases) so the -50% loop is seamless.
-  const hWords = Array.from({ length: hPhrases.length * 2 }).map((_, i) => (
+  // Repeat each phrase set enough times to span the whole band on load, then
+  // present two identical halves (REPEAT × 2) so the -50% loop is seamless.
+  const REPEAT = 4;
+  const hWords = Array.from({ length: hPhrases.length * REPEAT * 2 }).map((_, i) => (
     <span key={i} style={{ ...bandFont, paddingRight: "2.5rem" }}>{hPhrases[i % hPhrases.length]}</span>
   ));
-  const vWords = Array.from({ length: vPhrases.length * 2 }).map((_, i) => (
+  const vWords = Array.from({ length: vPhrases.length * REPEAT * 2 }).map((_, i) => (
     <span key={i} style={{ ...bandFont, writingMode: "vertical-rl", paddingBottom: "2.5rem" }}>{vPhrases[i % vPhrases.length]}</span>
   ));
 
@@ -723,24 +737,24 @@ function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
       />
 
-      {/* Top band — fully written out on load, loops immediately */}
+      {/* Top band — travels right to left, endless loop */}
       <div style={{ position: "absolute", top: "1.5rem", left: 0, right: 0, overflow: "hidden", zIndex: 2 }}>
-        <div style={{ display: "inline-flex", animation: "marquee 40s linear infinite" }}>{hWords}</div>
+        <div style={{ display: "inline-flex", animation: "marquee 150s linear infinite" }}>{hWords}</div>
       </div>
 
-      {/* Bottom band — enters from the right, travels left */}
+      {/* Bottom band — travels left to right, endless loop */}
       <div style={{ position: "absolute", bottom: "1.5rem", left: 0, right: 0, overflow: "hidden", zIndex: 2 }}>
-        <div style={{ display: "inline-flex", animation: "marquee 40s linear infinite" }}>{hWords}</div>
+        <div style={{ display: "inline-flex", animation: "marqueeReverse 150s linear infinite" }}>{hWords}</div>
       </div>
 
       {/* Left band — travels top to bottom */}
       <div style={{ position: "absolute", left: "1.5rem", top: 0, bottom: 0, overflow: "hidden", zIndex: 2 }}>
-        <div style={{ display: "flex", flexDirection: "column", animation: "marqueeDown 40s linear infinite" }}>{vWords}</div>
+        <div style={{ display: "flex", flexDirection: "column", animation: "marqueeDown 150s linear infinite" }}>{vWords}</div>
       </div>
 
       {/* Right band — travels bottom to top */}
       <div style={{ position: "absolute", right: "1.5rem", top: 0, bottom: 0, overflow: "hidden", zIndex: 2 }}>
-        <div style={{ display: "flex", flexDirection: "column", animation: "marqueeUp 40s linear infinite" }}>{vWords}</div>
+        <div style={{ display: "flex", flexDirection: "column", animation: "marqueeUp 150s linear infinite" }}>{vWords}</div>
       </div>
 
       {/* Clickable button on top → start page */}
@@ -781,7 +795,6 @@ export default function App() {
   if (page.id === "home")      return <HomePage onNavigate={navigate} />;
   if (page.id === "about")     return <SimplePage title="ABOUT" onNavigate={navigate} />;
   if (page.id === "contact")   return <SimplePage title="FAQ"   onNavigate={navigate} />;
-  if (page.id === "subscribe") return <SimplePage title="Buy" onNavigate={navigate} />;
   if (page.id === "typeface")  return <TypefacePage name={page.name} onNavigate={navigate} />;
 
   // Start page is always the zoomed-out layout so every cell is visible (6 per row)
@@ -809,7 +822,7 @@ export default function App() {
           ))}
         </div>
       </div>
-      <StarBuyButton onNavigate={navigate} fixed />
+      <StarBuyButton fixed />
     </div>
   );
 }
