@@ -556,6 +556,30 @@ function WipCarousel({ panelText, font }: { panelText: string; font: string }) {
 
 type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 
+// Wraps text into visual lines the same way the textarea does: break on explicit
+// newlines, then greedily wrap words once a line's measured advance width exceeds
+// the available box width.
+function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
+  const paragraphs = text.split("\n");
+  const result: string[] = [];
+  for (const para of paragraphs) {
+    if (para === "") { result.push(""); continue; }
+    const words = para.split(" ");
+    let current = "";
+    for (const word of words) {
+      const candidate = current ? current + " " + word : word;
+      if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) {
+        result.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    result.push(current);
+  }
+  return result;
+}
+
 // Renders a single line of preview text as an SVG path built from the loaded
 // font. Any character absent from the font's cmap is drawn with the font's own
 // .notdef glyph (opentype.js substitutes it automatically) rather than falling
@@ -586,10 +610,39 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   const [top, setTop] = useState("");
   const [size, setSize] = useState(6); // rem — controls the big preview text
   const [font, setFont] = useState<opentype.Font | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const [boxWidth, setBoxWidth] = useState(0);
+
+  // Track the preview box's rendered width so the overlay can wrap words to match.
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const measure = () => setBoxWidth(el.clientWidth);
+    measure();
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(measure);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   // Parse the actual font file with opentype.js so we can draw glyphs (and the
   // font's own .notdef) ourselves instead of relying on CSS font fallback.
-  useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!cancelled) setFont(opentype.parse(buffer)); }) .catch(() => { if (!cancelled) setFont(null); }); } return () => { cancelled = true; }; }, [name]);
+  useEffect(() => {
+    let cancelled = false;
+    setFont(null);
+    if (face?.file) {
+      opentype.load(face.file, (err, f) => {
+        if (!cancelled && !err && f) setFont(f);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [name]);
+
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
     let i = 0;
@@ -604,8 +657,11 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   if (!face) return null;
 
+  // Wrap the text the same way the box does, so the overlay lines up with it.
+  const wrappedLines = font && boxWidth ? wrapLines(font, top, size * 16, boxWidth - 4) : top.split("\n");
+
   // Fit a single row by default; grow with each added line, up to four.
-  const previewLines = Math.min(4, Math.max(1, top.split("\n").length));
+  const previewLines = Math.min(4, Math.max(1, wrappedLines.length));
 
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
@@ -671,7 +727,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "4rem 2rem 1rem" }}>
-            <div style={{ position: "relative", width: "100%" }}>
+            <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
                 value={top}
                 onChange={(e) => {
@@ -709,7 +765,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                     justifyContent: "flex-start",
                   }}
                 >
-                  {top.split("\n").map((line, idx) => (
+                  {wrappedLines.map((line, idx) => (
                     <GlyphLine
                       key={idx}
                       font={font}
