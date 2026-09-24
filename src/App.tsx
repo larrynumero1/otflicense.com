@@ -77,18 +77,18 @@ const typefaces = [
   { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.ttf" },
   { name: "Last Call",    designer: "Emma Ljungkvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/emmalastcall.ttf" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower" },
   { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf" },
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf" },
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf" },
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower" },
   { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf" },
   { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: img4, font: "'Cheiron', sans-serif", file: "/fonts/simoncheiron.ttf" },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf" },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf", casing: "upper" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf", casing: "upper" },
 ];
 
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
@@ -633,9 +633,58 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
-function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] { const paragraphs = text.split("\n"); const result: string[] = []; for (const para of paragraphs) { if (para === "") { result.push(""); continue; } const words = para.split(" "); let current = ""; for (const word of words) { if (font.getAdvanceWidth(word, fontSizePx) > maxWidthPx) { if (current) { result.push(current); current = ""; } let chunk = ""; for (const ch of word) { const candidateChunk = chunk + ch; if (chunk && font.getAdvanceWidth(candidateChunk, fontSizePx) > maxWidthPx) { result.push(chunk); chunk = ch; } else { chunk = candidateChunk; } } current = chunk; continue; } const candidate = current ? current + " " + word : word; if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) { result.push(current); current = word; } else { current = candidate; } } result.push(current); } return result; }
+function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
+  const paragraphs = text.split("\n");
+  const result: string[] = [];
+  for (const para of paragraphs) {
+    if (para === "") { result.push(""); continue; }
+    const words = para.split(" ");
+    let current = "";
+    for (const word of words) {
+      if (font.getAdvanceWidth(word, fontSizePx) > maxWidthPx) {
+        if (current) { result.push(current); current = ""; }
+        let chunk = "";
+        for (const ch of word) {
+          const candidateChunk = chunk + ch;
+          if (chunk && font.getAdvanceWidth(candidateChunk, fontSizePx) > maxWidthPx) {
+            result.push(chunk);
+            chunk = ch;
+          } else {
+            chunk = candidateChunk;
+          }
+        }
+        current = chunk;
+        continue;
+      }
+      const candidate = current ? current + " " + word : word;
+      if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) {
+        result.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    result.push(current);
+  }
+  return result;
+}
 
-function safePathData(path: opentype.Path): string { let d = ""; for (const cmd of path.commands) { const vals = [cmd.x, cmd.y, cmd.x1, cmd.y1, cmd.x2, cmd.y2].filter((v) => v !== undefined); if (vals.some((v) => !Number.isFinite(v as number))) continue; if (cmd.type === "M") d += `M${cmd.x} ${cmd.y}`; else if (cmd.type === "L") d += `L${cmd.x} ${cmd.y}`; else if (cmd.type === "C") d += `C${cmd.x1} ${cmd.y1} ${cmd.x2} ${cmd.y2} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Q") d += `Q${cmd.x1} ${cmd.y1} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Z") d += "Z"; } return d; }
+// Builds SVG path data from an opentype.js Path, skipping any command with a
+// non-finite coordinate. A single NaN in the "d" attribute breaks the rest of
+// the path; degenerate curves (e.g. custom .notdef glyphs) can produce those.
+function safePathData(path: opentype.Path): string {
+  let d = "";
+  for (const cmd of path.commands) {
+    const vals = [cmd.x, cmd.y, cmd.x1, cmd.y1, cmd.x2, cmd.y2].filter((v) => v !== undefined);
+    if (vals.some((v) => !Number.isFinite(v as number))) continue;
+    if (cmd.type === "M") d += `M${cmd.x} ${cmd.y}`;
+    else if (cmd.type === "L") d += `L${cmd.x} ${cmd.y}`;
+    else if (cmd.type === "C") d += `C${cmd.x1} ${cmd.y1} ${cmd.x2} ${cmd.y2} ${cmd.x} ${cmd.y}`;
+    else if (cmd.type === "Q") d += `Q${cmd.x1} ${cmd.y1} ${cmd.x} ${cmd.y}`;
+    else if (cmd.type === "Z") d += "Z";
+  }
+  return d;
+}
 
 // Renders a single line of preview text as an SVG path built from the loaded
 // font. Any character absent from the font's cmap is drawn with the font's own
@@ -651,10 +700,14 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
   // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null; const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0; const bbox = path ? path.getBoundingBox() : null; const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth; const d = path ? safePathData(path) : "";
+  const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null;
+  const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
+  const bbox = path ? path.getBoundingBox() : null;
+  const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth;
+  const d = path ? safePathData(path) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
-{d && <path d={d} fill={fill} fillRule="evenodd" />} 
+      {d && <path d={d} fill={fill} fillRule="evenodd" />}
     </svg>
   );
 }
@@ -692,7 +745,14 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
     let cancelled = false;
     setFont(null);
     if (face?.file) {
-fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!cancelled) setFont(opentype.parse(buffer)); }) .catch(() => { if (!cancelled) setFont(null); });
+      fetch(face.file)
+        .then((res) => res.arrayBuffer())
+        .then((buffer) => {
+          if (!cancelled) setFont(opentype.parse(buffer));
+        })
+        .catch(() => {
+          if (!cancelled) setFont(null);
+        });
     }
     return () => {
       cancelled = true;
@@ -713,11 +773,16 @@ fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!canc
 
   if (!face) return null;
 
+  // Some faces are uppercase- or lowercase-only; force typed/preview text to match.
+  const applyCase = (s: string) =>
+    face.casing === "upper" ? s.toUpperCase() : face.casing === "lower" ? s.toLowerCase() : s;
+  const previewText = applyCase(top);
+
   // Wrap the text the same way the box does, so the overlay lines up with it.
-  const wrappedLines = font && boxWidth ? wrapLines(font, top, size * 16, boxWidth - 4) : top.split("\n");
+  const wrappedLines = font && boxWidth ? wrapLines(font, previewText, size * 16, boxWidth - 4) : previewText.split("\n");
 
   // Fit a single row by default; grow with each added line, up to four.
-const previewLines = Math.max(1, wrappedLines.length);
+  const previewLines = Math.max(1, wrappedLines.length);
 
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
@@ -833,7 +898,7 @@ const previewLines = Math.max(1, wrappedLines.length);
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
             <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
-                value={top}
+                value={previewText}
                 onChange={(e) => {
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
@@ -909,7 +974,7 @@ const previewLines = Math.max(1, wrappedLines.length);
           {/* Info — left: description + details */}
           <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
             <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
-              {face.name} is a {face.klass} typeface designed by {face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.
+              {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {[
