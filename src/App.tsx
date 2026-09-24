@@ -661,8 +661,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   const wrappedLines = font && boxWidth ? wrapLines(font, top, size * 16, boxWidth - 4) : top.split("\n");
 
   // Fit a single row by default; grow with each added line, up to four.
-  const previewLines = Math.min(4, Math.max(1, wrappedLines.length));
-
+  const previewLines = Math.max(1, wrappedLines.length);
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
   const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
