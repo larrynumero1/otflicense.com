@@ -575,8 +575,7 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
   // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-  const width = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
-  const d = text ? font.getPath(text, 0, baselineY, fontSizePx).toPathData(2) : "";
+const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null; const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0; const bbox = path ? path.getBoundingBox() : null; const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth; const d = path ? path.toPathData(2) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
       {d && <path d={d} fill={fill} fillRule="evenodd" />}
