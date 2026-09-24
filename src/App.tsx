@@ -630,18 +630,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   // Parse the actual font file with opentype.js so we can draw glyphs (and the
   // font's own .notdef) ourselves instead of relying on CSS font fallback.
-  useEffect(() => {
-    let cancelled = false;
-    setFont(null);
-    if (face?.file) {
-      opentype.load(face.file, (err, f) => {
-        if (!cancelled && !err && f) setFont(f);
-      });
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [name]);
+useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!cancelled) setFont(opentype.parse(buffer)); }) .catch(() => { if (!cancelled) setFont(null); }); } return () => { cancelled = true; }; }, [name]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
