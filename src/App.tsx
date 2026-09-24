@@ -559,26 +559,7 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
-function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
-  const paragraphs = text.split("\n");
-  const result: string[] = [];
-  for (const para of paragraphs) {
-    if (para === "") { result.push(""); continue; }
-    const words = para.split(" ");
-    let current = "";
-    for (const word of words) {
-      const candidate = current ? current + " " + word : word;
-      if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) {
-        result.push(current);
-        current = word;
-      } else {
-        current = candidate;
-      }
-    }
-    result.push(current);
-  }
-  return result;
-}
+function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] { const paragraphs = text.split("\n"); const result: string[] = []; for (const para of paragraphs) { if (para === "") { result.push(""); continue; } const words = para.split(" "); let current = ""; for (const word of words) { if (font.getAdvanceWidth(word, fontSizePx) > maxWidthPx) { if (current) { result.push(current); current = ""; } let chunk = ""; for (const ch of word) { const candidateChunk = chunk + ch; if (chunk && font.getAdvanceWidth(candidateChunk, fontSizePx) > maxWidthPx) { result.push(chunk); chunk = ch; } else { chunk = candidateChunk; } } current = chunk; continue; } const candidate = current ? current + " " + word : word; if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) { result.push(current); current = word; } else { current = candidate; } } result.push(current); } return result; }
 
 // Renders a single line of preview text as an SVG path built from the loaded
 // font. Any character absent from the font's cmap is drawn with the font's own
