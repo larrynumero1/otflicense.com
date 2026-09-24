@@ -11,6 +11,21 @@ import img7 from "./imports/7.png";
 import img8 from "./imports/8.png";
 import img9 from "./imports/9.png";
 import logo from "./imports/Logo_OTF_ny.png";
+import specDukat from "./imports/alvadukat_spec.png";
+import specElla from "./imports/casparella_spec.png";
+import specLastCall from "./imports/emmalastcall_spec.png";
+import specXOXO from "./imports/emmaxoxo_spec.png";
+import specLiljan from "./imports/enyaliljan_spec.png";
+import specKurir from "./imports/fahedkuriren_spec.png";
+import specGalanite from "./imports/hannahgalanite_spec.png";
+import specFacit from "./imports/jesperfacit_spec.png";
+import specMormor from "./imports/lawrencemormor_spec.png";
+import specBrus from "./imports/linnbrus_spec.png";
+import specCrypto from "./imports/lovisacrypto_spec.png";
+import specUber from "./imports/siljelcduber_spec.png";
+import specSvek from "./imports/tindrasvek_spec.png";
+import specSonja from "./imports/vesonja_spec.png";
+import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 
 type Page =
@@ -43,23 +58,37 @@ function starburstPath(cx: number, cy: number, spikes: number, outerR: number, i
   return d + "Z";
 }
 
+// Elliptical/rectangular variant of the starburst — separate radii per axis so the
+// price tag can be wider than it is tall.
+function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: number, outerRY: number, innerRX: number, innerRY: number) {
+  const step = Math.PI / spikes;
+  let d = "";
+  for (let i = 0; i < spikes * 2; i++) {
+    const rx = i % 2 === 0 ? outerRX : innerRX;
+    const ry = i % 2 === 0 ? outerRY : innerRY;
+    const a = i * step - Math.PI / 2;
+    d += `${i === 0 ? "M" : "L"}${(cx + Math.cos(a) * rx).toFixed(1)},${(cy + Math.sin(a) * ry).toFixed(1)} `;
+  }
+  return d + "Z";
+}
+
 const typefaces = [
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: img1, font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf" },
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#0074ff", fg: W, img: img2, font: "'Ella', sans-serif", file: "/fonts/casparella.ttf" },
-  { name: "Last Call",    designer: "Emma Ljungkvist",    klass: "VK27", bg: "#ff1d38", fg: W, img: img3, font: "'Last Call', sans-serif", file: "/fonts/emmalastcall.ttf" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#00ab53", fg: W, img: img4, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#fff800", fg: B, img: img5, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf" },
-  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#c3872f", fg: W, img: img6, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf" },
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#ff5756", fg: W, img: img7, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff2cb2", fg: W, img: img8, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#0074ff", fg: W, img: img9, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf" },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#ff1d38", fg: W, img: img1, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf" },
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#00ab53", fg: W, img: img2, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf" },
-  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#fff800", fg: B, img: img3, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.ttf" },
+  { name: "Last Call",    designer: "Emma Ljungkvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/emmalastcall.ttf" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf" },
+  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf" },
+  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf" },
   { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: img4, font: "'Cheiron', sans-serif", file: "/fonts/simoncheiron.ttf" },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#ff5756", fg: W, img: img5, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#ff2cb2", fg: W, img: img6, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#0074ff", fg: W, img: img7, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf" },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf" },
 ];
 
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
@@ -174,7 +203,7 @@ function Cell({ face, width, onNavigate }: {
   return (
     <div
       className="cell"
-      style={{ width, display: "flex", pointerEvents: "none", transform: `translate(${offX}px, ${offY}px)` }}
+      style={{ width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${offX}px, ${offY}px)` }}
     >
       <img
         src={face.img}
@@ -239,15 +268,14 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
   );
 }
 
-function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "6rem" }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string }) {
-  const linkStyle: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: fg, background: "none", border: "none", cursor: "pointer", padding: 0 };
+function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "6rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "1.5rem" }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string }) {
   return (
     <nav
       className="sticky top-0 z-50"
       style={{
         position: "sticky",
         background: bg,
-        padding: "2.25rem 2.5rem",
+        padding,
         transition: "background 0.25s ease",
         display: "flex",
         alignItems: "flex-start",
@@ -255,10 +283,10 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "6
         gap: "1.5rem",
       }}
     >
-      <button onClick={() => onNavigate({ id: "about" })} className="nav-link" style={linkStyle}>ABOUT</button>
+      <StarLink label="ABOUT" onClick={() => onNavigate({ id: "about" })} fg={fg} starColor={starColor} scale={linkScale} />
       <button
         onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
-        style={{ position: "absolute", left: "50%", top: "1.5rem", transform: "translateX(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
+        style={{ position: "absolute", left: "50%", top: logoTop, transform: "translateX(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
       >
         <img
           src={logo}
@@ -266,7 +294,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "6
           style={{ height: logoHeight, display: "block", filter: fg === "#fff" ? "invert(1)" : "none" }}
         />
       </button>
-      <button onClick={() => onNavigate({ id: "contact" })} className="nav-link" style={linkStyle}>FAQ</button>
+      <StarLink label="FAQ" onClick={() => onNavigate({ id: "contact" })} fg={fg} starColor={starColor} scale={linkScale} />
     </nav>
   );
 }
@@ -282,33 +310,85 @@ const PAGE_TEXT: Record<string, string> = {
     "Buy and license our typefaces for desktop, web, app, and broadcast use. Support the foundry directly and get new releases, work-in-progress cuts, and the occasional free trial weight. Head over to our Gumroad to purchase and follow along.",
 };
 
-function SubscribeFooter({ bg = "#fff", hoverColor, textColor }: { bg?: string; hoverColor?: string; textColor?: string }) {
-  return (
-    <div style={{ background: bg, padding: "1rem 2.5rem 2rem", display: "flex", justifyContent: "center", transition: "background 0.25s ease" }}>
-      <StarBuyButton hoverColor={hoverColor} textColor={textColor} size={380} />
-    </div>
-  );
-}
-
-function StarBuyButton({ fixed = false, hoverColor, size = 200, textColor = "#000" }: { fixed?: boolean; hoverColor?: string; size?: number; textColor?: string }) {
+// Nav link that flashes a jagged starburst behind the label on hover — random
+// palette colour by default, or a fixed colour to match a typeface page.
+function StarLink({ label, onClick, fg, starColor, scale = 1 }: { label: string; onClick: () => void; fg: string; starColor?: string; scale?: number }) {
   const [hover, setHover] = useState(false);
-  const [randColor, setRandColor] = useState(PALETTE[0]);
-  const color = hoverColor ?? randColor;
+  const [rand, setRand] = useState(PALETTE[0]);
+  const color = starColor ?? rand;
   const star = starburstPath(100, 100, 20, 96, 74);
+  const size = 150 * scale;
   return (
     <button
-      onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")}
+      onClick={onClick}
       onMouseEnter={() => {
-        if (!hoverColor) setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
+        if (!starColor) setRand(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
       }}
       onMouseLeave={() => setHover(false)}
       style={{
-        ...(fixed
-          ? { position: "fixed", right: "1.5rem", bottom: "1.5rem", zIndex: 40 }
-          : { position: "relative" }),
-        width: size,
-        height: size,
+        position: "relative",
+        fontFamily: "Arial, sans-serif",
+        fontSize: `${1.6 * scale}rem`,
+        fontWeight: "bold",
+        color: fg,
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: 0,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "visible",
+      }}
+    >
+      {hover && (
+        <svg
+          viewBox="0 0 200 200"
+          width={size}
+          height={size}
+          style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }}
+        >
+          <path d={star} fill={color} />
+        </svg>
+      )}
+      <span
+        style={{
+          position: "relative",
+          color: hover ? "#000" : fg,
+          textDecoration: hover ? "underline" : "none",
+          textUnderlineOffset: 8,
+          textDecorationThickness: 3,
+        }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+// Fixed bottom-right CTA — a rectangular starburst price tag for the mega bundle.
+function StarBuyButton() {
+  const [hover, setHover] = useState(false);
+  const [randColor, setRandColor] = useState<string | null>(null);
+  const W = 420;
+  const H = 200;
+  const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
+  return (
+    <button
+      onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")}
+      onMouseEnter={() => {
+        setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
+        setHover(true);
+      }}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        position: "fixed",
+        right: "1.5rem",
+        bottom: "1.5rem",
+        zIndex: 40,
+        width: W,
+        height: H,
         background: "none",
         border: "none",
         padding: 0,
@@ -318,10 +398,9 @@ function StarBuyButton({ fixed = false, hoverColor, size = 200, textColor = "#00
         justifyContent: "center",
       }}
     >
-      {/* Jagged star price tag — only shown on hover */}
       {hover && (
-        <svg viewBox="0 0 200 200" width={size} height={size} style={{ position: "absolute", inset: 0 }}>
-          <path d={star} fill={color} />
+        <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ position: "absolute", inset: 0 }}>
+          <path d={star} fill={randColor ?? PALETTE[0]} />
         </svg>
       )}
       <span
@@ -329,15 +408,15 @@ function StarBuyButton({ fixed = false, hoverColor, size = 200, textColor = "#00
           position: "relative",
           fontFamily: "Arial, sans-serif",
           fontWeight: "bold",
-          fontSize: `${(size / 200) * 1.6}rem`,
-          color: textColor,
+          fontSize: "1.3rem",
+          color: "#000",
           whiteSpace: "nowrap",
           textDecoration: hover ? "underline" : "none",
-          textUnderlineOffset: 10,
+          textUnderlineOffset: 6,
           textDecorationThickness: 3,
         }}
       >
-        BUY NOW
+        BUY THE MEGA BUNDLE!!
       </span>
     </button>
   );
@@ -435,83 +514,93 @@ function SimplePage({ title, onNavigate }: { title: string; onNavigate: (p: Page
   );
 }
 
-const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:;!?&@#$%*()+-=/".split("");
+// Selectable weights shown in the "Regular" dropdown and reflected in Format.
+const WEIGHTS = ["Light", "Medium", "Regular", "Italic", "Bold"];
 
-function GlyphSection({ font, panelBg, panelText, compact = false }: { font: string; panelBg: string; panelText: string; compact?: boolean }) {
-  const [hovered, setHovered] = useState(GLYPHS[0]);
+// Characters shown in the glyph list, grouped in the order the categories appear.
+const CHAR_GROUPS: { label: string; chars: string[] }[] = [
+  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
+  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyz".split("") },
+  { label: "Accents", chars: "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ".split("") },
+  { label: "Numbers", chars: "0123456789".split("") },
+  {
+    label: "Punctuations",
+    chars: [".", ",", ":", ";", "…", "!", "¡", "?", "¿", "·", "•", "*", "#", "/", "\\", "-", "–", "—", "_", "(", ")", "{", "}", "[", "]", "‚", "„", "“", "”", "‘", "’", "«", "»", "‹", "›", "\"", "'"],
+  },
+  {
+    label: "Symbols",
+    chars: ["ƒ", "@", "&", "¶", "§", "©", "®", "™", "°", "|", "¦", "†", "‡", "¢", "¤", "$", "€", "£", "¥", "+", "−", "×", "÷", "=", "≠", ">", "<", "≥", "≤", "±", "≈", "~", "¬", "^", "∞", "∫", "∏", "∑", "√", "∂", "%", "‰", "↑", "↗", "→", "↘", "↓", "↙", "←", "↖", "◊"],
+  },
+  {
+    label: "Other",
+    chars: ["ﬀ", "ﬁ", "ﬂ", "ﬃ", "ﬄ", "ﬅ", "ﬆ", "ª", "º", "µ"],
+  },
+];
 
-  const grid = (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${compact ? 34 : 56}px, 1fr))`, gap: compact ? 2 : 4 }}>
-      {GLYPHS.map((g, i) => (
-        <div
-          key={i}
-          onMouseEnter={() => setHovered(g)}
-          style={{
-            fontFamily: font,
-            color: panelText,
-            aspectRatio: "1/1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: compact ? "1rem" : "1.6rem",
-            cursor: "default",
-            borderRadius: 2,
-            background: hovered === g ? panelText : "transparent",
-            transition: "background 0.15s ease, color 0.15s ease",
-            ...(hovered === g ? { color: panelBg } : null),
-          }}
-        >
-          {g}
-        </div>
-      ))}
-    </div>
-  );
+// Full-width panel: large showcase on the left, categorised character list on the right.
+// When the parsed opentype font is available, only glyphs actually present in the
+// face are shown (missing chars are omitted and empty categories are hidden).
+function GlyphSection({ font, otFont, panelBg, panelText }: { font: string; otFont: opentype.Font | null; panelBg: string; panelText: string }) {
+  const groups = CHAR_GROUPS.map((group) => ({
+    label: group.label,
+    chars: otFont ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0) : group.chars,
+  })).filter((group) => group.chars.length > 0);
 
-  const showcase = (
-    <div
-      style={{
-        color: panelText,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "visible",
-        padding: "0.35em 0",
-        transition: "color 0.25s ease",
-      }}
-    >
-      <span style={{ fontFamily: font, fontSize: compact ? "clamp(6rem, 14vw, 12rem)" : "clamp(10rem, 28vw, 26rem)", lineHeight: 1.5 }}>{hovered}</span>
-    </div>
-  );
-
-  // Compact: showcase on the left, glyph grid on the right (side by side).
-  if (compact) {
-    return (
-      <div style={{ background: panelBg, padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.75rem", transition: "background 0.25s ease" }}>
-        <button
-          style={{ alignSelf: "flex-end", fontFamily: font, fontSize: "1.1rem", color: panelText, background: "none", border: "none", cursor: "pointer", opacity: 0.85, padding: 0 }}
-        >
-          Regular
-        </button>
-        <div style={{ display: "flex", alignItems: "stretch", gap: "1.25rem", flex: 1 }}>
-          <div style={{ flex: "0 0 45%", minWidth: 0 }}>{showcase}</div>
-          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>{grid}</div>
-        </div>
-      </div>
-    );
-  }
+  const firstChar = groups[0]?.chars[0] ?? "A";
+  const [hovered, setHovered] = useState(firstChar);
+  useEffect(() => {
+    setHovered(firstChar);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otFont]);
 
   return (
-    <div style={{ background: panelBg, padding: "1.5rem", transition: "background 0.25s ease" }}>
-      {grid}
-      <div style={{ minHeight: 420, paddingBottom: "3rem" }}>{showcase}</div>
+    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+      {/* Showcase — left */}
+      <div style={{ flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
+        <span style={{ fontFamily: font, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
+      </div>
+
+      {/* Character list — right, grouped by category */}
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {groups.map((group) => (
+          <div key={group.label}>
+            <div style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
+              {group.label}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
+              {group.chars.map((g, i) => (
+                <div
+                  key={i}
+                  onMouseEnter={() => setHovered(g)}
+                  style={{
+                    fontFamily: font,
+                    color: hovered === g ? panelBg : panelText,
+                    background: hovered === g ? panelText : "transparent",
+                    aspectRatio: "1/1",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1rem",
+                    cursor: "default",
+                    borderRadius: 2,
+                    transition: "background 0.15s ease, color 0.15s ease",
+                  }}
+                >
+                  {g}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function WipCarousel({ panelText, font }: { panelText: string; font: string }) {
-  const slides = ["Work in progress 1", "Work in progress 2", "Work in progress 3"];
+function WipCarousel({ panelText, images = [] }: { panelText: string; images?: string[] }) {
+  const count = Math.max(images.length, 1);
   const [i, setI] = useState(0);
-  const go = (d: number) => setI((prev) => (prev + d + slides.length) % slides.length);
+  const go = (d: number) => setI((prev) => (prev + d + count) % count);
   const arrowStyle: React.CSSProperties = {
     background: "none",
     border: `1.5px solid ${panelText}`,
@@ -528,26 +617,11 @@ function WipCarousel({ panelText, font }: { panelText: string; font: string }) {
   return (
     <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 12 }}>
       <button onClick={() => go(-1)} style={arrowStyle} aria-label="Previous">‹</button>
-      <div
-        style={{
-          flex: 1,
-          maxWidth: 300,
-          margin: "0 auto",
-          aspectRatio: "3 / 4",
-          border: `1px solid ${panelText}`,
-          opacity: 0.85,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: panelText,
-          fontFamily: font,
-          fontSize: "1.1rem",
-          letterSpacing: "0.04em",
-          textTransform: "uppercase",
-          transition: "color 0.25s ease, border-color 0.25s ease",
-        }}
-      >
-        {slides[i]}
+      {/* Image field — same 3:4 frame as before; drop real images in via `images`. */}
+      <div style={{ flex: 1, maxWidth: 300, margin: "0 auto", aspectRatio: "3 / 4", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {images[i] && (
+          <img src={images[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        )}
       </div>
       <button onClick={() => go(1)} style={arrowStyle} aria-label="Next">›</button>
     </div>
@@ -559,9 +633,26 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
-function safePathData(path: opentype.Path): string { let d = ""; for (const cmd of path.commands) { const vals = [cmd.x, cmd.y, cmd.x1, cmd.y1, cmd.x2, cmd.y2].filter((v) => v !== undefined); if (vals.some((v) => !Number.isFinite(v as number))) continue; if (cmd.type === "M") d += `M${cmd.x} ${cmd.y}`; else if (cmd.type === "L") d += `L${cmd.x} ${cmd.y}`; else if (cmd.type === "C") d += `C${cmd.x1} ${cmd.y1} ${cmd.x2} ${cmd.y2} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Q") d += `Q${cmd.x1} ${cmd.y1} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Z") d += "Z"; } return d; }
-
-function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] { const paragraphs = text.split("\n"); const result: string[] = []; for (const para of paragraphs) { if (para === "") { result.push(""); continue; } const words = para.split(" "); let current = ""; for (const word of words) { if (font.getAdvanceWidth(word, fontSizePx) > maxWidthPx) { if (current) { result.push(current); current = ""; } let chunk = ""; for (const ch of word) { const candidateChunk = chunk + ch; if (chunk && font.getAdvanceWidth(candidateChunk, fontSizePx) > maxWidthPx) { result.push(chunk); chunk = ch; } else { chunk = candidateChunk; } } current = chunk; continue; } const candidate = current ? current + " " + word : word; if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) { result.push(current); current = word; } else { current = candidate; } } result.push(current); } return result; }
+function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
+  const paragraphs = text.split("\n");
+  const result: string[] = [];
+  for (const para of paragraphs) {
+    if (para === "") { result.push(""); continue; }
+    const words = para.split(" ");
+    let current = "";
+    for (const word of words) {
+      const candidate = current ? current + " " + word : word;
+      if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) {
+        result.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    result.push(current);
+  }
+  return result;
+}
 
 // Renders a single line of preview text as an SVG path built from the loaded
 // font. Any character absent from the font's cmap is drawn with the font's own
@@ -577,10 +668,11 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
   // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null; const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0; const bbox = path ? path.getBoundingBox() : null; const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth; const d = path ? safePathData(path) : "";
+  const width = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
+  const d = text ? font.getPath(text, 0, baselineY, fontSizePx).toPathData(2) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
-      {d && <path d={d} fill={fill} fillRule="evenodd" />}
+      {d && <path d={d} fill={fill} />}
     </svg>
   );
 }
@@ -590,7 +682,9 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
-  const [size, setSize] = useState(6); // rem — controls the big preview text
+  const [size, setSize] = useState(16); // rem — starts at the slider's max size
+  const [weight, setWeight] = useState("Regular");
+  const [weightOpen, setWeightOpen] = useState(false);
   const [font, setFont] = useState<opentype.Font | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
@@ -612,7 +706,18 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   // Parse the actual font file with opentype.js so we can draw glyphs (and the
   // font's own .notdef) ourselves instead of relying on CSS font fallback.
-useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!cancelled) setFont(opentype.parse(buffer)); }) .catch(() => { if (!cancelled) setFont(null); }); } return () => { cancelled = true; }; }, [name]);
+  useEffect(() => {
+    let cancelled = false;
+    setFont(null);
+    if (face?.file) {
+      opentype.load(face.file, (err, f) => {
+        if (!cancelled && !err && f) setFont(f);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [name]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
@@ -632,7 +737,8 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
   const wrappedLines = font && boxWidth ? wrapLines(font, top, size * 16, boxWidth - 4) : top.split("\n");
 
   // Fit a single row by default; grow with each added line, up to four.
-  const previewLines = Math.max(1, wrappedLines.length);
+  const previewLines = Math.min(4, Math.max(1, wrappedLines.length));
+
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
   const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
@@ -655,11 +761,12 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
-      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" />
-      <div className="flex-1 flex flex-col px-10" style={{ gap: GAP, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
-        {/* Top column — big editable preview, size slider in the top-left corner */}
-        <div style={{ position: "relative", background: panelBg, transition: "background 0.25s ease" }}>
-          <div style={{ position: "absolute", top: 16, left: 16, zIndex: 2, color: panelText }}>
+      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} padding="2.5rem 4.5rem 1.75rem" logoTop="1.5rem" />
+      <div className="flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
+        {/* Top column — big editable preview, controls pinned at the top */}
+        <div style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
+          {/* Size slider + colour dots, side by side and centred at the top. */}
+          <div style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
             <input
               type="range"
               min={3}
@@ -669,34 +776,81 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
               onChange={(e) => setSize(Number(e.target.value))}
               className="size-slider"
             />
-          </div>
-          <div style={{ position: "absolute", top: 16, right: 16, display: "flex", gap: 10, zIndex: 2 }}>
-            {([
-              { m: "color" as Mode, c: face.bg },
-              { m: "panelsDark" as Mode, c: "#000" },
-              { m: "panelsLight" as Mode, c: "#fff" },
-            ]).map(({ m, c }) => (
+            <div style={{ display: "flex", gap: 10 }}>
+              {([
+                { m: "color" as Mode, c: face.bg },
+                { m: "panelsDark" as Mode, c: "#000" },
+                { m: "panelsLight" as Mode, c: "#fff" },
+              ]).map(({ m, c }) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  title={m}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    background: c,
+                    border: "1.5px solid rgba(128,128,128,0.6)",
+                    cursor: "pointer",
+                    padding: 0,
+                    outline: mode === m ? "2px solid rgba(128,128,128,0.9)" : "none",
+                    outlineOffset: 2,
+                  }}
+                />
+              ))}
+            </div>
+            {/* Weight selector — fixed width so the label never shifts the row. */}
+            <div style={{ position: "relative", width: 96, flexShrink: 0 }}>
               <button
-                key={m}
-                onClick={() => setMode(m)}
-                title={m}
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: "50%",
-                  background: c,
-                  border: "1.5px solid rgba(128,128,128,0.6)",
-                  cursor: "pointer",
-                  padding: 0,
-                  outline: mode === m ? "2px solid rgba(128,128,128,0.9)" : "none",
-                  outlineOffset: 2,
-                }}
-              />
-            ))}
+                onClick={() => setWeightOpen((o) => !o)}
+                style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, background: "none", border: "none", cursor: "pointer", padding: 0, width: "100%", textAlign: "left" }}
+              >
+                {weight} ▾
+              </button>
+              {weightOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 6px)",
+                    left: 0,
+                    background: pageBg,
+                    color: pageText,
+                    border: `1px solid ${pageText}`,
+                    zIndex: 5,
+                    display: "flex",
+                    flexDirection: "column",
+                    minWidth: 110,
+                  }}
+                >
+                  {WEIGHTS.map((w) => (
+                    <button
+                      key={w}
+                      onClick={() => {
+                        setWeight(w);
+                        setWeightOpen(false);
+                      }}
+                      style={{
+                        fontFamily: "Arial, sans-serif",
+                        fontSize: "0.85rem",
+                        color: pageText,
+                        background: w === weight ? "rgba(128,128,128,0.2)" : "none",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "0.4rem 0.75rem",
+                        textAlign: "left",
+                      }}
+                    >
+                      {w}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "4rem 2rem 1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
             <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
                 value={top}
@@ -749,12 +903,11 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
               )}
             </div>
           </div>
-          <div style={{ paddingBottom: "2.5rem" }} />
         </div>
 
         {/* Designer label + right-to-left looping marquee on one line */}
         <div style={{ display: "flex", alignItems: "center", overflow: "hidden" }}>
-          <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.5rem", fontWeight: "bold", color: pageText, whiteSpace: "nowrap", flexShrink: 0, paddingRight: "1.5rem" }}>
+          <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "bold", color: pageText, whiteSpace: "nowrap", flexShrink: 0, paddingRight: "1.5rem" }}>
             Designer:
           </span>
           <div style={{ overflow: "hidden", whiteSpace: "nowrap", flex: 1 }}>
@@ -762,7 +915,7 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
               {Array.from({ length: 24 }).map((_, k) => (
                 <span
                   key={k}
-                  style={{ fontFamily: "Arial, sans-serif", fontSize: "1.5rem", fontWeight: "normal", color: pageText, paddingRight: "2.5rem", whiteSpace: "nowrap" }}
+                  style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "normal", color: pageText, paddingRight: "2.5rem", whiteSpace: "nowrap" }}
                 >
                   {k % 2 === 0 ? face.designer : face.klass}
                 </span>
@@ -771,19 +924,42 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
           </div>
         </div>
 
-        {/* About (left) + compact Glyphs/Showcase (right), side by side */}
+        {/* Info (left) + Work-in-progress images (right), side by side */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
-          {/* About — left */}
+          {/* Info — left: description + details */}
           <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <h1 style={{ fontFamily: face.font, fontSize: "2.5rem", fontWeight: "bold", color: panelText, margin: 0 }}>About {face.name}</h1>
-            <p style={{ fontFamily: face.font, fontSize: "1.15rem", color: panelText, opacity: 0.85, marginTop: "0.75rem", marginBottom: "1.75rem", lineHeight: 1.6 }}>
+            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
               {face.name} is a {face.klass} typeface designed by {face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.
             </p>
-            <WipCarousel panelText={panelText} font={face.font} />
+            <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
+              {[
+                ["First sketched:", "2024"],
+                ["Released:", "2026"],
+                ["Update:", "2026"],
+                ["Version:", "1.0"],
+                ["Language support:", "Latin Extended"],
+                ["Range:", "Light, Medium, Regular, Italic, Bold"],
+                ["Format:", "ttf, otf, woff"],
+              ].map(([label, value]) => (
+                <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
+                  <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
+                  <span style={{ flex: 1 }}>{value}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Glyphs + showcase — right, smaller */}
-          <GlyphSection font={face.font} panelBg={panelBg} panelText={panelText} compact />
+          {/* Image field — right (currently the WIP carousel, ready for real images) */}
+          <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
+            <WipCarousel panelText={panelText} />
+          </div>
+        </div>
+
+        {/* Full-width Glyphs panel — showcase (left) + character list (right).
+            Extra top margin so the gap above the panel matches the preview→columns
+            whitespace (which also spans the designer marquee row between them). */}
+        <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
+          <GlyphSection font={face.font} otFont={font} panelBg={panelBg} panelText={panelText} />
         </div>
 
         {/* Gumroad purchase widget */}
@@ -791,7 +967,6 @@ useEffect(() => { let cancelled = false; setFont(null); if (face?.file) { fetch(
           <GumroadEmbed url="https://otflicense.gumroad.com/l/facitsans" />
         </div>
       </div>
-      <SubscribeFooter bg={pageBg} hoverColor={face.bg} textColor={pageText} />
     </div>
   );
 }
@@ -898,11 +1073,11 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#fff" }}>
       <div className="sticky top-0 z-50 flex flex-col" style={{ background: "#fff" }}>
-        <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} />
+        <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="4.5rem 4.5rem 2.25rem" />
       </div>
 
       <div style={{ padding: "3rem 2.5rem 3.5rem" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", columnGap: colGap, rowGap }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", columnGap: colGap, rowGap }}>
           {typefaces.map((face) => (
             <Cell
               key={face.name}
@@ -913,7 +1088,7 @@ export default function App() {
           ))}
         </div>
       </div>
-      <StarBuyButton fixed />
+      <StarBuyButton />
     </div>
   );
 }
