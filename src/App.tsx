@@ -52,7 +52,7 @@ const typefaces = [
   { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#c3872f", fg: W, img: img6, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf" },
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#ff5756", fg: W, img: img7, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff2cb2", fg: W, img: img8, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#0074ff", fg: W, img: img9, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor.otf" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#0074ff", fg: W, img: img9, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v1.otf" },
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#ff1d38", fg: W, img: img1, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf" },
   { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#00ab53", fg: W, img: img2, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf" },
   { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#fff800", fg: B, img: img3, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf" },
