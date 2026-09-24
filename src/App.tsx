@@ -633,26 +633,9 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
-function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
-  const paragraphs = text.split("\n");
-  const result: string[] = [];
-  for (const para of paragraphs) {
-    if (para === "") { result.push(""); continue; }
-    const words = para.split(" ");
-    let current = "";
-    for (const word of words) {
-      const candidate = current ? current + " " + word : word;
-      if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) {
-        result.push(current);
-        current = word;
-      } else {
-        current = candidate;
-      }
-    }
-    result.push(current);
-  }
-  return result;
-}
+function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] { const paragraphs = text.split("\n"); const result: string[] = []; for (const para of paragraphs) { if (para === "") { result.push(""); continue; } const words = para.split(" "); let current = ""; for (const word of words) { if (font.getAdvanceWidth(word, fontSizePx) > maxWidthPx) { if (current) { result.push(current); current = ""; } let chunk = ""; for (const ch of word) { const candidateChunk = chunk + ch; if (chunk && font.getAdvanceWidth(candidateChunk, fontSizePx) > maxWidthPx) { result.push(chunk); chunk = ch; } else { chunk = candidateChunk; } } current = chunk; continue; } const candidate = current ? current + " " + word : word; if (current && font.getAdvanceWidth(candidate, fontSizePx) > maxWidthPx) { result.push(current); current = word; } else { current = candidate; } } result.push(current); } return result; }
+
+function safePathData(path: opentype.Path): string { let d = ""; for (const cmd of path.commands) { const vals = [cmd.x, cmd.y, cmd.x1, cmd.y1, cmd.x2, cmd.y2].filter((v) => v !== undefined); if (vals.some((v) => !Number.isFinite(v as number))) continue; if (cmd.type === "M") d += `M${cmd.x} ${cmd.y}`; else if (cmd.type === "L") d += `L${cmd.x} ${cmd.y}`; else if (cmd.type === "C") d += `C${cmd.x1} ${cmd.y1} ${cmd.x2} ${cmd.y2} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Q") d += `Q${cmd.x1} ${cmd.y1} ${cmd.x} ${cmd.y}`; else if (cmd.type === "Z") d += "Z"; } return d; }
 
 // Renders a single line of preview text as an SVG path built from the loaded
 // font. Any character absent from the font's cmap is drawn with the font's own
@@ -668,11 +651,10 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
   // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-  const width = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
-  const d = text ? font.getPath(text, 0, baselineY, fontSizePx).toPathData(2) : "";
+const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null; const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0; const bbox = path ? path.getBoundingBox() : null; const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth; const d = path ? safePathData(path) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
-      {d && <path d={d} fill={fill} />}
+{d && <path d={d} fill={fill} fillRule="evenodd" />} 
     </svg>
   );
 }
@@ -710,9 +692,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
     let cancelled = false;
     setFont(null);
     if (face?.file) {
-      opentype.load(face.file, (err, f) => {
-        if (!cancelled && !err && f) setFont(f);
-      });
+fetch(face.file) .then((res) => res.arrayBuffer()) .then((buffer) => { if (!cancelled) setFont(opentype.parse(buffer)); }) .catch(() => { if (!cancelled) setFont(null); });
     }
     return () => {
       cancelled = true;
@@ -737,7 +717,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   const wrappedLines = font && boxWidth ? wrapLines(font, top, size * 16, boxWidth - 4) : top.split("\n");
 
   // Fit a single row by default; grow with each added line, up to four.
-  const previewLines = Math.min(4, Math.max(1, wrappedLines.length));
+const previewLines = Math.max(1, wrappedLines.length);
 
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
