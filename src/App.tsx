@@ -598,7 +598,7 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
   const d = text ? font.getPath(text, 0, baselineY, fontSizePx).toPathData(2) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
-      {d && <path d={d} fill={fill} />}
+      {d && <path d={d} fill={fill} fillRule="evenodd" />}
     </svg>
   );
 }
