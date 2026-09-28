@@ -911,21 +911,58 @@ function safePathData(path: opentype.Path): string {
 // font. Any character absent from the font's cmap is drawn with the font's own
 // .notdef glyph (opentype.js substitutes it automatically) rather than falling
 // back to another typeface.
-function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill }: {
+function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill, weightAxis, weightValue }: {
   font: opentype.Font;
   text: string;
   fontSizePx: number;
   lineHeightPx: number;
   fill: string;
+  weightAxis: { min: number; max: number; default: number } | null;
+  weightValue: number;
 }) {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
   // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-  const path = text ? font.getPath(text, 0, baselineY, fontSizePx) : null;
-  const advanceWidth = text ? font.getAdvanceWidth(text, fontSizePx) : 0;
-  const bbox = path ? path.getBoundingBox() : null;
+
+  let d = "";
+  let advanceWidth = 0;
+  let bbox: { x2: number } | null = null;
+
+  if (text) {
+    if (weightAxis) {
+      // Draw character by character so each glyph can carry its own variation
+      // weight — normal glyphs follow the slider, missing (.notdef) glyphs stay
+      // at the font's default weight.
+      const scale = fontSizePx / font.unitsPerEm;
+      let currentX = 0;
+      const paths: opentype.Path[] = [];
+      for (const ch of text) {
+        const glyphIndex = font.charToGlyphIndex(ch);
+        (font as any).variation.set({ wght: glyphIndex === 0 ? weightAxis.default : weightValue });
+        const glyph = font.glyphs.get(glyphIndex);
+        const path = glyph.getPath(currentX, baselineY, fontSizePx, {}, font);
+        d += safePathData(path);
+        paths.push(path);
+        currentX += glyph.advanceWidth * scale;
+      }
+      // Restore a consistent default render state for anything read afterward.
+      (font as any).variation.set({ wght: weightValue });
+      advanceWidth = currentX;
+      let maxX2 = 0;
+      for (const p of paths) {
+        const b = p.getBoundingBox();
+        if (Number.isFinite(b.x2) && b.x2 > maxX2) maxX2 = b.x2;
+      }
+      bbox = { x2: maxX2 };
+    } else {
+      const path = font.getPath(text, 0, baselineY, fontSizePx);
+      d = safePathData(path);
+      advanceWidth = font.getAdvanceWidth(text, fontSizePx);
+      bbox = path.getBoundingBox();
+    }
+  }
+
   const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth;
-  const d = path ? safePathData(path) : "";
   return (
     <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
       {d && <path d={d} fill={fill} fillRule="evenodd" />}
@@ -1159,6 +1196,8 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                       fontSizePx={size * 16}
                       lineHeightPx={size * 16 * 1.3}
                       fill={panelText}
+                      weightAxis={weightAxis}
+                      weightValue={weightValue}
                     />
                   ))}
                 </div>
@@ -1190,7 +1229,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p style={{ fontFamily: face.font, fontVariationSettings, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
               {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
