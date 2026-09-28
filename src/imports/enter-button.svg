@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 315.43 72.5">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #00ab53;
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2 {
+        letter-spacing: 0em;
+      }
+
+      .cls-3 {
+        font-family: ABCAreal-BoldItalic, 'ABC Areal';
+        font-size: 20.87px;
+        font-style: italic;
+        font-weight: 700;
+      }
+
+      .cls-4 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-5 {
+        letter-spacing: -.03em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-3" transform="translate(43.32 41.95)"><tspan x="0" y="0">ENTER</tspan><tspan class="cls-4" x="71.36" y="0"> </tspan><tspan class="cls-2" x="75.32" y="0">THE SHO</tspan><tspan class="cls-5" x="167.76" y="0">P</tspan></text>
+    <polygon points="284.05 34.45 260.41 25.48 259.54 27.78 277.52 34.61 234.4 34.61 234.4 37.07 277.52 37.07 259.54 43.9 260.41 46.2 284.24 37.16 287.54 35.83 284.05 34.45"/>
+  </g>
+</svg>
