@@ -367,7 +367,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
         alt={face.name}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => onNavigate({ id: "", name: face.name })}
+        onClick={() => onNavigate({ id: "typeface", name: face.name })}
         style={{
           width: "100%",
           height: "auto",
