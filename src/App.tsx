@@ -155,20 +155,25 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
 
 function pageFromPath(pathname: string): Page {
   const path = pathname.replace(/\/+$/, "") || "/";
+
   if (path === "/intro" || path === "/") return { id: "home" };
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
   if (path === "/faq") return { id: "contact" };
 
-const shopMatch = path.match(/^\/shop\/([^/]+)$/);
-if (shopMatch) {
-  const face = typefaces.find(
-    (item) => Slug(item.name) === shopMatch[1].toLowerCase()
-  );
-  if (face) return { id: "typeface", name: face.name };
-}
+  const shopMatch = path.match(/^\/shop\/([^/]+)$/);
 
-return { id: "home" };
+  if (shopMatch) {
+    const face = typefaces.find(
+      (item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase()
+    );
+
+    if (face) {
+      return { id: "typeface", name: face.name };
+    }
+  }
+
+  return { id: "home" };
 }
 
 // Designer directory, derived from the typefaces
