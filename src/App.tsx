@@ -88,7 +88,7 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/emmalastcall.ttf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
   { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
@@ -96,10 +96,10 @@ const typefaces = [
 
 { name: "Ella", designer: "Caspar Broms", klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
   
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, font: "'Cheiron', sans-serif", file: "/fonts/simoncheiron.ttf", scale: 1.27 },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", scale: 1.27 },
   { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/vivibip.ttf", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
@@ -108,7 +108,7 @@ const typefaces = [
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/linnbrus.ttf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
 const SHOP_TYPEFACE_NAMES = [
