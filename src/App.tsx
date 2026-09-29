@@ -5,6 +5,82 @@ import specCheiron from "./imports/simoncheiron_spec.png";
 import galleryImg1 from "./imports/gallery-1.jpg";
 import galleryImg2 from "./imports/gallery-2.jpg";
 import galleryImg3 from "./imports/gallery-3.jpg";
+import galleryXoxo1 from "./imports/xoxo1.png";
+import galleryXoxo2 from "./imports/xoxo2.png";
+import galleryXoxo3 from "./imports/xoxo3.png";
+import galleryXoxo4 from "./imports/xoxo4.png";
+import galleryUber1 from "./imports/uber1.png";
+import galleryUber2 from "./imports/uber2.png";
+import galleryUber3 from "./imports/uber3.png";
+import galleryUber4 from "./imports/uber4.png";
+import gallerySvek1 from "./imports/svek1.png";
+import gallerySvek2 from "./imports/svek2.png";
+import gallerySvek3 from "./imports/svek3.png";
+import gallerySvek4 from "./imports/svek4.png";
+import gallerySonja1 from "./imports/sonja1.png";
+import gallerySonja2 from "./imports/sonja2.png";
+import gallerySonja3 from "./imports/sonja3.png";
+import gallerySonja4 from "./imports/sonja4.png";
+import galleryMormor1 from "./imports/mormor1.png";
+import galleryMormor2 from "./imports/mormor2.png";
+import galleryMormor3 from "./imports/mormor3.png";
+import galleryMormor4 from "./imports/mormor4.png";
+import galleryLiljan1 from "./imports/liljan1.png";
+import galleryLiljan2 from "./imports/liljan2.png";
+import galleryLiljan3 from "./imports/liljan3.png";
+import galleryLiljan4 from "./imports/liljan4.png";
+import galleryBrus1 from "./imports/brus1.png";
+import galleryFacit1 from "./imports/facit1.png";
+import galleryFacit2 from "./imports/facit2.png";
+import galleryFacit3 from "./imports/facit3.png";
+import galleryFacit4 from "./imports/facit4.png";
+import galleryGalanite1 from "./imports/galanite1.png";
+import galleryGalanite2 from "./imports/galanite2.png";
+import galleryGalanite3 from "./imports/galanite3.png";
+import galleryGalanite4 from "./imports/galanite4.png";
+import galleryElla1 from "./imports/ella1.png";
+import galleryElla2 from "./imports/ella2.png";
+import galleryElla3 from "./imports/ella3.png";
+import galleryElla4 from "./imports/ella4.png";
+import galleryCrypto1 from "./imports/crypto1.png";
+import galleryCrypto2 from "./imports/crypto2.png";
+import galleryCrypto3 from "./imports/crypto3.png";
+import galleryCrypto4 from "./imports/crypto4.png";
+import galleryLastCall1 from "./imports/lastcall1.png";
+import galleryLastCall2 from "./imports/lastcall2.png";
+import galleryLastCall3 from "./imports/lastcall3.png";
+import galleryLastCall4 from "./imports/lastcall4.png";
+import galleryKuriren1 from "./imports/kuriren1.png";
+import galleryKuriren2 from "./imports/kuriren2.png";
+import galleryKuriren3 from "./imports/kuriren3.png";
+import galleryKuriren4 from "./imports/kuriren4.png";
+import galleryCheiron1 from "./imports/cheiron1.png";
+import galleryCheiron2 from "./imports/cheiron2.png";
+import galleryCheiron3 from "./imports/cheiron3.png";
+import galleryCheiron4 from "./imports/cheiron4.png";
+import galleryBrus2 from "./imports/brus2.png";
+import galleryBrus3 from "./imports/brus3.png";
+import galleryBrus4 from "./imports/brus4.png";
+import galleryBip1 from "./imports/bip1.png";
+import galleryBip2 from "./imports/bip2.png";
+import galleryBip3 from "./imports/bip3.png";
+import galleryBip4 from "./imports/bip4.png";
+import placeholderBip from "./imports/Placeholder_BIP.png";
+import placeholderBrus from "./imports/Placeholder_Brus.png";
+import placeholderCheiron from "./imports/Placeholder_Cheiron.png";
+import placeholderCrypto from "./imports/Placeholder_Crypto.png";
+import placeholderDukat from "./imports/Placeholder_Dukat.png";
+import placeholderElla from "./imports/Placeholder_Ella.png";
+import placeholderFacit from "./imports/Placeholder_Facit.png";
+import placeholderGalanite from "./imports/Placeholder_Galanite.png";
+import placeholderKuriren from "./imports/Placeholder_Kuriren.png";
+import placeholderLastCall from "./imports/Placeholder_LastCall.png";
+import placeholderLcdUber from "./imports/Placeholder_LCDUber.png";
+import placeholderLiljan from "./imports/Placeholder_Liljan.png";
+import placeholderMormor from "./imports/Placeholder_Mormor.png";
+import placeholderSonja from "./imports/Placeholder_Sonja.png";
+import placeholderSvek from "./imports/Placeholder_Svek.png";
+import placeholderXoxo from "./imports/Placeholder_XOXO.png";
 import transitionSvgRaw from "./imports/transition-asset.svg?raw";
 
 const GALLERY_IMAGES = [galleryImg1, galleryImg2, galleryImg3];
@@ -35,6 +111,7 @@ type Page =
   | { id: "about" }
   | { id: "licensing" }
   | { id: "contact" }
+  | { id: "bundle" }
   | { id: "typeface"; name: string };
 
 function typefaceSlug(name: string) {
@@ -46,6 +123,7 @@ function pageToPath(page: Page) {
   if (page.id === "foundry") return "/shop";
   if (page.id === "about") return "/about";
   if (page.id === "contact") return "/faq";
+  if (page.id === "bundle") return "/bundle";
   if (page.id === "typeface") return `/shop/${typefaceSlug(page.name)}`;
   return `/${page.id}`;
 }
@@ -78,8 +156,8 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
   const step = Math.PI / spikes;
   let d = "";
   for (let i = 0; i < spikes * 2; i++) {
-      const rx = i % 2 === 0 ? outerRX : innerRX;
-      const ry = i % 2 === 0 ? outerRY : innerRY;
+    const rx = i % 2 === 0 ? outerRX : innerRX;
+    const ry = i % 2 === 0 ? outerRY : innerRY;
     const a = i * step - Math.PI / 2;
     d += `${i === 0 ? "M" : "L"}${(cx + Math.cos(a) * rx).toFixed(1)},${(cy + Math.sin(a) * ry).toFixed(1)} `;
   }
@@ -88,28 +166,55 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
+  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [placeholderLastCall], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [placeholderXoxo], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [placeholderLiljan], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
+  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [placeholderKuriren], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
   // — middle —
-
-{ name: "Ella", designer: "Caspar Broms", klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
-  
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", scale: 1.27 },
-  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [placeholderElla], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [placeholderSvek], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [placeholderCheiron], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", scale: 1.27 },
+  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [placeholderLcdUber], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [placeholderBip], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [placeholderGalanite], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [placeholderDukat], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [placeholderCrypto], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [placeholderFacit], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [placeholderSonja], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [placeholderMormor], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [placeholderBrus], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
+
+// Native variable-font typefaces — rendered directly by the browser (not the
+// SVG/opentype.js overlay) so variable-font metrics/kerning stay correct. Each
+// axis maps to a CSS font-variation-settings tag. These known ranges act as
+// fallback axis data even when opentype.js cannot parse the WOFF2 file.
+type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
+const NATIVE_VF: Record<string, VFAxis[]> = {
+  "Ella": [
+    { label: "Weight", tag: "wght", min: 100, max: 700, default: 100 },
+    { label: "Serif", tag: "SRIF", min: 0, max: 100, default: 0 },
+  ],
+  "Brus": [
+    { label: "Weight", tag: "wght", min: 60, max: 177, default: 60 },
+    { label: "Slant", tag: "slnt", min: 0, max: 60, default: 0 },
+  ],
+  "Cheiron": [
+    { label: "Weight", tag: "wght", min: 0, max: 100, default: 0 },
+    { label: "Width", tag: "wdth", min: 0, max: 100, default: 0 },
+  ],
+  "Svek": [
+    { label: "Italic", tag: "ital", min: 0, max: 100, default: 0, onOff: true },
+  ],
+  "BIP": [
+    { label: "Weight", tag: "wght", min: 0, max: 100, default: 0 },
+  ],
+  "Last Call": [
+    { label: "Weight", tag: "wght", min: 0, max: 900, default: 0 },
+  ],
+};
 
 const SHOP_TYPEFACE_NAMES = [
   "BIP",
@@ -135,12 +240,12 @@ const shopTypefaces = SHOP_TYPEFACE_NAMES.map(
 );
 
 const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
-  BIP: { x: -165, y: 14, rotation: -6 },
-  Brus: { x: -25, y: -32, rotation: 4 },
-  Cheiron: { x: -8, y: 24, rotation: -3 },
-  Crypto: { x: 18, y: -20, rotation: 6 },
-  Dukat: { x: 90, y: 30, rotation: -5 },
-  Ella: { x: 120, y: -12, rotation: 3 },
+  BIP: { x: -65, y: 14, rotation: -6 },
+  Brus: { x: 25, y: -32, rotation: 4 },
+  Cheiron: { x: 42, y: 24, rotation: -3 },
+  Crypto: { x: 68, y: -20, rotation: 6 },
+  Dukat: { x: 140, y: 30, rotation: -5 },
+  Ella: { x: 170, y: -12, rotation: 3 },
   Facit: { x: -145, y: -18, rotation: 5 },
   Galanite: { x: -95, y: -20, rotation: -4 },
   Kurir: { x: -4, y: -28, rotation: 2 },
@@ -155,29 +260,22 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
 
 function pageFromPath(pathname: string): Page {
   const path = pathname.replace(/\/+$/, "") || "/";
-
   if (path === "/intro" || path === "/") return { id: "home" };
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
   if (path === "/faq") return { id: "contact" };
+  if (path === "/bundle") return { id: "bundle" };
 
   const shopMatch = path.match(/^\/shop\/([^/]+)$/);
-
   if (shopMatch) {
-    const face = typefaces.find(
-      (item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase()
-    );
-
-    if (face) {
-      return { id: "typeface", name: face.name };
-    }
+    const face = typefaces.find((item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase());
+    if (face) return { id: "typeface", name: face.name };
   }
 
   return { id: "home" };
 }
 
-// Designer directory, derived from the typefaces
-// (each colour/contrast pairing reused).
+// Designer directory, derived from the typefaces (each colour/contrast pairing reused).
 const designers = typefaces.map((t) => {
   const handle = t.designer.toLowerCase().replace(/\s+/g, "");
   return {
@@ -190,10 +288,7 @@ const designers = typefaces.map((t) => {
   };
 });
 
-const DESIGNER_CLASSES = [
-  "All",
-  ...Array.from(new Set(designers.map((d) => d.klass))),
-];
+const DESIGNER_CLASSES = ["All", ...Array.from(new Set(designers.map((d) => d.klass)))];
 
 // Ticket/stamp SVG path: rounded-corner rectangle with semicircular notches at top and bottom centre.
 // viewBox 0 0 200 100. Corner radius 10, notch radius 12 centred at (100, 0) and (100, 100).
@@ -286,7 +381,7 @@ function NameCell({ d }: { d: typeof designers[0] }) {
             style={{
               position: "absolute", top: 0, left: "50%", right: 0, bottom: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "Arial, sans-serif", fontWeight: "bold", font: "0.8rem",
+              fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "0.8rem",
               color: rightHover ? d.textColor : "#000",
               textDecoration: "none", transition: "color 0.15s ease",
             }}
@@ -313,13 +408,13 @@ function StarTag({ face }: { face: typeof typefaces[0] }) {
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
         textAlign: "center", padding: "30px 16px",
       }}>
-        <p style={{ fontFamily: "Arial, sans-serif", font: "0.55rem", fontWeight: "bold", color: "#000", lineHeight: 1.3 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.55rem", fontWeight: "bold", color: "#000", lineHeight: 1.3 }}>
           {face.name}
         </p>
-        <p style={{ fontFamily: "Arial, sans-serif", font: "0.47rem", color: "#333", lineHeight: 1.2, marginTop: 1 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.47rem", color: "#333", lineHeight: 1.2, marginTop: 1 }}>
           {face.designer}
         </p>
-        <p style={{ fontFamily: "Arial, sans-serif", font: "0.44rem", color: "#666", lineHeight: 1.2 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.44rem", color: "#666", lineHeight: 1.2 }}>
           {face.klass}
         </p>
       </div>
@@ -328,7 +423,7 @@ function StarTag({ face }: { face: typeof typefaces[0] }) {
 }
 
 function randomEdgePlacement(): { edge: Edge; pct: number } {
-const edges: Edge[] = ["top", "bottom", "left", "right"];
+  const edges: Edge[] = ["top", "bottom", "left", "right"];
   return {
     edge: edges[Math.floor(Math.random() * 4)],
     pct: 15 + Math.random() * 55,
@@ -352,10 +447,10 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
   rotation?: number;
 }) {
   const [hovered, setHovered] = useState(false);
-  // Each cell gets its own random tilt, generated once and stable across re-hovers.
-  const [tilt] = useState(() => Math.random() * 22 - 11); // -11°..11°
 
   const s = face.scale ?? 1;
+  // Hover tilt: 5° in the same direction as the resting rotation
+  const hoverRotation = rotation >= 0 ? 15 : -15;
 
   return (
     <div
@@ -375,8 +470,9 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
           cursor: "pointer",
           pointerEvents: "auto",
           transform: hovered
-            ? `rotate(${tilt}deg) scale(${s})`
+            ? `rotate(${hoverRotation}deg) scale(${s})`
             : `rotate(${rotation}deg) scale(${s})`,
+          transition: "none",
           transformOrigin: "center",
           position: "relative",
           zIndex: hovered ? 1 : 0,
@@ -415,7 +511,7 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
         x="0"
         y="0"
         textAnchor="middle"
-        style={{ fontFamily: font, font: 100, fill: color, whiteSpace: "pre" }}
+        style={{ fontFamily: font, fontSize: 100, fill: color, whiteSpace: "pre" }}
       >
         {words.map((word, i) => (
           <tspan key={i} x="0" dy={i === 0 ? "0" : "1em"}>
@@ -427,7 +523,7 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
   );
 }
 
-function NavTextButton({ label, width, onClick }: { label: string; width: number; onClick: () => void }) {
+function NavTextButton({ label, width, onClick, color = "#000" }: { label: string; width: number; onClick: () => void; color?: string }) {
   return (
     <button
       className="nav-link"
@@ -440,7 +536,8 @@ function NavTextButton({ label, width, onClick }: { label: string; width: number
         cursor: "pointer",
         padding: 0,
         fontFamily: "Arial, sans-serif",
-        font: "20px",
+        fontSize: "20px",
+        color,
       }}
     >
       {label}
@@ -448,7 +545,7 @@ function NavTextButton({ label, width, onClick }: { label: string; width: number
   );
 }
 
-function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem" }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string }) {
+function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <nav
       className="sticky top-0 z-50"
@@ -464,8 +561,8 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       }}
     >
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="ABOUT" width={140} onClick={() => onNavigate({ id: "about" })} />
-        <NavTextButton label="FAQ" width={140} onClick={() => onNavigate({ id: "contact" })} />
+        <NavTextButton label="ABOUT" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="FAQ" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
         onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
@@ -476,29 +573,33 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           alt={BRAND}
           style={{ height: logoHeight, display: "block", filter: fg === "#fff" ? "invert(1)" : "none" }}
         />
-        <img
-          src={headerEyesSvg}
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            left: "calc(100% + 0.75rem)",
-            top: 0,
-            height: logoHeight,
-            width: "auto",
-            display: "block",
-            filter: fg === "#fff" ? "invert(1)" : "none",
-          }}
-        />
+        {showEyes && (
+          <img
+            src={headerEyesSvg}
+            alt=""
+            aria-hidden="true"
+            onMouseEnter={(e) => { e.stopPropagation(); onEyesHover?.(); }}
+            style={{
+              position: "absolute",
+              left: "calc(100% + 1.1rem)",
+              top: "0.5rem",
+              height: "1.75rem",
+              width: "auto",
+              display: "block",
+              filter: fg === "#fff" ? "invert(1)" : "none",
+              cursor: "pointer",
+            }}
+          />
+        )}
       </button>
-      <NavTextButton label="BUY THE MEGA BUNDLE!" width={344} onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")} />
+      <NavTextButton label="BUY THE MEGA BUNDLE!" width={344} color={fg} onClick={() => onNavigate({ id: "bundle" })} />
     </nav>
   );
 }
 
 const PAGE_TEXT: Record<string, string> = {
   ABOUT:
-    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, s, and media.",
+    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
   Licensing:
     "Our fonts are available under desktop, web, app, and broadcast licenses, priced by the number of users and monthly page views. A single trial weight is free for testing. Custom and exclusive licenses are available for brands and publishers — get in touch and we will tailor an agreement to your needs.",
   FAQ:
@@ -565,7 +666,7 @@ function StarLink({ label, onClick, fg, starColor, scale = 1 }: { label: string;
 }
 
 // Fixed bottom-right CTA — a rectangular starburst price tag for the mega bundle.
-function StarBuyButton() {
+function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   const [hover, setHover] = useState(false);
   const [randColor, setRandColor] = useState<string | null>(null);
   const W = 420;
@@ -573,7 +674,7 @@ function StarBuyButton() {
   const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
   return (
     <button
-      onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
       onMouseEnter={() => {
         setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -667,14 +768,14 @@ function ScrollGallery() {
   );
 }
 
-function SimplePage({ title, onNavigate }: { title: string; onNavigate: (p: Page) => void }) {
+function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("All");
   const shownDesigners = klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
   if (title === "ABOUT") {
     return (
       <div className="min-h-screen bg-white flex flex-col">
-        <NavBar onNavigate={onNavigate} />
+        <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, paddingTop: "5.5rem" }}>
           {/* Left column */}
@@ -712,7 +813,7 @@ function SimplePage({ title, onNavigate }: { title: string; onNavigate: (p: Page
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <NavBar onNavigate={onNavigate} />
+      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="flex-1 flex flex-col px-10" style={{ paddingTop: "5.5rem", paddingBottom: "3rem" }}>
         <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, maxWidth: "48rem" }}>
           {PAGE_TEXT[title] ?? "Coming soon."}
@@ -749,6 +850,39 @@ const CHAR_GROUPS: { label: string; chars: string[] }[] = [
   },
 ];
 
+// Adobe-style glyph names for every character shown in the panel, so the
+// "Glyph:" label reads e.g. "parenleft", "Aring", "comma" rather than the raw
+// character. Falls back to the parsed font's own name, then a uniXXXX form.
+const GLYPH_NAMES: Record<string, string> = {
+  ...Object.fromEntries("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((c) => [c, c])),
+  ...Object.fromEntries("abcdefghijklmnopqrstuvwxyz".split("").map((c) => [c, c])),
+  "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+  "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine",
+  "À": "Agrave", "Á": "Aacute", "Â": "Acircumflex", "Ã": "Atilde", "Ä": "Adieresis", "Å": "Aring", "Æ": "AE",
+  "Ç": "Ccedilla", "È": "Egrave", "É": "Eacute", "Ê": "Ecircumflex", "Ë": "Edieresis",
+  "Ì": "Igrave", "Í": "Iacute", "Î": "Icircumflex", "Ï": "Idieresis", "Ñ": "Ntilde",
+  "Ò": "Ograve", "Ó": "Oacute", "Ô": "Ocircumflex", "Õ": "Otilde", "Ö": "Odieresis", "Ø": "Oslash",
+  "Ù": "Ugrave", "Ú": "Uacute", "Û": "Ucircumflex", "Ü": "Udieresis", "Ý": "Yacute",
+  "à": "agrave", "á": "aacute", "â": "acircumflex", "ã": "atilde", "ä": "adieresis", "å": "aring", "æ": "ae",
+  "ç": "ccedilla", "è": "egrave", "é": "eacute", "ê": "ecircumflex", "ë": "edieresis",
+  "ì": "igrave", "í": "iacute", "î": "icircumflex", "ï": "idieresis", "ñ": "ntilde",
+  "ò": "ograve", "ó": "oacute", "ô": "ocircumflex", "õ": "otilde", "ö": "odieresis", "ø": "oslash",
+  "ù": "ugrave", "ú": "uacute", "û": "ucircumflex", "ü": "udieresis", "ý": "yacute", "ÿ": "ydieresis",
+  ".": "period", ",": "comma", ":": "colon", ";": "semicolon", "…": "ellipsis",
+  "!": "exclam", "¡": "exclamdown", "?": "question", "¿": "questiondown", "·": "periodcentered", "•": "bullet",
+  "*": "asterisk", "#": "numbersign", "/": "slash", "\\": "backslash", "-": "hyphen", "–": "endash", "—": "emdash", "_": "underscore",
+  "(": "parenleft", ")": "parenright", "{": "braceleft", "}": "braceright", "[": "bracketleft", "]": "bracketright",
+  "‚": "quotesinglbase", "„": "quotedblbase", "“": "quotedblleft", "”": "quotedblright", "‘": "quoteleft", "’": "quoteright",
+  "«": "guillemotleft", "»": "guillemotright", "‹": "guilsinglleft", "›": "guilsinglright", "\"": "quotedbl", "'": "quotesingle",
+  "ƒ": "florin", "@": "at", "&": "ampersand", "¶": "paragraph", "§": "section", "©": "copyright", "®": "registered", "™": "trademark", "°": "degree",
+  "|": "bar", "¦": "brokenbar", "†": "dagger", "‡": "daggerdbl", "¢": "cent", "¤": "currency", "$": "dollar", "€": "Euro", "£": "sterling", "¥": "yen",
+  "+": "plus", "−": "minus", "×": "multiply", "÷": "divide", "=": "equal", "≠": "notequal", ">": "greater", "<": "less",
+  "≥": "greaterequal", "≤": "lessequal", "±": "plusminus", "≈": "approxequal", "~": "asciitilde", "¬": "logicalnot", "^": "asciicircum",
+  "∞": "infinity", "∫": "integral", "∏": "product", "∑": "summation", "√": "radical", "∂": "partialdiff", "%": "percent", "‰": "perthousand",
+  "↑": "arrowup", "↗": "arrowupright", "→": "arrowright", "↘": "arrowdownright", "↓": "arrowdown", "↙": "arrowdownleft", "←": "arrowleft", "↖": "arrowupleft", "◊": "lozenge",
+  "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "longst", "ﬆ": "st", "ª": "ordfeminine", "º": "ordmasculine", "µ": "mu",
+};
+
 // Full-width panel: large showcase on the left, categorised character list on the right.
 // When the parsed opentype font is available, only glyphs actually present in the
 // face are shown (missing chars are omitted and empty categories are hidden).
@@ -765,11 +899,25 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otFont]);
 
+  // Metadata for the currently highlighted glyph. The Unicode value comes from
+  // the character itself; the glyph name is read from the parsed font when
+  // available, falling back to the character.
+  const codePoint = hovered.codePointAt(0) ?? 0;
+  const glyphUnicode = "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0");
+  const glyphName =
+    GLYPH_NAMES[hovered] ??
+    (otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(hovered))?.name : undefined) ??
+    "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
+
   return (
     <div style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
       {/* Showcase — left */}
-      <div style={{ flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
+      <div style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
         <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
+        <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
+          <div>Glyph: {glyphName}</div>
+          <div>Unicode: {glyphUnicode}</div>
+        </div>
       </div>
 
       {/* Character list — right, grouped by category */}
@@ -811,16 +959,39 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
 }
 
 function WipCarousel({ panelText, images = [] }: { panelText: string; images?: string[] }) {
-  const count = Math.max(images.length, 1);
-  const [i, setI] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const count = images.length;
+
+  // Single-image or empty: no carousel needed
+  if (count <= 1) {
+    return (
+      <div style={{ position: "absolute", inset: 0, background: "#fff" }}>
+        {images[0] && <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />}
+      </div>
+    );
+  }
+
+  // Infinite loop: [last, ...images, first]
+  const slides = [images[count - 1], ...images, images[0]];
+  const total = slides.length;
+
+  // Start at index 1 (the real first image)
+  const [idx, setIdx] = useState(1);
+  const [animated, setAnimated] = useState(true);
 
   const go = (d: number) => {
-    setVisible(false);
-    setTimeout(() => {
-      setI((prev) => (prev + d + count) % count);
-      setVisible(true);
-    }, 280);
+    setAnimated(true);
+    setIdx((prev) => prev + d);
+  };
+
+  const handleTransitionEnd = () => {
+    // Silently snap from clone to real slide with no animation
+    if (idx === 0) {
+      setAnimated(false);
+      setIdx(count);
+    } else if (idx === total - 1) {
+      setAnimated(false);
+      setIdx(1);
+    }
   };
 
   const arrowStyle: React.CSSProperties = {
@@ -841,21 +1012,23 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
   };
 
   return (
-    <div style={{ position: "absolute", inset: 0 }}>
-      {images[i] && (
-        <img
-          src={images[i]}
-          alt=""
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-            opacity: visible ? 1 : 0,
-            transition: "opacity 0.28s ease-in-out",
-          }}
-        />
-      )}
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
+      <div
+        onTransitionEnd={handleTransitionEnd}
+        style={{
+          display: "flex",
+          width: `${total * 100}%`,
+          height: "100%",
+          transform: `translateX(-${(idx / total) * 100}%)`,
+          transition: animated ? "transform 0.42s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
+        }}
+      >
+        {slides.map((src, i) => (
+          <div key={i} style={{ width: `${100 / total}%`, flexShrink: 0, height: "100%" }}>
+            <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+          </div>
+        ))}
+      </div>
       <button onClick={() => go(-1)} style={{ ...arrowStyle, left: 12 }} aria-label="Previous">‹</button>
       <button onClick={() => go(1)} style={{ ...arrowStyle, right: 12 }} aria-label="Next">›</button>
     </div>
@@ -924,17 +1097,7 @@ function safePathData(path: opentype.Path): string {
 // font. Any character absent from the font's cmap is drawn with the font's own
 // .notdef glyph (opentype.js substitutes it automatically) rather than falling
 // back to another typeface.
-
-function GlyphLine({
-  font,
-  text,
-  fontSizePx,
-  lineHeightPx,
-  fill,
-  weightAxis,
-  weightValue,
-  letterSpacing = 0,
-}: {
+function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill, weightAxis, weightValue, letterSpacing = 0 }: {
   font: opentype.Font;
   text: string;
   fontSizePx: number;
@@ -944,301 +1107,172 @@ function GlyphLine({
   weightValue: number;
   letterSpacing?: number;
 }) {
-  const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
-  const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
-
-  // letterSpacing comes in em, just like CSS.
+  // Em letter-spacing → pixels, inserted between characters (never after the last).
   const spacingPx = letterSpacing * fontSizePx;
+  const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
+  // Baseline placement inside the line box mirrors CSS half-leading.
+  const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
 
   let d = "";
   let advanceWidth = 0;
   let bbox: { x2: number } | null = null;
 
   if (text) {
-    const scale = fontSizePx / font.unitsPerEm;
-    let currentX = 0;
-    const paths: opentype.Path[] = [];
-
-    for (let i = 0; i < text.length; i++) {
-      const ch = text[i];
-      const glyphIndex = font.charToGlyphIndex(ch);
-
-      if (weightAxis) {
-        (font as any).variation.set({
-          wght: glyphIndex === 0 ? weightAxis.default : weightValue,
-        });
-      }
-
-      const glyph = font.glyphs.get(glyphIndex);
-      const path = glyph.getPath(
-        currentX,
-        baselineY,
-        fontSizePx,
-        {},
-        font
-      );
-
-      d += safePathData(path);
-      paths.push(path);
-
-      currentX += glyph.advanceWidth * scale;
-
-      // Add tracking BETWEEN characters, but not after the final character.
-      if (i < text.length - 1) {
-        currentX += spacingPx;
-      }
-    }
-
     if (weightAxis) {
+      // Draw character by character so each glyph can carry its own variation
+      // weight — normal glyphs follow the slider, missing (.notdef) glyphs stay
+      // at the font's default weight.
+      const scale = fontSizePx / font.unitsPerEm;
+      let currentX = 0;
+      const paths: opentype.Path[] = [];
+      const chars = Array.from(text);
+      chars.forEach((ch, ci) => {
+        const glyphIndex = font.charToGlyphIndex(ch);
+        (font as any).variation.set({ wght: glyphIndex === 0 ? weightAxis.default : weightValue });
+        const glyph = font.glyphs.get(glyphIndex);
+        const path = glyph.getPath(currentX, baselineY, fontSizePx, {}, font);
+        d += safePathData(path);
+        paths.push(path);
+        currentX += glyph.advanceWidth * scale;
+        if (ci < chars.length - 1) currentX += spacingPx;
+      });
+      // Restore a consistent default render state for anything read afterward.
       (font as any).variation.set({ wght: weightValue });
-    }
-
-    advanceWidth = currentX;
-
-    let maxX2 = 0;
-
-    for (const p of paths) {
-      const b = p.getBoundingBox();
-
-      if (Number.isFinite(b.x2) && b.x2 > maxX2) {
-        maxX2 = b.x2;
+      advanceWidth = currentX;
+      let maxX2 = 0;
+      for (const p of paths) {
+        const b = p.getBoundingBox();
+        if (Number.isFinite(b.x2) && b.x2 > maxX2) maxX2 = b.x2;
       }
+      bbox = { x2: maxX2 };
+    } else if (spacingPx !== 0) {
+      // Draw glyph-by-glyph so letter spacing can be inserted between characters.
+      const scale = fontSizePx / font.unitsPerEm;
+      let currentX = 0;
+      const paths: opentype.Path[] = [];
+      const chars = Array.from(text);
+      chars.forEach((ch, ci) => {
+        const glyphIndex = font.charToGlyphIndex(ch);
+        const glyph = font.glyphs.get(glyphIndex);
+        const path = glyph.getPath(currentX, baselineY, fontSizePx, {}, font);
+        d += safePathData(path);
+        paths.push(path);
+        currentX += glyph.advanceWidth * scale;
+        if (ci < chars.length - 1) currentX += spacingPx;
+      });
+      advanceWidth = currentX;
+      let maxX2 = 0;
+      for (const p of paths) {
+        const b = p.getBoundingBox();
+        if (Number.isFinite(b.x2) && b.x2 > maxX2) maxX2 = b.x2;
+      }
+      bbox = { x2: maxX2 };
+    } else {
+      const path = font.getPath(text, 0, baselineY, fontSizePx);
+      d = safePathData(path);
+      advanceWidth = font.getAdvanceWidth(text, fontSizePx);
+      bbox = path.getBoundingBox();
     }
-
-    bbox = { x2: maxX2 };
   }
 
-  const width = bbox
-    ? Math.max(advanceWidth, bbox.x2)
-    : advanceWidth;
-
+  const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth;
   return (
-    <svg
-      width={Math.max(width, 1)}
-      height={lineHeightPx}
-      style={{
-        display: "block",
-        overflow: "visible",
-      }}
-    >
-      {d && (
-        <path
-          d={d}
-          fill={fill}
-          fillRule="evenodd"
-        />
-      )}
+    <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
+      {d && <path d={d} fill={fill} fillRule="evenodd" />}
     </svg>
   );
 }
 
-function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page) => void }) {
+function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const face = typefaces.find((f) => f.name === name);
-
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
   const [size, setSize] = useState(16); // rem — starts at the slider's max size
-  const [spacing, setSpacing] = useState(0);
   const [font, setFont] = useState<opentype.Font | null>(null);
-
   // Per-typeface weight control: variable fonts expose a wght axis (slider),
   // static fonts show a fixed "Regular" label instead.
-  const [weightAxis, setWeightAxis] = useState<{
-    min: number;
-    max: number;
-    default: number;
-  } | null>(null);
-
+  const [weightAxis, setWeightAxis] = useState<{ min: number; max: number; default: number } | null>(null);
   const [weightValue, setWeightValue] = useState(400);
-
-  // Extra variable-font axes used by the browser-rendered typefaces.
-  const [serifAxis, setSerifAxis] = useState<{ min: number; max: number; default: number } | null>(null);
-  const [serifValue, setSerifValue] = useState(0);
-
-  const [widthAxis, setWidthAxis] = useState<{ min: number; max: number; default: number } | null>(null);
-  const [widthValue, setWidthValue] = useState(0);
-
-  const [slantAxis, setSlantAxis] = useState<{ min: number; max: number; default: number } | null>(null);
-  const [slantValue, setSlantValue] = useState(0);
-
-  const [italicAxis, setItalicAxis] = useState<{ min: number; max: number; default: number } | null>(null);
-  const [italicOn, setItalicOn] = useState(false);
-
+  // Letter spacing (em) — applies to every typeface, native or SVG-rendered.
+  const [spacing, setSpacing] = useState(0);
+  // Native variable fonts: rendered by the browser with live axis values.
+  const nativeAxes = NATIVE_VF[name] ?? null;
+  const isNative = nativeAxes !== null;
+  const [axisValues, setAxisValues] = useState<Record<string, number>>({});
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
 
-  const isNativeVariable = ["Ella", "Brus", "Cheiron", "Svek", "BIP", "Last Call"].includes(name);
-
-  // Track the preview box's rendered width so the SVG overlay for the other
-  // typefaces can wrap words to match.
+  // Track the preview box's rendered width so the overlay can wrap words to match.
   useEffect(() => {
     const el = boxRef.current;
     if (!el) return;
-
     const measure = () => setBoxWidth(el.clientWidth);
     measure();
-
     if (typeof ResizeObserver !== "undefined") {
       const ro = new ResizeObserver(measure);
       ro.observe(el);
       return () => ro.disconnect();
     }
-
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Parse variable axes from the font when possible.
-  // The known values below are also used as browser-rendering fallbacks for WOFF2.
+  // Parse the actual font file with opentype.js so we can draw glyphs (and the
+  // font's own .notdef) ourselves instead of relying on CSS font fallback.
   useEffect(() => {
     let cancelled = false;
-
     setFont(null);
     setWeightAxis(null);
-    setSerifAxis(null);
-    setWidthAxis(null);
-    setSlantAxis(null);
-    setItalicAxis(null);
-    setItalicOn(false);
-
-    const knownAxes: Record<string, Record<string, { min: number; max: number; default: number }>> = {
-      Ella: {
-        wght: { min: 100, max: 700, default: 100 },
-        SRIF: { min: 0, max: 100, default: 0 },
-      },
-      Brus: {
-        wght: { min: 60, max: 177, default: 60 },
-        slnt: { min: 0, max: 60, default: 0 },
-      },
-      Cheiron: {
-        wght: { min: 0, max: 100, default: 0 },
-        wdth: { min: 0, max: 100, default: 0 },
-      },
-      Svek: {
-        ital: { min: 0, max: 100, default: 0 },
-      },
-      BIP: {
-        wght: { min: 0, max: 100, default: 0 },
-      },
-      "Last Call": {
-        wght: { min: 0, max: 900, default: 0 },
-      },
-    };
-
-    const applyAxes = (axes: any[]) => {
-      const findAxis = (tag: string) => axes?.find((a: any) => a.tag === tag);
-
-      const wght = findAxis("wght");
-      const srif = findAxis("SRIF");
-      const wdth = findAxis("wdth");
-      const slnt = findAxis("slnt");
-      const ital = findAxis("ital");
-
-      if (wght) {
-        const axis = { min: wght.minValue, max: wght.maxValue, default: wght.defaultValue };
-        setWeightAxis(axis);
-        setWeightValue(axis.default);
-      }
-      if (srif) {
-        const axis = { min: srif.minValue, max: srif.maxValue, default: srif.defaultValue };
-        setSerifAxis(axis);
-        setSerifValue(axis.default);
-      }
-      if (wdth) {
-        const axis = { min: wdth.minValue, max: wdth.maxValue, default: wdth.defaultValue };
-        setWidthAxis(axis);
-        setWidthValue(axis.default);
-      }
-      if (slnt) {
-        const axis = { min: slnt.minValue, max: slnt.maxValue, default: slnt.defaultValue };
-        setSlantAxis(axis);
-        setSlantValue(axis.default);
-      }
-      if (ital) {
-        const axis = { min: ital.minValue, max: ital.maxValue, default: ital.defaultValue };
-        setItalicAxis(axis);
-        setItalicOn(false);
-      }
-    };
-
-    const applyKnownAxes = () => {
-      const axes = knownAxes[name];
-      if (!axes) return;
-
-      if (axes.wght) {
-        setWeightAxis(axes.wght);
-        setWeightValue(axes.wght.default);
-      }
-      if (axes.SRIF) {
-        setSerifAxis(axes.SRIF);
-        setSerifValue(axes.SRIF.default);
-      }
-      if (axes.wdth) {
-        setWidthAxis(axes.wdth);
-        setWidthValue(axes.wdth.default);
-      }
-      if (axes.slnt) {
-        setSlantAxis(axes.slnt);
-        setSlantValue(axes.slnt.default);
-      }
-      if (axes.ital) {
-        setItalicAxis(axes.ital);
-        setItalicOn(false);
-      }
-    };
-
-    // Give the six native variable fonts their controls immediately.
-    if (isNativeVariable) applyKnownAxes();
-
+    setSpacing(0);
+    // Native variable fonts render through the browser using known axis data,
+    // so they don't need (and opentype.js often can't parse) the WOFF2 file.
+    if (nativeAxes) {
+      const init: Record<string, number> = {};
+      for (const a of nativeAxes) init[a.tag] = a.default;
+      setAxisValues(init);
+      return () => {
+        cancelled = true;
+      };
+    }
     if (face?.file) {
       fetch(face.file)
         .then((res) => res.arrayBuffer())
         .then((buffer) => {
           if (cancelled) return;
-
           const parsed = opentype.parse(buffer);
           setFont(parsed);
-
+          // Detect a variable font's weight axis (fvar table, "wght" tag).
           const fvar = (parsed.tables as any)?.fvar;
-          if (fvar?.axes) applyAxes(fvar.axes);
+          const wght = fvar?.axes?.find((a: any) => a.tag === "wght");
+          if (wght) {
+            setWeightAxis({ min: wght.minValue, max: wght.maxValue, default: wght.defaultValue });
+            setWeightValue(wght.defaultValue);
+          } else {
+            setWeightAxis(null);
+          }
         })
         .catch(() => {
           if (!cancelled) {
             setFont(null);
-
-            // WOFF2 can still be rendered natively by the browser even if
-            // opentype.js cannot parse it, so keep the known controls alive.
-            if (isNativeVariable) {
-              applyKnownAxes();
-            } else {
-              setWeightAxis(null);
-              setSerifAxis(null);
-              setWidthAxis(null);
-              setSlantAxis(null);
-              setItalicAxis(null);
-            }
+            setWeightAxis(null);
           }
         });
     }
-
     return () => {
       cancelled = true;
     };
-  }, [name, face?.file, isNativeVariable]);
+  }, [name]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
     let i = 0;
     setTop("");
-
     const id = setInterval(() => {
       i++;
       setTop(name.slice(0, i));
-
       if (i >= name.length) clearInterval(id);
     }, 100);
-
     return () => clearInterval(id);
   }, [name]);
 
@@ -1246,66 +1280,35 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   // Some faces are uppercase- or lowercase-only; force typed/preview text to match.
   const applyCase = (s: string) =>
-    face.casing === "upper"
-      ? s.toUpperCase()
-      : face.casing === "lower"
-        ? s.toLowerCase()
-        : s;
-
+    face.casing === "upper" ? s.toUpperCase() : face.casing === "lower" ? s.toLowerCase() : s;
   const previewText = applyCase(top);
 
-  // The six variable fonts are rendered directly by the browser so their own
-  // advance widths, kerning, spacing and simultaneous variation axes are preserved.
-  // All other typefaces keep the existing opentype.js wrapping/rendering system.
-  const wrappedLines =
-    !isNativeVariable && font && boxWidth
-      ? wrapLines(font, previewText, size * 16, boxWidth - 4)
-      : previewText.split("\n");
+  // Wrap the text the same way the box does, so the overlay lines up with it.
+  const wrappedLines = font && boxWidth ? wrapLines(font, previewText, size * 16, boxWidth - 4) : previewText.split("\n");
 
+  // Fit a single row by default; grow with each added line, up to four.
   const previewLines = Math.max(1, wrappedLines.length);
 
   // Panel (column) colours + surrounding page colours by mode.
-  const panelBg =
-    mode === "color"
-      ? face.bg
-      : mode === "invert"
-        ? face.fg
-        : mode === "panelsDark"
-          ? "#000"
-          : "#fff";
-
-  const panelText =
-    mode === "color"
-      ? face.fg
-      : mode === "invert"
-        ? face.bg
-        : mode === "panelsDark"
-          ? "#fff"
-          : "#000";
-
+  const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
+  const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
   const pageBg = mode === "panelsLight" ? "#000" : "#fff";
   const pageText = mode === "panelsLight" ? "#fff" : "#000";
 
   const GAP = 24;
 
-  // Build the active CSS variation settings for the current typeface.
-  const variationParts: string[] = [];
-
-  if (weightAxis) variationParts.push(`"wght" ${weightValue}`);
-  if (name === "Ella" && serifAxis) variationParts.push(`"SRIF" ${serifValue}`);
-  if (name === "Cheiron" && widthAxis) variationParts.push(`"wdth" ${widthValue}`);
-  if (name === "Brus" && slantAxis) variationParts.push(`"slnt" ${slantValue}`);
-  if (name === "Svek" && italicAxis) {
-    variationParts.push(`"ital" ${italicOn ? italicAxis.max : italicAxis.min}`);
-  }
-
-  const fontVariationSettings =
-    variationParts.length > 0 ? variationParts.join(", ") : undefined;
+  // Applied alongside fontFamily so variable fonts reflect their sliders live.
+  // Native fonts use their configured axes; SVG fonts keep the wght axis.
+  const fontVariationSettings = isNative
+    ? nativeAxes!.map((a) => `'${a.tag}' ${axisValues[a.tag] ?? a.default}`).join(", ")
+    : weightAxis
+    ? `'wght' ${weightValue}`
+    : undefined;
 
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
     fontVariationSettings,
-    fontKerning: "normal",
+    letterSpacing: `${spacing}em`,
     background: panelBg,
     color: panelText,
     border: "none",
@@ -1317,127 +1320,45 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ background: pageBg }}
-    >
-      <NavBar
-        onNavigate={onNavigate}
-        bg={pageBg}
-        fg={pageText}
-        logoHeight="3rem"
-        starColor={face.bg}
-        linkScale={0.7}
-        padding="2.5rem 4.5rem 1.75rem"
-        logoTop="1.5rem"
-      />
-
-      <div
-        className="flex-1 flex flex-col px-10"
-        style={{
-          gap: 12,
-          paddingTop: "2.5rem",
-          paddingBottom: "3rem",
-        }}
-      >
+    <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
+      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <div className="flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
-        <div
-          style={{
-            position: "relative",
-            background: panelBg,
-            minHeight: "52vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            paddingTop: "4.5rem",
-            paddingBottom: "2.5rem",
-            transition: "background 0.25s ease",
-          }}
-        >
-          {/* Controls */}
-          <div
-            style={{
-              position: "absolute",
-              top: 16,
-              left: 0,
-              right: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 20,
-              zIndex: 2,
-              color: panelText,
-            }}
-          >
-{/* Size */}
-<div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    flexShrink: 0,
-  }}
->
-  <span
-    style={{
-      fontFamily: "Arial, sans-serif",
-      fontSize: "0.75rem",
-      color: panelText,
-    }}
-  >
-    Size
-  </span>
-
-  <input
-    type="range"
-    min={3}
-    max={16}
-    step={0.5}
-    value={size}
-    onChange={(e) => setSize(Number(e.target.value))}
-    className="size-slider"
-    style={{ width: 120 }}
-  />
-</div>
-
-{/* Space */}
-<div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    flexShrink: 0,
-  }}
->
-  <span
-    style={{
-      fontFamily: "Arial, sans-serif",
-      fontSize: "0.75rem",
-      color: panelText,
-    }}
-  >
-    Space
-  </span>
-
-  <input
-    type="range"
-    min={0}
-    max={0.2}
-    step={0.01}
-    value={spacing}
-    onChange={(e) => setSpacing(Number(e.target.value))}
-    className="size-slider"
-    style={{ width: 120 }}
-  />
-</div>
-            
-            {/* Colours */}
+        <div style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
+          {/* Size slider + colour dots, side by side and centred at the top. */}
+          <div style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
+            {/* Size */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+              <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
+              <input
+                type="range"
+                min={3}
+                max={16}
+                step={0.5}
+                value={size}
+                onChange={(e) => setSize(Number(e.target.value))}
+                className="size-slider"
+              />
+            </div>
+            {/* Space — em letter spacing; numeric value intentionally hidden. */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+              <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Space</span>
+              <input
+                type="range"
+                min={0}
+                max={0.2}
+                step={0.01}
+                value={spacing}
+                onChange={(e) => setSpacing(Number(e.target.value))}
+                className="size-slider"
+              />
+            </div>
             <div style={{ display: "flex", gap: 10 }}>
-              {[
+              {([
                 { m: "color" as Mode, c: face.bg },
                 { m: "panelsDark" as Mode, c: "#000" },
                 { m: "panelsLight" as Mode, c: "#fff" },
-              ].map(({ m, c }) => (
+              ]).map(({ m, c }) => (
                 <button
                   key={m}
                   onClick={() => setMode(m)}
@@ -1450,213 +1371,94 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                     border: "1.5px solid rgba(128,128,128,0.6)",
                     cursor: "pointer",
                     padding: 0,
-                    outline:
-                      mode === m
-                        ? "2px solid rgba(128,128,128,0.9)"
-                        : "none",
+                    outline: mode === m ? "2px solid rgba(128,128,128,0.9)" : "none",
                     outlineOffset: 2,
                   }}
                 />
               ))}
             </div>
-
-            {/* Weight */}
-            {weightAxis ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "0.75rem",
-                    color: panelText,
-                  }}
-                >
-                  Weight
-                </span>
-
+            {/* Variable-font controls — native fonts expose their configured axes,
+                SVG variable fonts keep the wght slider, static fonts show "Regular". */}
+            {isNative ? (
+              nativeAxes!.map((axis) =>
+                axis.onOff ? (
+                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
+                    <button
+                      onClick={() =>
+                        setAxisValues((prev) => ({
+                          ...prev,
+                          [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
+                        }))
+                      }
+                      style={{
+                        width: 34,
+                        height: 20,
+                        borderRadius: 10,
+                        border: "1.5px solid rgba(128,128,128,0.6)",
+                        background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
+                        cursor: "pointer",
+                        padding: 0,
+                        position: "relative",
+                      }}
+                      aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
+                    >
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: 2,
+                          left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
+                          transition: "left 0.15s ease",
+                        }}
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
+                    <input
+                      type="range"
+                      min={axis.min}
+                      max={axis.max}
+                      step={1}
+                      value={axisValues[axis.tag] ?? axis.default}
+                      onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
+                      className="size-slider"
+                    />
+                  </div>
+                )
+              )
+            ) : weightAxis ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
                 <input
                   type="range"
                   min={weightAxis.min}
                   max={weightAxis.max}
                   step={1}
                   value={weightValue}
-                  onChange={(e) =>
-                    setWeightValue(Number(e.target.value))
-                  }
+                  onChange={(e) => setWeightValue(Number(e.target.value))}
                   className="size-slider"
-                  style={{ width: 120 }}
                 />
-
-                <span
-                  style={{
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "0.9rem",
-                    color: panelText,
-                    minWidth: 40,
-                    textAlign: "left",
-                  }}
-                >
-                  {Math.round(weightValue)}
-                </span>
               </div>
-            ) : !isNativeVariable ? (
-              <div
-                style={{
-                  width: 96,
-                  flexShrink: 0,
-                  fontFamily: "Arial, sans-serif",
-                  fontSize: "0.9rem",
-                  color: panelText,
-                }}
-              >
+            ) : (
+              <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
                 Regular
               </div>
-            ) : null}
-
-            {/* Ella only — Serif / SRIF */}
-            {name === "Ella" && serifAxis && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "0.75rem",
-                    color: panelText,
-                  }}
-                >
-                  Serif
-                </span>
-
-                <input
-                  type="range"
-                  min={serifAxis.min}
-                  max={serifAxis.max}
-                  step={1}
-                  value={serifValue}
-                  onChange={(e) =>
-                    setSerifValue(Number(e.target.value))
-                  }
-                  className="size-slider"
-                  style={{ width: 120 }}
-                />
-
-                <span
-                  style={{
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "0.9rem",
-                    color: panelText,
-                    minWidth: 40,
-                    textAlign: "left",
-                  }}
-                >
-                  {Math.round(serifValue)}
-                </span>
-              </div>
-            )}
-
-
-            {/* Brus only — Slant */}
-            {name === "Brus" && slantAxis && (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: panelText }}>
-                  Slant
-                </span>
-                <input
-                  type="range"
-                  min={slantAxis.min}
-                  max={slantAxis.max}
-                  step={1}
-                  value={slantValue}
-                  onChange={(e) => setSlantValue(Number(e.target.value))}
-                  className="size-slider"
-                  style={{ width: 120 }}
-                />
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
-                  {Math.round(slantValue)}
-                </span>
-              </div>
-            )}
-
-            {/* Cheiron only — Width */}
-            {name === "Cheiron" && widthAxis && (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: panelText }}>
-                  Width
-                </span>
-                <input
-                  type="range"
-                  min={widthAxis.min}
-                  max={widthAxis.max}
-                  step={1}
-                  value={widthValue}
-                  onChange={(e) => setWidthValue(Number(e.target.value))}
-                  className="size-slider"
-                  style={{ width: 120 }}
-                />
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
-                  {Math.round(widthValue)}
-                </span>
-              </div>
-            )}
-
-            {/* Svek only — Italic toggle */}
-            {name === "Svek" && italicAxis && (
-              <button
-                type="button"
-                onClick={() => setItalicOn((current) => !current)}
-                aria-pressed={italicOn}
-                style={{
-                  fontFamily: "Arial, sans-serif",
-                  fontSize: "0.75rem",
-                  color: panelText,
-                  background: "transparent",
-                  border: `1px solid ${panelText}`,
-                  borderRadius: 999,
-                  padding: "5px 10px",
-                  cursor: "pointer",
-                  opacity: italicOn ? 1 : 0.55,
-                }}
-              >
-                Italic {italicOn ? "On" : "Off"}
-              </button>
             )}
           </div>
-
-          {/* Editable preview */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "visible",
-              padding: "0 2rem",
-            }}
-          >
-            <div
-              ref={boxRef}
-              style={{
-                position: "relative",
-                width: "100%",
-              }}
-            >
+          {/* Editable preview — one row by default, grows with content up to four rows.
+              Extra bottom room keeps descenders on the last line fully visible. */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
+            <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
                 value={previewText}
                 onChange={(e) => {
-                  if (e.target.value.split("\n").length <= 4) {
-                    setTop(e.target.value);
-                  }
+                  if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
                 rows={previewLines}
                 style={{
@@ -1667,30 +1469,17 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   lineHeight: 1.3,
                   textAlign: "center",
                   height: `${previewLines * size * 1.3 + size * 0.35}rem`,
-
-                  // IMPORTANT:
-                  // Native variable fonts stay visible as browser-rendered text.
-                  // Other fonts retain the existing SVG overlay behaviour.
-                  color:
-                    !isNativeVariable && font
-                      ? "transparent"
-                      : panelText,
-
+                  // Once the font is parsed the SVG overlay draws the glyphs, so
+                  // hide the textarea's own text (caret stays visible). Until then
+                  // fall back to normal rendering so text is never invisible.
+                  color: font && !isNative ? "transparent" : panelText,
                   caretColor: panelText,
-
-                  // No artificial tracking.
-letterSpacing: `${spacing}em`,
-
-                  // Let the browser use the font's kerning.
-                  fontKerning: "normal",
-
-                  // Apply all active variable axes directly in the browser.
-                  fontVariationSettings,
                 }}
               />
-
-              {/* Existing SVG renderer stays untouched for non-native-variable fonts */}
-              {!isNativeVariable && font && (
+              {/* Purely visual overlay — draws the real glyphs on top of the
+                  transparent textarea, aligned to the same box/padding/metrics.
+                  Skipped for native variable fonts, which the browser renders. */}
+              {font && !isNative && (
                 <div
                   style={{
                     position: "absolute",
@@ -1705,17 +1494,17 @@ letterSpacing: `${spacing}em`,
                   }}
                 >
                   {wrappedLines.map((line, idx) => (
-<GlyphLine
-  key={idx}
-  font={font}
-  text={line}
-  fontSizePx={size * 16}
-  lineHeightPx={size * 16 * 1.3}
-  fill={panelText}
-  weightAxis={weightAxis}
-  weightValue={weightValue}
-  letterSpacing={spacing}
-/>
+                    <GlyphLine
+                      key={idx}
+                      font={font}
+                      text={line}
+                      fontSizePx={size * 16}
+                      lineHeightPx={size * 16 * 1.3}
+                      fill={panelText}
+                      weightAxis={weightAxis}
+                      weightValue={weightValue}
+                      letterSpacing={spacing}
+                    />
                   ))}
                 </div>
               )}
@@ -1724,51 +1513,16 @@ letterSpacing: `${spacing}em`,
         </div>
 
         {/* Designer label + right-to-left looping marquee on one line */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            overflow: "hidden",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "Arial, sans-serif",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              color: pageText,
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              paddingRight: "1.5rem",
-            }}
-          >
+        <div style={{ display: "flex", alignItems: "center", overflow: "hidden" }}>
+          <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "bold", color: pageText, whiteSpace: "nowrap", flexShrink: 0, paddingRight: "1.5rem" }}>
             Designer:
           </span>
-
-          <div
-            style={{
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              flex: 1,
-            }}
-          >
-            <div
-              style={{
-                display: "inline-flex",
-                animation: "marquee 24s linear infinite",
-              }}
-            >
+          <div style={{ overflow: "hidden", whiteSpace: "nowrap", flex: 1 }}>
+            <div style={{ display: "inline-flex", animation: "marquee 24s linear infinite" }}>
               {Array.from({ length: 24 }).map((_, k) => (
                 <span
                   key={k}
-                  style={{
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "1rem",
-                    fontWeight: "normal",
-                    color: pageText,
-                    paddingRight: "2.5rem",
-                    whiteSpace: "nowrap",
-                  }}
+                  style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "normal", color: pageText, paddingRight: "2.5rem", whiteSpace: "nowrap" }}
                 >
                   {k % 2 === 0 ? face.designer : face.klass}
                 </span>
@@ -1777,55 +1531,14 @@ letterSpacing: `${spacing}em`,
           </div>
         </div>
 
-        {/* Info + WIP images */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: GAP,
-            alignItems: "stretch",
-          }}
-        >
-          {/* Info */}
-          <div
-            style={{
-              background: panelBg,
-              color: panelText,
-              padding: "1.75rem",
-              display: "flex",
-              flexDirection: "column",
-              transition:
-                "background 0.25s ease, color 0.25s ease",
-            }}
-          >
-            <p
-              style={{
-                fontFamily: face.font,
-                fontVariationSettings,
-                fontKerning: "normal",
-                fontSize: "0.95rem",
-                color: panelText,
-                opacity: 0.85,
-                marginTop: 0,
-                marginBottom: "1.75rem",
-                lineHeight: 1.6,
-              }}
-            >
-              {applyCase(
-                `${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`
-              )}
+        {/* Info (left) + Work-in-progress images (right), side by side */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
+          {/* Info — left: description + details */}
+          <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
+            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+              {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
-
-            <div
-              style={{
-                marginTop: "auto",
-                fontFamily: "Arial, sans-serif",
-                fontSize: "0.8rem",
-                color: panelText,
-                display: "flex",
-                flexDirection: "column-reverse",
-              }}
-            >
+            <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {[
                 ["First sketched:", "2024"],
                 ["Released:", "2026"],
@@ -1835,101 +1548,114 @@ letterSpacing: `${spacing}em`,
                 ["Range:", "Light, Medium, Regular, Italic, Bold"],
                 ["Format:", "ttf, otf, woff"],
               ].map(([label, value]) => (
-                <div
-                  key={label}
-                  style={{
-                    display: "flex",
-                    gap: "0.75rem",
-                    padding: "0.3rem 0",
-                  }}
-                >
-                  <span
-                    style={{
-                      flex: "0 0 42%",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {label}
-                  </span>
-
+                <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
+                  <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
                   <span style={{ flex: 1 }}>{value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Image field */}
-          <div
-            style={{
-              position: "relative",
-              overflow: "hidden",
-              background: panelBg,
-              transition: "background 0.25s ease",
-            }}
-          >
-            <WipCarousel
-              panelText={panelText}
-              images={GALLERY_IMAGES}
-            />
+          {/* Image field — right */}
+          <div style={{ position: "relative", overflow: "hidden", background: panelBg, transition: "background 0.25s ease" }}>
+            <WipCarousel panelText={panelText} images={face.gallery ?? GALLERY_IMAGES} />
           </div>
         </div>
 
-        {/* Glyph panel */}
+        {/* Full-width Glyphs panel — showcase (left) + character list (right).
+            Extra top margin so the gap above the panel matches the preview→columns
+            whitespace (which also spans the designer marquee row between them). */}
         <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection
-            font={face.font}
-            otFont={font}
-            panelBg={panelBg}
-            panelText={panelText}
-            fontVariationSettings={fontVariationSettings}
-          />
+          <GlyphSection font={face.font} otFont={font} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} />
         </div>
 
         {/* Gumroad purchase widget */}
-        <div
-          style={{
-            marginTop: GAP,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <GumroadEmbed
-            url={face.gumroad ?? "https://otflicense.gumroad.com"}
-          />
+        <div style={{ marginTop: GAP, display: "flex", justifyContent: "center" }}>
+          <GumroadEmbed url={face.gumroad ?? "https://otflicense.gumroad.com"} />
         </div>
       </div>
     </div>
   );
 }
 
+const BAND_PHRASES = [
+  "BUNDLE PACK: SAVE 74%!",
+  "BUY NOW OR REGRET IT.",
+  "BUY THE BUNDLE, FOR THE PRICE OF 4",
+];
 
-const BAND_PHRASES = ["BUNDLE PACK: SAVE 50%!"];
-const BAND_FONT: React.CSSProperties = {
-  fontFamily: "Arial, sans-serif",
-  fontWeight: "bold",
-  fontSize: "0.75rem",
-  letterSpacing: "0.04em",
-  color: "#fff",
-  whiteSpace: "nowrap",
-  textTransform: "uppercase",
-};
+// Colors that need black text for legibility
+const LIGHT_BAND_COLORS = new Set(["#fff800", "#c3872f", "#00ab53"]);
 
-function MarqueeBand({ direction = "forward" }: { direction?: "forward" | "reverse" }) {
-  const REPEAT = 6;
-  const phraseCount = BAND_PHRASES.length * REPEAT * 2;
-  const words = Array.from({ length: phraseCount }).map((_, i) => (
-    <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "2rem", paddingRight: "2rem" }}>
-      <span style={BAND_FONT}>{BAND_PHRASES[i % BAND_PHRASES.length]}</span>
-      <img src={eyesSvg} alt="" style={{ height: "0.75rem", width: "auto", display: "inline-block", filter: "invert(1)" }} />
-    </span>
-  ));
+function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void }) {
+  const [colorIdx, setColorIdx] = useState(0);
+
+  useEffect(() => {
+    // Cycle through palette at ~0.6 s per frame — matches the intro gif tempo
+    const id = setInterval(() => {
+      setColorIdx((prev) => (prev + 1) % PALETTE.length);
+    }, 1200);
+    return () => clearInterval(id);
+  }, []);
+
+  const bg = PALETTE[colorIdx];
+  const textColor = LIGHT_BAND_COLORS.has(bg) ? "#000" : "#fff";
+  const eyesFilter = textColor === "#000" ? "none" : "invert(1)";
+
+  const REPEAT = 8;
+  const totalSlots = BAND_PHRASES.length * REPEAT * 2;
+  const words = Array.from({ length: totalSlots }).map((_, i) => {
+    const phrase = BAND_PHRASES[i % BAND_PHRASES.length];
+    return (
+      <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "3rem", paddingRight: "3rem" }}>
+        <span style={{
+          fontFamily: "Arial, sans-serif",
+          fontWeight: "bold",
+          fontSize: "1.5rem",
+          letterSpacing: "0.04em",
+          color: textColor,
+          whiteSpace: "nowrap",
+          textTransform: "uppercase",
+          transition: "color 0.3s ease",
+        }}>{phrase}</span>
+        <img src={eyesSvg} alt="" style={{ height: "1.5rem", width: "auto", display: "inline-block", filter: eyesFilter, transition: "filter 0.3s ease" }} />
+      </span>
+    );
+  });
+
   return (
     <button
-      onClick={() => window.open("https://otflicense.gumroad.com", "_blank", "noopener,noreferrer")}
-      style={{ display: "block", width: "100%", overflow: "hidden", background: "#0074ff", padding: "0.4rem 0", border: "none", cursor: "pointer" }}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
+      style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: "pointer", transition: "background 0.3s ease" }}
     >
-      <div style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 40s linear infinite` }}>{words}</div>
+      <div style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 80s linear infinite` }}>{words}</div>
     </button>
+  );
+}
+
+const BUNDLE_URL = "https://otflicense.gumroad.com/l/megabundlepack?wanted=true";
+
+function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://gumroad.com/js/gumroad-embed.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
+  }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
+      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+        <div className="gumroad-product-embed" style={{ width: "100%", maxWidth: 740 }}>
+          <a href={BUNDLE_URL}>Loading…</a>
+        </div>
+      </div>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+        <MarqueeBand direction="reverse" onNavigate={onNavigate} />
+      </div>
+    </div>
   );
 }
 
@@ -1962,12 +1688,12 @@ function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
 
       {/* Top band — travels right to left */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="forward" />
+        <MarqueeBand direction="forward" onNavigate={onNavigate} />
       </div>
 
       {/* Bottom band — travels left to right */}
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="reverse" />
+        <MarqueeBand direction="reverse" onNavigate={onNavigate} />
       </div>
 
       {/* Enter button — true SVG oval, stop-motion hover */}
@@ -2032,10 +1758,10 @@ const FAQ_ITEMS = [
   },
 ];
 
-function FaqPage({ onNavigate }: { onNavigate: (p: Page) => void }) {
+function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <NavBar onNavigate={onNavigate} />
+      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="flex-1 flex flex-col px-10" style={{ paddingTop: "5.5rem", paddingBottom: "5rem", maxWidth: "52rem" }}>
         {FAQ_ITEMS.map(({ q, a }, i) => (
           <div key={i} style={{ marginBottom: "2.8rem" }}>
@@ -2070,12 +1796,109 @@ function FaqPage({ onNavigate }: { onNavigate: (p: Page) => void }) {
   );
 }
 
+// ——— Eyes easter egg ———
+// Phase 0: eyes shown in navbar
+// Phase 1–3: eyes floating at a random screen position (hop 1, 2, 3)
+// Phase 4: modal shown
+function getRandomEyesPos() {
+  const margin = 80;
+  return {
+    x: margin + Math.random() * (window.innerWidth - 120 - margin * 2),
+    y: margin + Math.random() * (window.innerHeight - 56 - margin * 2),
+  };
+}
+
+function FloatingEyes({ pos, onHover, filter }: { pos: { x: number; y: number }; onHover: () => void; filter?: string }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    requestAnimationFrame(() => setVisible(true));
+  }, []);
+  return (
+    <img
+      src={headerEyesSvg}
+      alt=""
+      onMouseEnter={onHover}
+      style={{
+        position: "fixed",
+        left: pos.x,
+        top: pos.y,
+        height: "1.75rem",
+        width: "auto",
+        display: "block",
+        cursor: "pointer",
+        zIndex: 8000,
+        opacity: visible ? 1 : 0,
+        transition: "opacity 0.35s ease",
+        filter: filter,
+      }}
+    />
+  );
+}
+
+function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNavigate?: (p: Page) => void }) {
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
+  }, []);
+  return (
+    <div
+      style={{
+        position: "fixed", inset: 0, zIndex: 9000,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: "rgba(0,0,0,0.35)",
+        opacity: entered ? 1 : 0,
+        transition: "opacity 0.4s ease",
+      }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+          if (onNavigate) onNavigate({ id: "bundle" });
+          else window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer");
+        }}
+        style={{
+          background: "#fff",
+          border: "2px solid #000",
+          padding: "3rem 4rem",
+          textAlign: "center",
+          cursor: "pointer",
+          transform: entered ? "translateY(0)" : "translateY(24px)",
+          transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
+          maxWidth: 420,
+        }}
+      >
+        <p style={{ fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "2rem", color: "#000", margin: "0 0 0.75rem" }}>
+          alright, you got me.
+        </p>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", color: "#000", margin: 0 }}>
+          click me to earn a reward
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState<Page>(() => pageFromPath(window.location.pathname));
   const [transY, setTransY] = useState<string | null>(null);
   const [transColor, setTransColor] = useState(PALETTE[0]);
   const navigating = useRef(false);
   const pendingPage = useRef<Page | null>(null);
+
+  // Eyes easter egg
+  const [eyesPhase, setEyesPhase] = useState(0);
+  const [eyesPos, setEyesPos] = useState({ x: 0, y: 0 });
+
+  function handleEyesHover() {
+    if (eyesPhase < 3) {
+      setEyesPhase((p) => p + 1);
+      setEyesPos(getRandomEyesPos());
+    } else {
+      setEyesPhase(4);
+    }
+  }
 
   function transitionTo(p: Page) {
     if (navigating.current) {
@@ -2093,6 +1916,8 @@ export default function App() {
       setTransY("translateY(0%)");
       setTimeout(() => {
         setPage(p);
+        // Reset the eyes easter egg whenever leaving the foundry page.
+        if (p.id !== "foundry") { setEyesPhase(0); setEyesPos({ x: 0, y: 0 }); }
         window.scrollTo(0, 0);
         // Slide out upward
         setTimeout(() => {
@@ -2139,15 +1964,20 @@ export default function App() {
   const rowGap = 24;
   const cellWidth = `calc((100% - ${colGap * (cols - 1)}px) / ${cols} * 0.50)`;
 
+  // Easter egg is only active on the foundry/sticker page.
+  const foundryEyesProps = { showEyes: eyesPhase === 0, onEyesHover: handleEyesHover };
+  const staticEyesProps  = { showEyes: true };
+
   let content: React.ReactNode;
   if (page.id === "home")     content = <HomePage onNavigate={navigate} />;
-  else if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} />;
-  else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} />;
-  else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} />;
+  else if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
-        <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" />
+        <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
         <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
@@ -2169,7 +1999,7 @@ export default function App() {
         </div>
       </div>
       <div style={{ flexShrink: 0 }}>
-        <MarqueeBand direction="reverse" />
+        <MarqueeBand direction="reverse" onNavigate={navigate} />
       </div>
     </div>
   );
@@ -2178,10 +2008,20 @@ export default function App() {
     <>
       {content}
 
+      {/* Eyes easter egg — floating hops (phases 1-3), foundry page only */}
+      {page.id === "foundry" && eyesPhase >= 1 && eyesPhase <= 3 && (
+        <FloatingEyes key={eyesPhase} pos={eyesPos} onHover={handleEyesHover} />
+      )}
+
+      {/* Eyes easter egg — reward modal (phase 4), foundry page only */}
+      {page.id === "foundry" && eyesPhase === 4 && (
+        <EasterEggModal onClose={() => setEyesPhase(0)} onNavigate={navigate} />
+      )}
+
       {/* Global fixed marquee — visible on every page, sits above content */}
-      {page.id !== "home" && page.id !== "foundry" && (
+      {page.id !== "home" && page.id !== "foundry" && page.id !== "bundle" && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
-          <MarqueeBand direction="reverse" />
+          <MarqueeBand direction="reverse" onNavigate={navigate} />
         </div>
       )}
 
