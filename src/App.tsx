@@ -1002,19 +1002,23 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   const [weightValue, setWeightValue] = useState(400);
 
-  // Ella-specific serif axis.
-  const [serifAxis, setSerifAxis] = useState<{
-    min: number;
-    max: number;
-    default: number;
-  } | null>(null);
-
+  // Extra variable-font axes used by the browser-rendered typefaces.
+  const [serifAxis, setSerifAxis] = useState<{ min: number; max: number; default: number } | null>(null);
   const [serifValue, setSerifValue] = useState(0);
+
+  const [widthAxis, setWidthAxis] = useState<{ min: number; max: number; default: number } | null>(null);
+  const [widthValue, setWidthValue] = useState(0);
+
+  const [slantAxis, setSlantAxis] = useState<{ min: number; max: number; default: number } | null>(null);
+  const [slantValue, setSlantValue] = useState(0);
+
+  const [italicAxis, setItalicAxis] = useState<{ min: number; max: number; default: number } | null>(null);
+  const [italicOn, setItalicOn] = useState(false);
 
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
 
-  const isElla = name === "Ella";
+  const isNativeVariable = ["Ella", "Brus", "Cheiron", "Svek", "BIP", "Last Call"].includes(name);
 
   // Track the preview box's rendered width so the SVG overlay for the other
   // typefaces can wrap words to match.
@@ -1035,14 +1039,107 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Parse the actual font file with opentype.js.
-  // For Ella we also read its custom SRIF axis.
+  // Parse variable axes from the font when possible.
+  // The known values below are also used as browser-rendering fallbacks for WOFF2.
   useEffect(() => {
     let cancelled = false;
 
     setFont(null);
     setWeightAxis(null);
     setSerifAxis(null);
+    setWidthAxis(null);
+    setSlantAxis(null);
+    setItalicAxis(null);
+    setItalicOn(false);
+
+    const knownAxes: Record<string, Record<string, { min: number; max: number; default: number }>> = {
+      Ella: {
+        wght: { min: 100, max: 700, default: 100 },
+        SRIF: { min: 0, max: 100, default: 0 },
+      },
+      Brus: {
+        wght: { min: 60, max: 177, default: 60 },
+        slnt: { min: 0, max: 60, default: 0 },
+      },
+      Cheiron: {
+        wght: { min: 0, max: 100, default: 0 },
+        wdth: { min: 0, max: 100, default: 0 },
+      },
+      Svek: {
+        ital: { min: 0, max: 100, default: 0 },
+      },
+      BIP: {
+        wght: { min: 0, max: 100, default: 0 },
+      },
+      "Last Call": {
+        wght: { min: 0, max: 900, default: 0 },
+      },
+    };
+
+    const applyAxes = (axes: any[]) => {
+      const findAxis = (tag: string) => axes?.find((a: any) => a.tag === tag);
+
+      const wght = findAxis("wght");
+      const srif = findAxis("SRIF");
+      const wdth = findAxis("wdth");
+      const slnt = findAxis("slnt");
+      const ital = findAxis("ital");
+
+      if (wght) {
+        const axis = { min: wght.minValue, max: wght.maxValue, default: wght.defaultValue };
+        setWeightAxis(axis);
+        setWeightValue(axis.default);
+      }
+      if (srif) {
+        const axis = { min: srif.minValue, max: srif.maxValue, default: srif.defaultValue };
+        setSerifAxis(axis);
+        setSerifValue(axis.default);
+      }
+      if (wdth) {
+        const axis = { min: wdth.minValue, max: wdth.maxValue, default: wdth.defaultValue };
+        setWidthAxis(axis);
+        setWidthValue(axis.default);
+      }
+      if (slnt) {
+        const axis = { min: slnt.minValue, max: slnt.maxValue, default: slnt.defaultValue };
+        setSlantAxis(axis);
+        setSlantValue(axis.default);
+      }
+      if (ital) {
+        const axis = { min: ital.minValue, max: ital.maxValue, default: ital.defaultValue };
+        setItalicAxis(axis);
+        setItalicOn(false);
+      }
+    };
+
+    const applyKnownAxes = () => {
+      const axes = knownAxes[name];
+      if (!axes) return;
+
+      if (axes.wght) {
+        setWeightAxis(axes.wght);
+        setWeightValue(axes.wght.default);
+      }
+      if (axes.SRIF) {
+        setSerifAxis(axes.SRIF);
+        setSerifValue(axes.SRIF.default);
+      }
+      if (axes.wdth) {
+        setWidthAxis(axes.wdth);
+        setWidthValue(axes.wdth.default);
+      }
+      if (axes.slnt) {
+        setSlantAxis(axes.slnt);
+        setSlantValue(axes.slnt.default);
+      }
+      if (axes.ital) {
+        setItalicAxis(axes.ital);
+        setItalicOn(false);
+      }
+    };
+
+    // Give the six native variable fonts their controls immediately.
+    if (isNativeVariable) applyKnownAxes();
 
     if (face?.file) {
       fetch(face.file)
@@ -1054,66 +1151,22 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
           setFont(parsed);
 
           const fvar = (parsed.tables as any)?.fvar;
-
-          // Detect wght axis.
-          const wght = fvar?.axes?.find((a: any) => a.tag === "wght");
-
-          if (wght) {
-            setWeightAxis({
-              min: wght.minValue,
-              max: wght.maxValue,
-              default: wght.defaultValue,
-            });
-            setWeightValue(wght.defaultValue);
-          } else {
-            setWeightAxis(null);
-          }
-
-          // Detect Ella's custom SRIF axis.
-          if (name === "Ella") {
-            const srif = fvar?.axes?.find((a: any) => a.tag === "SRIF");
-
-            if (srif) {
-              setSerifAxis({
-                min: srif.minValue,
-                max: srif.maxValue,
-                default: srif.defaultValue,
-              });
-              setSerifValue(srif.defaultValue);
-            } else {
-              // Fallback to Ella's known SRIF range.
-              setSerifAxis({
-                min: 0,
-                max: 100,
-                default: 0,
-              });
-              setSerifValue(0);
-            }
-          }
+          if (fvar?.axes) applyAxes(fvar.axes);
         })
         .catch(() => {
           if (!cancelled) {
             setFont(null);
-            setWeightAxis(null);
 
-            // Ella can still be rendered by the browser even if opentype.js
-            // cannot parse the WOFF2 file.
-            if (name === "Ella") {
-              setSerifAxis({
-                min: 0,
-                max: 100,
-                default: 0,
-              });
-              setSerifValue(0);
-
-              setWeightAxis({
-                min: 100,
-                max: 700,
-                default: 100,
-              });
-              setWeightValue(100);
+            // WOFF2 can still be rendered natively by the browser even if
+            // opentype.js cannot parse it, so keep the known controls alive.
+            if (isNativeVariable) {
+              applyKnownAxes();
             } else {
+              setWeightAxis(null);
               setSerifAxis(null);
+              setWidthAxis(null);
+              setSlantAxis(null);
+              setItalicAxis(null);
             }
           }
         });
@@ -1122,7 +1175,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
     return () => {
       cancelled = true;
     };
-  }, [name, face?.file]);
+  }, [name, face?.file, isNativeVariable]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
@@ -1151,12 +1204,11 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   const previewText = applyCase(top);
 
-  // Ella is rendered directly by the browser so the variable font itself controls
-  // advance widths, kerning and spacing.
-  //
-  // Other typefaces keep the existing opentype.js wrapping/rendering system.
+  // The six variable fonts are rendered directly by the browser so their own
+  // advance widths, kerning, spacing and simultaneous variation axes are preserved.
+  // All other typefaces keep the existing opentype.js wrapping/rendering system.
   const wrappedLines =
-    !isElla && font && boxWidth
+    !isNativeVariable && font && boxWidth
       ? wrapLines(font, previewText, size * 16, boxWidth - 4)
       : previewText.split("\n");
 
@@ -1186,13 +1238,19 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   const GAP = 24;
 
-  // Ella uses both variable axes simultaneously.
-  // All other variable fonts continue to use only wght.
-  const fontVariationSettings = isElla
-    ? `"wght" ${weightValue}, "SRIF" ${serifValue}`
-    : weightAxis
-      ? `"wght" ${weightValue}`
-      : undefined;
+  // Build the active CSS variation settings for the current typeface.
+  const variationParts: string[] = [];
+
+  if (weightAxis) variationParts.push(`"wght" ${weightValue}`);
+  if (name === "Ella" && serifAxis) variationParts.push(`"SRIF" ${serifValue}`);
+  if (name === "Cheiron" && widthAxis) variationParts.push(`"wdth" ${widthValue}`);
+  if (name === "Brus" && slantAxis) variationParts.push(`"slnt" ${slantValue}`);
+  if (name === "Svek" && italicAxis) {
+    variationParts.push(`"ital" ${italicOn ? italicAxis.max : italicAxis.min}`);
+  }
+
+  const fontVariationSettings =
+    variationParts.length > 0 ? variationParts.join(", ") : undefined;
 
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
@@ -1346,7 +1404,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   {Math.round(weightValue)}
                 </span>
               </div>
-            ) : (
+            ) : !isNativeVariable ? (
               <div
                 style={{
                   width: 96,
@@ -1358,10 +1416,10 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
               >
                 Regular
               </div>
-            )}
+            ) : null}
 
             {/* Ella only — Serif / SRIF */}
-            {isElla && serifAxis && (
+            {name === "Ella" && serifAxis && (
               <div
                 style={{
                   display: "flex",
@@ -1405,6 +1463,71 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                 </span>
               </div>
             )}
+
+
+            {/* Brus only — Slant */}
+            {name === "Brus" && slantAxis && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: panelText }}>
+                  Slant
+                </span>
+                <input
+                  type="range"
+                  min={slantAxis.min}
+                  max={slantAxis.max}
+                  step={1}
+                  value={slantValue}
+                  onChange={(e) => setSlantValue(Number(e.target.value))}
+                  className="size-slider"
+                />
+                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
+                  {Math.round(slantValue)}
+                </span>
+              </div>
+            )}
+
+            {/* Cheiron only — Width */}
+            {name === "Cheiron" && widthAxis && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: panelText }}>
+                  Width
+                </span>
+                <input
+                  type="range"
+                  min={widthAxis.min}
+                  max={widthAxis.max}
+                  step={1}
+                  value={widthValue}
+                  onChange={(e) => setWidthValue(Number(e.target.value))}
+                  className="size-slider"
+                />
+                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
+                  {Math.round(widthValue)}
+                </span>
+              </div>
+            )}
+
+            {/* Svek only — Italic toggle */}
+            {name === "Svek" && italicAxis && (
+              <button
+                type="button"
+                onClick={() => setItalicOn((current) => !current)}
+                aria-pressed={italicOn}
+                style={{
+                  fontFamily: "Arial, sans-serif",
+                  fontSize: "0.75rem",
+                  color: panelText,
+                  background: "transparent",
+                  border: `1px solid ${panelText}`,
+                  borderRadius: 999,
+                  padding: "5px 10px",
+                  cursor: "pointer",
+                  opacity: italicOn ? 1 : 0.55,
+                }}
+              >
+                Italic {italicOn ? "On" : "Off"}
+              </button>
+            )}
           </div>
 
           {/* Editable preview */}
@@ -1442,10 +1565,10 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   height: `${previewLines * size * 1.3 + size * 0.35}rem`,
 
                   // IMPORTANT:
-                  // Ella stays visible as normal browser text.
+                  // Native variable fonts stay visible as browser-rendered text.
                   // Other fonts retain the existing SVG overlay behaviour.
                   color:
-                    !isElla && font
+                    !isNativeVariable && font
                       ? "transparent"
                       : panelText,
 
@@ -1457,13 +1580,13 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   // Let the browser use the font's kerning.
                   fontKerning: "normal",
 
-                  // Ensure Ella receives both axes directly.
+                  // Apply all active variable axes directly in the browser.
                   fontVariationSettings,
                 }}
               />
 
-              {/* Existing SVG renderer stays untouched for every font except Ella */}
-              {!isElla && font && (
+              {/* Existing SVG renderer stays untouched for non-native-variable fonts */}
+              {!isNativeVariable && font && (
                 <div
                   style={{
                     position: "absolute",
@@ -1673,6 +1796,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
     </div>
   );
 }
+
 
 const BAND_PHRASES = ["BUNDLE PACK: SAVE 50%!"];
 const BAND_FONT: React.CSSProperties = {
