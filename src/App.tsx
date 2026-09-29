@@ -93,7 +93,9 @@ const typefaces = [
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
   { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.ttf", scale: 1.11 },
+
+{ name: "Ella", designer: "Caspar Broms", klass: "VK27", bg: "#00ab53", fg: W, img: specElla, font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
+  
   { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, font: "'Svek', sans-serif", file: "/fonts/tindrasvek.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
   { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, font: "'Cheiron', sans-serif", file: "/fonts/simoncheiron.ttf", scale: 1.27 },
   { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
@@ -160,15 +162,15 @@ function pageFromPath(pathname: string): Page {
 
   const shopMatch = path.match(/^\/shop\/([^/]+)$/);
   if (shopMatch) {
-    const face = typefaces.find((item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase());
-    if (face) return { id: "typeface", name: face.name };
+    const face = s.find((item) => Slug(item.name) === shopMatch[1].toLowerCase());
+    if (face) return { id: "", name: face.name };
   }
 
   return { id: "home" };
 }
 
-// Designer directory, derived from the typefaces (each colour/contrast pairing reused).
-const designers = typefaces.map((t) => {
+// Designer directory, derived from the s (each colour/contrast pairing reused).
+const designers = s.map((t) => {
   const handle = t.designer.toLowerCase().replace(/\s+/g, "");
   return {
     name: t.designer,
@@ -286,7 +288,7 @@ function NameCell({ d }: { d: typeof designers[0] }) {
   );
 }
 
-function StarTag({ face }: { face: typeof typefaces[0] }) {
+function StarTag({ face }: { face: typeof s[0] }) {
   return (
     <div style={{ width: 110, height: 110, position: "relative", pointerEvents: "none" }}>
       <svg viewBox="0 0 110 110" width="110" height="110" style={{ position: "absolute", inset: 0 }}>
@@ -331,7 +333,7 @@ function edgeToStyle(edge: Edge, pct: number): React.CSSProperties {
 }
 
 function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }: {
-  face: typeof typefaces[0];
+  face: typeof s[0];
   width: string;
   onNavigate: (p: Page) => void;
   nudgeX?: number;
@@ -354,7 +356,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
         alt={face.name}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => onNavigate({ id: "typeface", name: face.name })}
+        onClick={() => onNavigate({ id: "", name: face.name })}
         style={{
           width: "100%",
           height: "auto",
@@ -485,13 +487,13 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
 
 const PAGE_TEXT: Record<string, string> = {
   ABOUT:
-    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
+    "OTF License is an independent studio drawing original s for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
   Licensing:
     "Our fonts are available under desktop, web, app, and broadcast licenses, priced by the number of users and monthly page views. A single trial weight is free for testing. Custom and exclusive licenses are available for brands and publishers — get in touch and we will tailor an agreement to your needs.",
   FAQ:
     "Say hello at hello@beckmanstype.se, or find us at Brahegatan 10, Stockholm. For licensing questions, custom commissions, or press, we usually reply within two working days. We are always happy to talk type.",
   Buy:
-    "Buy and license our typefaces for desktop, web, app, and broadcast use. Support the foundry directly and get new releases, work-in-progress cuts, and the occasional free trial weight. Head over to our Gumroad to purchase and follow along.",
+    "Buy and license our s for desktop, web, app, and broadcast use. Support the foundry directly and get new releases, work-in-progress cuts, and the occasional free trial weight. Head over to our Gumroad to purchase and follow along.",
 };
 
 // Nav link that flashes a jagged starburst behind the label on hover — random
@@ -972,77 +974,157 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill, weightAxis, wei
 
 function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page) => void }) {
   const face = typefaces.find((f) => f.name === name);
+
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
   const [size, setSize] = useState(16); // rem — starts at the slider's max size
   const [font, setFont] = useState<opentype.Font | null>(null);
+
   // Per-typeface weight control: variable fonts expose a wght axis (slider),
   // static fonts show a fixed "Regular" label instead.
-  const [weightAxis, setWeightAxis] = useState<{ min: number; max: number; default: number } | null>(null);
+  const [weightAxis, setWeightAxis] = useState<{
+    min: number;
+    max: number;
+    default: number;
+  } | null>(null);
+
   const [weightValue, setWeightValue] = useState(400);
+
+  // Ella-specific serif axis.
+  const [serifAxis, setSerifAxis] = useState<{
+    min: number;
+    max: number;
+    default: number;
+  } | null>(null);
+
+  const [serifValue, setSerifValue] = useState(0);
+
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
 
-  // Track the preview box's rendered width so the overlay can wrap words to match.
+  const isElla = name === "Ella";
+
+  // Track the preview box's rendered width so the SVG overlay for the other
+  // typefaces can wrap words to match.
   useEffect(() => {
     const el = boxRef.current;
     if (!el) return;
+
     const measure = () => setBoxWidth(el.clientWidth);
     measure();
+
     if (typeof ResizeObserver !== "undefined") {
       const ro = new ResizeObserver(measure);
       ro.observe(el);
       return () => ro.disconnect();
     }
+
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Parse the actual font file with opentype.js so we can draw glyphs (and the
-  // font's own .notdef) ourselves instead of relying on CSS font fallback.
+  // Parse the actual font file with opentype.js.
+  // For Ella we also read its custom SRIF axis.
   useEffect(() => {
     let cancelled = false;
+
     setFont(null);
     setWeightAxis(null);
+    setSerifAxis(null);
+
     if (face?.file) {
       fetch(face.file)
         .then((res) => res.arrayBuffer())
         .then((buffer) => {
           if (cancelled) return;
+
           const parsed = opentype.parse(buffer);
           setFont(parsed);
-          // Detect a variable font's weight axis (fvar table, "wght" tag).
+
           const fvar = (parsed.tables as any)?.fvar;
+
+          // Detect wght axis.
           const wght = fvar?.axes?.find((a: any) => a.tag === "wght");
+
           if (wght) {
-            setWeightAxis({ min: wght.minValue, max: wght.maxValue, default: wght.defaultValue });
+            setWeightAxis({
+              min: wght.minValue,
+              max: wght.maxValue,
+              default: wght.defaultValue,
+            });
             setWeightValue(wght.defaultValue);
           } else {
             setWeightAxis(null);
+          }
+
+          // Detect Ella's custom SRIF axis.
+          if (name === "Ella") {
+            const srif = fvar?.axes?.find((a: any) => a.tag === "SRIF");
+
+            if (srif) {
+              setSerifAxis({
+                min: srif.minValue,
+                max: srif.maxValue,
+                default: srif.defaultValue,
+              });
+              setSerifValue(srif.defaultValue);
+            } else {
+              // Fallback to Ella's known SRIF range.
+              setSerifAxis({
+                min: 0,
+                max: 100,
+                default: 0,
+              });
+              setSerifValue(0);
+            }
           }
         })
         .catch(() => {
           if (!cancelled) {
             setFont(null);
             setWeightAxis(null);
+
+            // Ella can still be rendered by the browser even if opentype.js
+            // cannot parse the WOFF2 file.
+            if (name === "Ella") {
+              setSerifAxis({
+                min: 0,
+                max: 100,
+                default: 0,
+              });
+              setSerifValue(0);
+
+              setWeightAxis({
+                min: 100,
+                max: 700,
+                default: 100,
+              });
+              setWeightValue(100);
+            } else {
+              setSerifAxis(null);
+            }
           }
         });
     }
+
     return () => {
       cancelled = true;
     };
-  }, [name]);
+  }, [name, face?.file]);
 
   // Type the typeface name into the preview window on entry.
   useEffect(() => {
     let i = 0;
     setTop("");
+
     const id = setInterval(() => {
       i++;
       setTop(name.slice(0, i));
+
       if (i >= name.length) clearInterval(id);
     }, 100);
+
     return () => clearInterval(id);
   }, [name]);
 
@@ -1050,29 +1132,61 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   // Some faces are uppercase- or lowercase-only; force typed/preview text to match.
   const applyCase = (s: string) =>
-    face.casing === "upper" ? s.toUpperCase() : face.casing === "lower" ? s.toLowerCase() : s;
+    face.casing === "upper"
+      ? s.toUpperCase()
+      : face.casing === "lower"
+        ? s.toLowerCase()
+        : s;
+
   const previewText = applyCase(top);
 
-  // Wrap the text the same way the box does, so the overlay lines up with it.
-  const wrappedLines = font && boxWidth ? wrapLines(font, previewText, size * 16, boxWidth - 4) : previewText.split("\n");
+  // Ella is rendered directly by the browser so the variable font itself controls
+  // advance widths, kerning and spacing.
+  //
+  // Other typefaces keep the existing opentype.js wrapping/rendering system.
+  const wrappedLines =
+    !isElla && font && boxWidth
+      ? wrapLines(font, previewText, size * 16, boxWidth - 4)
+      : previewText.split("\n");
 
-  // Fit a single row by default; grow with each added line, up to four.
   const previewLines = Math.max(1, wrappedLines.length);
 
   // Panel (column) colours + surrounding page colours by mode.
-  const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
-  const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
+  const panelBg =
+    mode === "color"
+      ? face.bg
+      : mode === "invert"
+        ? face.fg
+        : mode === "panelsDark"
+          ? "#000"
+          : "#fff";
+
+  const panelText =
+    mode === "color"
+      ? face.fg
+      : mode === "invert"
+        ? face.bg
+        : mode === "panelsDark"
+          ? "#fff"
+          : "#000";
+
   const pageBg = mode === "panelsLight" ? "#000" : "#fff";
   const pageText = mode === "panelsLight" ? "#fff" : "#000";
 
   const GAP = 24;
 
-  // Applied alongside fontFamily so variable fonts reflect the wght slider live.
-  const fontVariationSettings = weightAxis ? `'wght' ${weightValue}` : undefined;
+  // Ella uses both variable axes simultaneously.
+  // All other variable fonts continue to use only wght.
+  const fontVariationSettings = isElla
+    ? `"wght" ${weightValue}, "SRIF" ${serifValue}`
+    : weightAxis
+      ? `"wght" ${weightValue}`
+      : undefined;
 
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
     fontVariationSettings,
+    fontKerning: "normal",
     background: panelBg,
     color: panelText,
     border: "none",
@@ -1084,13 +1198,59 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
-      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} padding="2.5rem 4.5rem 1.75rem" logoTop="1.5rem" />
-      <div className="flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ background: pageBg }}
+    >
+      <NavBar
+        onNavigate={onNavigate}
+        bg={pageBg}
+        fg={pageText}
+        logoHeight="3rem"
+        starColor={face.bg}
+        linkScale={0.7}
+        padding="2.5rem 4.5rem 1.75rem"
+        logoTop="1.5rem"
+      />
+
+      <div
+        className="flex-1 flex flex-col px-10"
+        style={{
+          gap: 12,
+          paddingTop: "2.5rem",
+          paddingBottom: "3rem",
+        }}
+      >
         {/* Top column — big editable preview, controls pinned at the top */}
-        <div style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
-          {/* Size slider + colour dots, side by side and centred at the top. */}
-          <div style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
+        <div
+          style={{
+            position: "relative",
+            background: panelBg,
+            minHeight: "52vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingTop: "4.5rem",
+            paddingBottom: "2.5rem",
+            transition: "background 0.25s ease",
+          }}
+        >
+          {/* Controls */}
+          <div
+            style={{
+              position: "absolute",
+              top: 16,
+              left: 0,
+              right: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 20,
+              zIndex: 2,
+              color: panelText,
+            }}
+          >
+            {/* Size */}
             <input
               type="range"
               min={3}
@@ -1099,13 +1259,16 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
               value={size}
               onChange={(e) => setSize(Number(e.target.value))}
               className="size-slider"
+              title="Size"
             />
+
+            {/* Colours */}
             <div style={{ display: "flex", gap: 10 }}>
-              {([
+              {[
                 { m: "color" as Mode, c: face.bg },
                 { m: "panelsDark" as Mode, c: "#000" },
                 { m: "panelsLight" as Mode, c: "#fff" },
-              ]).map(({ m, c }) => (
+              ].map(({ m, c }) => (
                 <button
                   key={m}
                   onClick={() => setMode(m)}
@@ -1118,43 +1281,144 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                     border: "1.5px solid rgba(128,128,128,0.6)",
                     cursor: "pointer",
                     padding: 0,
-                    outline: mode === m ? "2px solid rgba(128,128,128,0.9)" : "none",
+                    outline:
+                      mode === m
+                        ? "2px solid rgba(128,128,128,0.9)"
+                        : "none",
                     outlineOffset: 2,
                   }}
                 />
               ))}
             </div>
-            {/* Weight control — a slider for variable fonts (wght axis), or a
-                fixed "Regular" label for static fonts. */}
+
+            {/* Weight */}
             {weightAxis ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "0.75rem",
+                    color: panelText,
+                  }}
+                >
+                  Weight
+                </span>
+
                 <input
                   type="range"
                   min={weightAxis.min}
                   max={weightAxis.max}
                   step={1}
                   value={weightValue}
-                  onChange={(e) => setWeightValue(Number(e.target.value))}
+                  onChange={(e) =>
+                    setWeightValue(Number(e.target.value))
+                  }
                   className="size-slider"
                 />
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
+
+                <span
+                  style={{
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "0.9rem",
+                    color: panelText,
+                    minWidth: 40,
+                    textAlign: "left",
+                  }}
+                >
                   {Math.round(weightValue)}
                 </span>
               </div>
             ) : (
-              <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
+              <div
+                style={{
+                  width: 96,
+                  flexShrink: 0,
+                  fontFamily: "Arial, sans-serif",
+                  fontSize: "0.9rem",
+                  color: panelText,
+                }}
+              >
                 Regular
               </div>
             )}
+
+            {/* Ella only — Serif / SRIF */}
+            {isElla && serifAxis && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "0.75rem",
+                    color: panelText,
+                  }}
+                >
+                  Serif
+                </span>
+
+                <input
+                  type="range"
+                  min={serifAxis.min}
+                  max={serifAxis.max}
+                  step={1}
+                  value={serifValue}
+                  onChange={(e) =>
+                    setSerifValue(Number(e.target.value))
+                  }
+                  className="size-slider"
+                />
+
+                <span
+                  style={{
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "0.9rem",
+                    color: panelText,
+                    minWidth: 40,
+                    textAlign: "left",
+                  }}
+                >
+                  {Math.round(serifValue)}
+                </span>
+              </div>
+            )}
           </div>
-          {/* Editable preview — one row by default, grows with content up to four rows.
-              Extra bottom room keeps descenders on the last line fully visible. */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
-            <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
+
+          {/* Editable preview */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "visible",
+              padding: "0 2rem",
+            }}
+          >
+            <div
+              ref={boxRef}
+              style={{
+                position: "relative",
+                width: "100%",
+              }}
+            >
               <textarea
                 value={previewText}
                 onChange={(e) => {
-                  if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
+                  if (e.target.value.split("\n").length <= 4) {
+                    setTop(e.target.value);
+                  }
                 }}
                 rows={previewLines}
                 style={{
@@ -1165,16 +1429,30 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   lineHeight: 1.3,
                   textAlign: "center",
                   height: `${previewLines * size * 1.3 + size * 0.35}rem`,
-                  // Once the font is parsed the SVG overlay draws the glyphs, so
-                  // hide the textarea's own text (caret stays visible). Until then
-                  // fall back to normal rendering so text is never invisible.
-                  color: font ? "transparent" : panelText,
+
+                  // IMPORTANT:
+                  // Ella stays visible as normal browser text.
+                  // Other fonts retain the existing SVG overlay behaviour.
+                  color:
+                    !isElla && font
+                      ? "transparent"
+                      : panelText,
+
                   caretColor: panelText,
+
+                  // No artificial tracking.
+                  letterSpacing: "normal",
+
+                  // Let the browser use the font's kerning.
+                  fontKerning: "normal",
+
+                  // Ensure Ella receives both axes directly.
+                  fontVariationSettings,
                 }}
               />
-              {/* Purely visual overlay — draws the real glyphs on top of the
-                  transparent textarea, aligned to the same box/padding/metrics. */}
-              {font && (
+
+              {/* Existing SVG renderer stays untouched for every font except Ella */}
+              {!isElla && font && (
                 <div
                   style={{
                     position: "absolute",
@@ -1207,16 +1485,51 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
         </div>
 
         {/* Designer label + right-to-left looping marquee on one line */}
-        <div style={{ display: "flex", alignItems: "center", overflow: "hidden" }}>
-          <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "bold", color: pageText, whiteSpace: "nowrap", flexShrink: 0, paddingRight: "1.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            overflow: "hidden",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "Arial, sans-serif",
+              fontSize: "1rem",
+              fontWeight: "bold",
+              color: pageText,
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              paddingRight: "1.5rem",
+            }}
+          >
             Designer:
           </span>
-          <div style={{ overflow: "hidden", whiteSpace: "nowrap", flex: 1 }}>
-            <div style={{ display: "inline-flex", animation: "marquee 24s linear infinite" }}>
+
+          <div
+            style={{
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                display: "inline-flex",
+                animation: "marquee 24s linear infinite",
+              }}
+            >
               {Array.from({ length: 24 }).map((_, k) => (
                 <span
                   key={k}
-                  style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "normal", color: pageText, paddingRight: "2.5rem", whiteSpace: "nowrap" }}
+                  style={{
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "1rem",
+                    fontWeight: "normal",
+                    color: pageText,
+                    paddingRight: "2.5rem",
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   {k % 2 === 0 ? face.designer : face.klass}
                 </span>
@@ -1225,14 +1538,55 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
           </div>
         </div>
 
-        {/* Info (left) + Work-in-progress images (right), side by side */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
-          {/* Info — left: description + details */}
-          <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
-              {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
+        {/* Info + WIP images */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: GAP,
+            alignItems: "stretch",
+          }}
+        >
+          {/* Info */}
+          <div
+            style={{
+              background: panelBg,
+              color: panelText,
+              padding: "1.75rem",
+              display: "flex",
+              flexDirection: "column",
+              transition:
+                "background 0.25s ease, color 0.25s ease",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: face.font,
+                fontVariationSettings,
+                fontKerning: "normal",
+                fontSize: "0.95rem",
+                color: panelText,
+                opacity: 0.85,
+                marginTop: 0,
+                marginBottom: "1.75rem",
+                lineHeight: 1.6,
+              }}
+            >
+              {applyCase(
+                `${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`
+              )}
             </p>
-            <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
+
+            <div
+              style={{
+                marginTop: "auto",
+                fontFamily: "Arial, sans-serif",
+                fontSize: "0.8rem",
+                color: panelText,
+                display: "flex",
+                flexDirection: "column-reverse",
+              }}
+            >
               {[
                 ["First sketched:", "2024"],
                 ["Released:", "2026"],
@@ -1242,30 +1596,67 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                 ["Range:", "Light, Medium, Regular, Italic, Bold"],
                 ["Format:", "ttf, otf, woff"],
               ].map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
-                  <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
+                <div
+                  key={label}
+                  style={{
+                    display: "flex",
+                    gap: "0.75rem",
+                    padding: "0.3rem 0",
+                  }}
+                >
+                  <span
+                    style={{
+                      flex: "0 0 42%",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {label}
+                  </span>
+
                   <span style={{ flex: 1 }}>{value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Image field — right */}
-          <div style={{ position: "relative", overflow: "hidden", background: panelBg, transition: "background 0.25s ease" }}>
-            <WipCarousel panelText={panelText} images={GALLERY_IMAGES} />
+          {/* Image field */}
+          <div
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              background: panelBg,
+              transition: "background 0.25s ease",
+            }}
+          >
+            <WipCarousel
+              panelText={panelText}
+              images={GALLERY_IMAGES}
+            />
           </div>
         </div>
 
-        {/* Full-width Glyphs panel — showcase (left) + character list (right).
-            Extra top margin so the gap above the panel matches the preview→columns
-            whitespace (which also spans the designer marquee row between them). */}
+        {/* Glyph panel */}
         <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} otFont={font} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} />
+          <GlyphSection
+            font={face.font}
+            otFont={font}
+            panelBg={panelBg}
+            panelText={panelText}
+            fontVariationSettings={fontVariationSettings}
+          />
         </div>
 
         {/* Gumroad purchase widget */}
-        <div style={{ marginTop: GAP, display: "flex", justifyContent: "center" }}>
-          <GumroadEmbed url={face.gumroad ?? "https://otflicense.gumroad.com"} />
+        <div
+          style={{
+            marginTop: GAP,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <GumroadEmbed
+            url={face.gumroad ?? "https://otflicense.gumroad.com"}
+          />
         </div>
       </div>
     </div>
