@@ -166,15 +166,15 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [placeholderLastCall], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [placeholderLastCall], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [placeholderXoxo], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [placeholderLiljan], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [placeholderKuriren], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [placeholderKuriren], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
   // — middle —
   { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [placeholderElla], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
   { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [placeholderSvek], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [placeholderCheiron], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", scale: 1.27 },
-  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [placeholderLcdUber], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [placeholderCheiron], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27 },
+  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [placeholderLcdUber], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
   { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [placeholderBip], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [placeholderGalanite], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
@@ -225,13 +225,13 @@ const SHOP_TYPEFACE_NAMES = [
   "Ella",
   "Facit",
   "Galanite",
-  "Kurir",
+  "Kuriren",
   "Last Call",
   "Liljan",
   "Mormor",
   "Sonja",
   "Svek",
-  "Uber",
+  "LCD Über",
   "XOXO",
 ] as const;
 
@@ -248,13 +248,13 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
   Ella: { x: 170, y: -12, rotation: 3 },
   Facit: { x: -145, y: -18, rotation: 5 },
   Galanite: { x: -95, y: -20, rotation: -4 },
-  Kurir: { x: -4, y: -28, rotation: 2 },
+  Kuriren: { x: -4, y: -28, rotation: 2 },
   "Last Call": { x: 100, y: 22, rotation: -5 },
   Liljan: { x: 150, y: -10, rotation: 6 },
   Mormor: { x: -104, y: 20, rotation: -4 },
   Sonja: { x: -52, y: -24, rotation: 6 },
   Svek: { x: -2, y: 28, rotation: -2 },
-  Uber: { x: 50, y: -18, rotation: 5 },
+  "LCD Über": { x: 50, y: -18, rotation: 5 },
   XOXO: { x: 104, y: 12, rotation: -6 },
 };
 
@@ -883,13 +883,65 @@ const GLYPH_NAMES: Record<string, string> = {
   "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "longst", "ﬆ": "st", "ª": "ordfeminine", "º": "ordmasculine", "µ": "mu",
 };
 
+// Detects whether a CSS-loaded font actually contains a glyph for `char`, without
+// parsing the font file. A missing glyph falls back to the generic family, so its
+// measured width matches the generic-alone width against BOTH monospace and
+// sans-serif fallbacks; a present glyph differs from at least one. Used for the
+// native variable fonts, whose WOFF2 files opentype.js cannot parse.
+function browserGlyphExists(ctx: CanvasRenderingContext2D, char: string, family: string): boolean {
+  ctx.font = `72px monospace`;
+  const monoBase = ctx.measureText(char).width;
+  ctx.font = `72px ${family}, monospace`;
+  const monoFam = ctx.measureText(char).width;
+  ctx.font = `72px sans-serif`;
+  const sansBase = ctx.measureText(char).width;
+  ctx.font = `72px ${family}, sans-serif`;
+  const sansFam = ctx.measureText(char).width;
+  return monoFam !== monoBase || sansFam !== sansBase;
+}
+
 // Full-width panel: large showcase on the left, categorised character list on the right.
 // When the parsed opentype font is available, only glyphs actually present in the
-// face are shown (missing chars are omitted and empty categories are hidden).
+// face are shown (missing chars are omitted and empty categories are hidden). Native
+// variable fonts (no parsed font) instead detect coverage via the browser.
 function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings }: { font: string; otFont: opentype.Font | null; panelBg: string; panelText: string; fontVariationSettings?: string }) {
+  // Browser-detected coverage for native fonts (otFont === null). Null while
+  // detecting, so the predefined list is never shown as-is.
+  const [detected, setDetected] = useState<Set<string> | null>(null);
+  useEffect(() => {
+    if (otFont) {
+      setDetected(null);
+      return;
+    }
+    let cancelled = false;
+    const family = font.split(",")[0].trim();
+    const run = () => {
+      const ctx = document.createElement("canvas").getContext("2d");
+      if (!ctx) return;
+      const found = new Set<string>();
+      for (const group of CHAR_GROUPS) {
+        for (const c of group.chars) {
+          if (browserGlyphExists(ctx, c, family)) found.add(c);
+        }
+      }
+      if (!cancelled) setDetected(found);
+    };
+    const fontsApi = (document as any).fonts;
+    if (fontsApi?.load) {
+      fontsApi.load(`72px ${family}`).then(() => { if (!cancelled) run(); }).catch(() => { if (!cancelled) run(); });
+    } else {
+      run();
+    }
+    return () => { cancelled = true; };
+  }, [otFont, font]);
+
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
-    chars: otFont ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0) : group.chars,
+    chars: otFont
+      ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0)
+      : detected
+      ? group.chars.filter((c) => detected.has(c))
+      : [],
   })).filter((group) => group.chars.length > 0);
 
   const firstChar = groups[0]?.chars[0] ?? "A";
@@ -897,7 +949,7 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
   useEffect(() => {
     setHovered(firstChar);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otFont]);
+  }, [otFont, detected]);
 
   // Metadata for the currently highlighted glyph. The Unicode value comes from
   // the character itself; the glyph name is read from the parsed font when
@@ -1264,14 +1316,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     };
   }, [name]);
 
-  // Type the typeface name into the preview window on entry.
+  // Type the typeface name into the preview window on entry. Faces marked
+  // "upperInitial" default to CAPS but stay freely editable to either case.
   useEffect(() => {
+    const seed = face?.casing === "upperInitial" ? name.toUpperCase() : name;
     let i = 0;
     setTop("");
     const id = setInterval(() => {
       i++;
-      setTop(name.slice(0, i));
-      if (i >= name.length) clearInterval(id);
+      setTop(seed.slice(0, i));
+      if (i >= seed.length) clearInterval(id);
     }, 100);
     return () => clearInterval(id);
   }, [name]);
