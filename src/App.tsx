@@ -328,7 +328,7 @@ function StarTag({ face }: { face: typeof s[0] }) {
 }
 
 function randomEdgePlacement(): { edge: Edge; pct: number } {
-   edges: Edge[] = ["top", "bottom", "left", "right"];
+const edges: Edge[] = ["top", "bottom", "left", "right"];
   return {
     edge: edges[Math.floor(Math.random() * 4)],
     pct: 15 + Math.random() * 55,
