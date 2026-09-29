@@ -128,13 +128,13 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
   "Svek",
   "Uber",
   "XOXO",
-] as ;
+] as const;
 
- shopTypefaces = SHOP_TYPEFACE_NAMES.map(
+const shopTypefaces = SHOP_TYPEFACE_NAMES.map(
   (name) => typefaces.find((face) => face.name === name)!,
 );
 
- SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
+const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
   BIP: { x: -165, y: 14, rotation: -6 },
   Brus: { x: -25, y: -32, rotation: 4 },
   Cheiron: { x: -8, y: 24, rotation: -3 },
