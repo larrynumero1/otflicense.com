@@ -286,7 +286,7 @@ function NameCell({ d }: { d: typeof designers[0] }) {
             style={{
               position: "absolute", top: 0, left: "50%", right: 0, bottom: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "0.8rem",
+              fontFamily: "Arial, sans-serif", fontWeight: "bold", font: "0.8rem",
               color: rightHover ? d.textColor : "#000",
               textDecoration: "none", transition: "color 0.15s ease",
             }}
@@ -313,13 +313,13 @@ function StarTag({ face }: { face: typeof typefaces[0] }) {
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
         textAlign: "center", padding: "30px 16px",
       }}>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.55rem", fontWeight: "bold", color: "#000", lineHeight: 1.3 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", font: "0.55rem", fontWeight: "bold", color: "#000", lineHeight: 1.3 }}>
           {face.name}
         </p>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.47rem", color: "#333", lineHeight: 1.2, marginTop: 1 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", font: "0.47rem", color: "#333", lineHeight: 1.2, marginTop: 1 }}>
           {face.designer}
         </p>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.44rem", color: "#666", lineHeight: 1.2 }}>
+        <p style={{ fontFamily: "Arial, sans-serif", font: "0.44rem", color: "#666", lineHeight: 1.2 }}>
           {face.klass}
         </p>
       </div>
@@ -415,7 +415,7 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
         x="0"
         y="0"
         textAnchor="middle"
-        style={{ fontFamily: font, fontSize: 100, fill: color, whiteSpace: "pre" }}
+        style={{ fontFamily: font, font: 100, fill: color, whiteSpace: "pre" }}
       >
         {words.map((word, i) => (
           <tspan key={i} x="0" dy={i === 0 ? "0" : "1em"}>
@@ -440,7 +440,7 @@ function NavTextButton({ label, width, onClick }: { label: string; width: number
         cursor: "pointer",
         padding: 0,
         fontFamily: "Arial, sans-serif",
-        fontSize: "20px",
+        font: "20px",
       }}
     >
       {label}
@@ -498,7 +498,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
 
 const PAGE_TEXT: Record<string, string> = {
   ABOUT:
-    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
+    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, s, and media.",
   Licensing:
     "Our fonts are available under desktop, web, app, and broadcast licenses, priced by the number of users and monthly page views. A single trial weight is free for testing. Custom and exclusive licenses are available for brands and publishers — get in touch and we will tailor an agreement to your needs.",
   FAQ:
@@ -1369,17 +1369,36 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
               color: panelText,
             }}
           >
-            {/* Size */}
-            <input
-              type="range"
-              min={3}
-              max={16}
-              step={0.5}
-              value={size}
-              onChange={(e) => setSize(Number(e.target.value))}
-              className="size-slider"
-              title="Size"
-            />
+{/* Size */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    flexShrink: 0,
+  }}
+>
+  <span
+    style={{
+      fontFamily: "Arial, sans-serif",
+      fontSize: "0.75rem",
+      color: panelText,
+    }}
+  >
+    Size
+  </span>
+
+  <input
+    type="range"
+    min={3}
+    max={16}
+    step={0.5}
+    value={size}
+    onChange={(e) => setSize(Number(e.target.value))}
+    className="size-slider"
+    style={{ width: 120 }}
+  />
+</div>
 
 {/* Space */}
 <div
@@ -1402,25 +1421,14 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
 
   <input
     type="range"
-    min={-0.1}
-    max={0.5}
+    min={0}
+    max={0.2}
     step={0.01}
     value={spacing}
     onChange={(e) => setSpacing(Number(e.target.value))}
     className="size-slider"
+    style={{ width: 120 }}
   />
-
-  <span
-    style={{
-      fontFamily: "Arial, sans-serif",
-      fontSize: "0.9rem",
-      color: panelText,
-      minWidth: 40,
-      textAlign: "left",
-    }}
-  >
-    {spacing.toFixed(2)}
-  </span>
 </div>
             
             {/* Colours */}
@@ -1482,6 +1490,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                     setWeightValue(Number(e.target.value))
                   }
                   className="size-slider"
+                  style={{ width: 120 }}
                 />
 
                 <span
@@ -1540,6 +1549,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                     setSerifValue(Number(e.target.value))
                   }
                   className="size-slider"
+                  style={{ width: 120 }}
                 />
 
                 <span
@@ -1571,6 +1581,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   value={slantValue}
                   onChange={(e) => setSlantValue(Number(e.target.value))}
                   className="size-slider"
+                  style={{ width: 120 }}
                 />
                 <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
                   {Math.round(slantValue)}
@@ -1592,6 +1603,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   value={widthValue}
                   onChange={(e) => setWidthValue(Number(e.target.value))}
                   className="size-slider"
+                  style={{ width: 120 }}
                 />
                 <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: 40, textAlign: "left" }}>
                   {Math.round(widthValue)}
