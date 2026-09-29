@@ -52,21 +52,21 @@ function pageToPath(page: Page) {
 
 type Edge = "top" | "bottom" | "left" | "right";
 
-const BRAND = "OTF License";
+ BRAND = "OTF License";
 
 // Text on each cell is always pure black or white for contrast.
-const B = "#000", W = "#fff";
+ B = "#000", W = "#fff";
 
 // Every accent colour used across the site — reused for random picks.
-const PALETTE = ["#ff2cb2", "#0074ff", "#ff1d38", "#00ab53", "#fff800", "#c3872f", "#ff5756"];
+ PALETTE = ["#ff2cb2", "#0074ff", "#ff1d38", "#00ab53", "#fff800", "#c3872f", "#ff5756"];
 
 // Builds a jagged starburst (price-sticker) path around a centre point.
 function starburstPath(cx: number, cy: number, spikes: number, outerR: number, innerR: number) {
-  const step = Math.PI / spikes;
+   step = Math.PI / spikes;
   let d = "";
   for (let i = 0; i < spikes * 2; i++) {
-    const r = i % 2 === 0 ? outerR : innerR;
-    const a = i * step - Math.PI / 2;
+     r = i % 2 === 0 ? outerR : innerR;
+     a = i * step - Math.PI / 2;
     d += `${i === 0 ? "M" : "L"}${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)} `;
   }
   return d + "Z";
@@ -75,18 +75,18 @@ function starburstPath(cx: number, cy: number, spikes: number, outerR: number, i
 // Elliptical/rectangular variant of the starburst — separate radii per axis so the
 // price tag can be wider than it is tall.
 function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: number, outerRY: number, innerRX: number, innerRY: number) {
-  const step = Math.PI / spikes;
+   step = Math.PI / spikes;
   let d = "";
   for (let i = 0; i < spikes * 2; i++) {
-    const rx = i % 2 === 0 ? outerRX : innerRX;
-    const ry = i % 2 === 0 ? outerRY : innerRY;
-    const a = i * step - Math.PI / 2;
+     rx = i % 2 === 0 ? outerRX : innerRX;
+     ry = i % 2 === 0 ? outerRY : innerRY;
+     a = i * step - Math.PI / 2;
     d += `${i === 0 ? "M" : "L"}${(cx + Math.cos(a) * rx).toFixed(1)},${(cy + Math.sin(a) * ry).toFixed(1)} `;
   }
   return d + "Z";
 }
 
-const typefaces = [
+ typefaces = [
   // — top row: stay —
   { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
@@ -111,7 +111,7 @@ const typefaces = [
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
-const SHOP_TYPEFACE_NAMES = [
+ SHOP_TYPEFACE_NAMES = [
   "BIP",
   "Brus",
   "Cheiron",
@@ -128,13 +128,13 @@ const SHOP_TYPEFACE_NAMES = [
   "Svek",
   "Uber",
   "XOXO",
-] as const;
+] as ;
 
-const shopTypefaces = SHOP_TYPEFACE_NAMES.map(
+ shopTypefaces = SHOP_TYPEFACE_NAMES.map(
   (name) => typefaces.find((face) => face.name === name)!,
 );
 
-const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
+ SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
   BIP: { x: -165, y: 14, rotation: -6 },
   Brus: { x: -25, y: -32, rotation: 4 },
   Cheiron: { x: -8, y: 24, rotation: -3 },
@@ -154,17 +154,17 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
 };
 
 function pageFromPath(pathname: string): Page {
-  const path = pathname.replace(/\/+$/, "") || "/";
+   path = pathname.replace(/\/+$/, "") || "/";
 
   if (path === "/intro" || path === "/") return { id: "home" };
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
   if (path === "/faq") return { id: "contact" };
 
-  const shopMatch = path.match(/^\/shop\/([^/]+)$/);
+   shopMatch = path.match(/^\/shop\/([^/]+)$/);
 
   if (shopMatch) {
-    const face = typefaces.find(
+     face = typefaces.find(
       (item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase()
     );
 
@@ -178,8 +178,8 @@ function pageFromPath(pathname: string): Page {
 
 // Designer directory, derived from the typefaces
 // (each colour/contrast pairing reused).
-const designers = typefaces.map((t) => {
-  const handle = t.designer.toLowerCase().replace(/\s+/g, "");
+ designers = typefaces.map((t) => {
+   handle = t.designer.toLowerCase().replace(/\s+/g, "");
   return {
     name: t.designer,
     klass: t.klass,
@@ -190,14 +190,14 @@ const designers = typefaces.map((t) => {
   };
 });
 
-const DESIGNER_CLASSES = [
+ DESIGNER_CLASSES = [
   "All",
   ...Array.from(new Set(designers.map((d) => d.klass))),
 ];
 
 // Ticket/stamp SVG path: rounded-corner rectangle with semicircular notches at top and bottom centre.
 // viewBox 0 0 200 100. Corner radius 10, notch radius 12 centred at (100, 0) and (100, 100).
-const TICKET_PATH = [
+ TICKET_PATH = [
   "M 10 0",
   "L 88 0",
   "A 12 12 0 0 1 112 0",   // top notch bites downward into shape
@@ -215,10 +215,10 @@ const TICKET_PATH = [
 ].join(" ");
 
 function NameCell({ d }: { d: typeof designers[0] }) {
-  const [cardHover, setCardHover] = useState(false);
-  const [leftHover, setLeftHover] = useState(false);
-  const [rightHover, setRightHover] = useState(false);
-  const id = d.name.replace(/\s+/g, "-");
+   [cardHover, setCardHover] = useState(false);
+   [leftHover, setLeftHover] = useState(false);
+   [rightHover, setRightHover] = useState(false);
+   id = d.name.replace(/\s+/g, "-");
 
   return (
     <div
@@ -328,7 +328,7 @@ function StarTag({ face }: { face: typeof s[0] }) {
 }
 
 function randomEdgePlacement(): { edge: Edge; pct: number } {
-  const edges: Edge[] = ["top", "bottom", "left", "right"];
+   edges: Edge[] = ["top", "bottom", "left", "right"];
   return {
     edge: edges[Math.floor(Math.random() * 4)],
     pct: 15 + Math.random() * 55,
@@ -336,7 +336,7 @@ function randomEdgePlacement(): { edge: Edge; pct: number } {
 }
 
 function edgeToStyle(edge: Edge, pct: number): React.CSSProperties {
-  const half = -55; // half of 110px tag
+   half = -55; // half of 110px tag
   if (edge === "top")    return { top: half,  left: `${pct}%`, transform: "translate(-50%, 0)" };
   if (edge === "bottom") return { bottom: half, left: `${pct}%`, transform: "translate(-50%, 0)" };
   if (edge === "left")   return { left: half, top: `${pct}%`, transform: "translate(0, -50%)" };
@@ -351,11 +351,11 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
   nudgeY?: number;
   rotation?: number;
 }) {
-  const [hovered, setHovered] = useState(false);
+   [hovered, setHovered] = useState(false);
   // Each cell gets its own random tilt, generated once and stable across re-hovers.
-  const [tilt] = useState(() => Math.random() * 22 - 11); // -11°..11°
+   [tilt] = useState(() => Math.random() * 22 - 11); // -11°..11°
 
-  const s = face.scale ?? 1;
+   s = face.scale ?? 1;
 
   return (
     <div
@@ -389,15 +389,15 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
 // Renders text as an SVG that auto-scales to fill the available width,
 // as large as possible for the cell.
 function FitText({ text, font, color }: { text: string; font: string; color: string }) {
-  const textRef = useRef<SVGTextElement | null>(null);
-  const [box, setBox] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+   textRef = useRef<SVGTextElement | null>(null);
+   [box, setBox] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
 
   // Break multi-word names onto separate lines so each line can grow larger.
-  const words = text.split(" ").filter(Boolean);
+   words = text.split(" ").filter(Boolean);
 
   useEffect(() => {
     if (textRef.current) {
-      const b = textRef.current.getBBox();
+       b = textRef.current.getBBox();
       setBox({ x: b.x, y: b.y, w: b.width, h: b.height });
     }
   }, [text, font]);
@@ -496,7 +496,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
   );
 }
 
-const PAGE_TEXT: Record<string, string> = {
+ PAGE_TEXT: Record<string, string> = {
   ABOUT:
     "OTF License is an independent studio drawing original s for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
   Licensing:
@@ -510,11 +510,11 @@ const PAGE_TEXT: Record<string, string> = {
 // Nav link that flashes a jagged starburst behind the label on hover — random
 // palette colour by default, or a fixed colour to match a typeface page.
 function StarLink({ label, onClick, fg, starColor, scale = 1 }: { label: string; onClick: () => void; fg: string; starColor?: string; scale?: number }) {
-  const [hover, setHover] = useState(false);
-  const [rand, setRand] = useState(PALETTE[0]);
-  const color = starColor ?? rand;
-  const star = starburstPath(100, 100, 20, 96, 74);
-  const size = 150 * scale;
+   [hover, setHover] = useState(false);
+   [rand, setRand] = useState(PALETTE[0]);
+   color = starColor ?? rand;
+   star = starburstPath(100, 100, 20, 96, 74);
+   size = 150 * scale;
   return (
     <button
       onClick={onClick}
@@ -924,7 +924,17 @@ function safePathData(path: opentype.Path): string {
 // font. Any character absent from the font's cmap is drawn with the font's own
 // .notdef glyph (opentype.js substitutes it automatically) rather than falling
 // back to another typeface.
-function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill, weightAxis, weightValue }: {
+
+function GlyphLine({
+  font,
+  text,
+  fontSizePx,
+  lineHeightPx,
+  fill,
+  weightAxis,
+  weightValue,
+  letterSpacing = 0,
+}: {
   font: opentype.Font;
   text: string;
   fontSizePx: number;
@@ -932,53 +942,92 @@ function GlyphLine({ font, text, fontSizePx, lineHeightPx, fill, weightAxis, wei
   fill: string;
   weightAxis: { min: number; max: number; default: number } | null;
   weightValue: number;
+  letterSpacing?: number;
 }) {
   const ascenderPx = (font.ascender / font.unitsPerEm) * fontSizePx;
-  // Baseline placement inside the line box mirrors CSS half-leading.
   const baselineY = (lineHeightPx - fontSizePx) / 2 + ascenderPx;
+
+  // letterSpacing comes in em, just like CSS.
+  const spacingPx = letterSpacing * fontSizePx;
 
   let d = "";
   let advanceWidth = 0;
   let bbox: { x2: number } | null = null;
 
   if (text) {
-    if (weightAxis) {
-      // Draw character by character so each glyph can carry its own variation
-      // weight — normal glyphs follow the slider, missing (.notdef) glyphs stay
-      // at the font's default weight.
-      const scale = fontSizePx / font.unitsPerEm;
-      let currentX = 0;
-      const paths: opentype.Path[] = [];
-      for (const ch of text) {
-        const glyphIndex = font.charToGlyphIndex(ch);
-        (font as any).variation.set({ wght: glyphIndex === 0 ? weightAxis.default : weightValue });
-        const glyph = font.glyphs.get(glyphIndex);
-        const path = glyph.getPath(currentX, baselineY, fontSizePx, {}, font);
-        d += safePathData(path);
-        paths.push(path);
-        currentX += glyph.advanceWidth * scale;
+    const scale = fontSizePx / font.unitsPerEm;
+    let currentX = 0;
+    const paths: opentype.Path[] = [];
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const glyphIndex = font.charToGlyphIndex(ch);
+
+      if (weightAxis) {
+        (font as any).variation.set({
+          wght: glyphIndex === 0 ? weightAxis.default : weightValue,
+        });
       }
-      // Restore a consistent default render state for anything read afterward.
-      (font as any).variation.set({ wght: weightValue });
-      advanceWidth = currentX;
-      let maxX2 = 0;
-      for (const p of paths) {
-        const b = p.getBoundingBox();
-        if (Number.isFinite(b.x2) && b.x2 > maxX2) maxX2 = b.x2;
+
+      const glyph = font.glyphs.get(glyphIndex);
+      const path = glyph.getPath(
+        currentX,
+        baselineY,
+        fontSizePx,
+        {},
+        font
+      );
+
+      d += safePathData(path);
+      paths.push(path);
+
+      currentX += glyph.advanceWidth * scale;
+
+      // Add tracking BETWEEN characters, but not after the final character.
+      if (i < text.length - 1) {
+        currentX += spacingPx;
       }
-      bbox = { x2: maxX2 };
-    } else {
-      const path = font.getPath(text, 0, baselineY, fontSizePx);
-      d = safePathData(path);
-      advanceWidth = font.getAdvanceWidth(text, fontSizePx);
-      bbox = path.getBoundingBox();
     }
+
+    if (weightAxis) {
+      (font as any).variation.set({ wght: weightValue });
+    }
+
+    advanceWidth = currentX;
+
+    let maxX2 = 0;
+
+    for (const p of paths) {
+      const b = p.getBoundingBox();
+
+      if (Number.isFinite(b.x2) && b.x2 > maxX2) {
+        maxX2 = b.x2;
+      }
+    }
+
+    bbox = { x2: maxX2 };
   }
 
-  const width = bbox ? Math.max(advanceWidth, bbox.x2) : advanceWidth;
+  const width = bbox
+    ? Math.max(advanceWidth, bbox.x2)
+    : advanceWidth;
+
   return (
-    <svg width={Math.max(width, 1)} height={lineHeightPx} style={{ display: "block", overflow: "visible" }}>
-      {d && <path d={d} fill={fill} fillRule="evenodd" />}
+    <svg
+      width={Math.max(width, 1)}
+      height={lineHeightPx}
+      style={{
+        display: "block",
+        overflow: "visible",
+      }}
+    >
+      {d && (
+        <path
+          d={d}
+          fill={fill}
+          fillRule="evenodd"
+        />
+      )}
     </svg>
   );
 }
@@ -990,6 +1039,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
   const [size, setSize] = useState(16); // rem — starts at the slider's max size
+  const [spacing, setSpacing] = useState(0);
   const [font, setFont] = useState<opentype.Font | null>(null);
 
   // Per-typeface weight control: variable fonts expose a wght axis (slider),
@@ -1331,6 +1381,48 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
               title="Size"
             />
 
+{/* Space */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    flexShrink: 0,
+  }}
+>
+  <span
+    style={{
+      fontFamily: "Arial, sans-serif",
+      fontSize: "0.75rem",
+      color: panelText,
+    }}
+  >
+    Space
+  </span>
+
+  <input
+    type="range"
+    min={-0.1}
+    max={0.5}
+    step={0.01}
+    value={spacing}
+    onChange={(e) => setSpacing(Number(e.target.value))}
+    className="size-slider"
+  />
+
+  <span
+    style={{
+      fontFamily: "Arial, sans-serif",
+      fontSize: "0.9rem",
+      color: panelText,
+      minWidth: 40,
+      textAlign: "left",
+    }}
+  >
+    {spacing.toFixed(2)}
+  </span>
+</div>
+            
             {/* Colours */}
             <div style={{ display: "flex", gap: 10 }}>
               {[
@@ -1575,7 +1667,7 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   caretColor: panelText,
 
                   // No artificial tracking.
-                  letterSpacing: "normal",
+letterSpacing: `${spacing}em`,
 
                   // Let the browser use the font's kerning.
                   fontKerning: "normal",
@@ -1601,16 +1693,17 @@ function TypefacePage({ name, onNavigate }: { name: string; onNavigate: (p: Page
                   }}
                 >
                   {wrappedLines.map((line, idx) => (
-                    <GlyphLine
-                      key={idx}
-                      font={font}
-                      text={line}
-                      fontSizePx={size * 16}
-                      lineHeightPx={size * 16 * 1.3}
-                      fill={panelText}
-                      weightAxis={weightAxis}
-                      weightValue={weightValue}
-                    />
+<GlyphLine
+  key={idx}
+  font={font}
+  text={line}
+  fontSizePx={size * 16}
+  lineHeightPx={size * 16 * 1.3}
+  fill={panelText}
+  weightAxis={weightAxis}
+  weightValue={weightValue}
+  letterSpacing={spacing}
+/>
                   ))}
                 </div>
               )}
