@@ -165,7 +165,7 @@ if (shopMatch) {
   const face = typefaces.find(
     (item) => Slug(item.name) === shopMatch[1].toLowerCase()
   );
-  if (face) return { id: "", name: face.name };
+  if (face) return { id: "typeface", name: face.name };
 }
 
 return { id: "home" };
