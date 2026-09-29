@@ -9,8 +9,8 @@
 }
 @font-face {
   font-family: 'Ella';
-  src: url('/fonts/casparella.ttf') format('truetype');
-  font-weight: normal;
+  src: url('/fonts/casparella.woff2') format('woff2');
+  font-weight: 100 700;
   font-style: normal;
   font-display: swap;
 }
