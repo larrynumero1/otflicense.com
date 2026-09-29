@@ -160,17 +160,20 @@ function pageFromPath(pathname: string): Page {
   if (path === "/about") return { id: "about" };
   if (path === "/faq") return { id: "contact" };
 
-  const shopMatch = path.match(/^\/shop\/([^/]+)$/);
-  if (shopMatch) {
-    const face = s.find((item) => Slug(item.name) === shopMatch[1].toLowerCase());
-    if (face) return { id: "", name: face.name };
-  }
-
-  return { id: "home" };
+const shopMatch = path.match(/^\/shop\/([^/]+)$/);
+if (shopMatch) {
+  const face = typefaces.find(
+    (item) => Slug(item.name) === shopMatch[1].toLowerCase()
+  );
+  if (face) return { id: "", name: face.name };
 }
 
-// Designer directory, derived from the s (each colour/contrast pairing reused).
-const designers = s.map((t) => {
+return { id: "home" };
+}
+
+// Designer directory, derived from the typefaces
+// (each colour/contrast pairing reused).
+const designers = typefaces.map((t) => {
   const handle = t.designer.toLowerCase().replace(/\s+/g, "");
   return {
     name: t.designer,
@@ -182,7 +185,10 @@ const designers = s.map((t) => {
   };
 });
 
-const DESIGNER_CLASSES = ["All", ...Array.from(new Set(designers.map((d) => d.klass)))];
+const DESIGNER_CLASSES = [
+  "All",
+  ...Array.from(new Set(designers.map((d) => d.klass))),
+];
 
 // Ticket/stamp SVG path: rounded-corner rectangle with semicircular notches at top and bottom centre.
 // viewBox 0 0 200 100. Corner radius 10, notch radius 12 centred at (100, 0) and (100, 100).
