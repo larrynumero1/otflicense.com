@@ -16,8 +16,8 @@
 }
 @font-face {
   font-family: 'Last Call';
-  src: url('/fonts/emmalastcall.ttf') format('truetype');
-  font-weight: normal;
+  src: url('/fonts/LASTCALLVF.woff2') format('woff2');
+  font-weight: 0 900;
   font-style: normal;
   font-display: swap;
 }
@@ -65,8 +65,8 @@
 }
 @font-face {
   font-family: 'Brus';
-  src: url('/fonts/linnbrus.ttf') format('truetype');
-  font-weight: normal;
+  src: url('/fonts/BRUSxVelociped8VF.woff2') format('woff2');
+  font-weight: 60 177;
   font-style: normal;
   font-display: swap;
 }
@@ -86,14 +86,15 @@
 }
 @font-face {
   font-family: 'Cheiron';
-  src: url('/fonts/simoncheiron.ttf') format('truetype');
-  font-weight: normal;
+  src: url('/fonts/CHEIRONRebrandVARIABLEVF.woff2') format('woff2');
+  font-weight: 0 100;
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Svek';
-  src: url('/fonts/tindrasvek.ttf') format('truetype');
+  src: url('/fonts/SVEKVF.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -107,8 +108,8 @@
 }
 @font-face {
   font-family: 'BIP';
-  src: url('/fonts/vivibip.ttf') format('truetype');
-  font-weight: normal;
+  src: url('/fonts/BIPExtendedSans-serifVF.woff2') format('woff2');
+  font-weight: 0 100;
   font-style: normal;
   font-display: swap;
 }
