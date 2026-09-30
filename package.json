@@ -9,11 +9,12 @@
     "preview": "vite preview",
     "format": "oxfmt"
   },
-  "dependencies": {
-    "opentype.js": "^2.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
+"dependencies": {
+  "fontkit": "^2.0.4",
+  "opentype.js": "^2.0.0",
+  "react": "^19.0.0",
+  "react-dom": "^19.0.0"
+},
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.0.0",
