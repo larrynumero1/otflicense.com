@@ -1360,39 +1360,26 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       {nativeAxes!.map((axis) =>
         axis.onOff ? (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
-            <button
-              onClick={() =>
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
+              {(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}
+            </span>
+            {/* Binary toggle presented with the same thin-line appearance as the
+                other axis sliders — snaps between the min (Regular) and max
+                (Italic) endpoints only. */}
+            <input
+              type="range"
+              min={axis.min}
+              max={axis.max}
+              step={axis.max - axis.min}
+              value={(axisValues[axis.tag] ?? axis.default) >= axis.max ? axis.max : axis.min}
+              onChange={(e) =>
                 setAxisValues((prev) => ({
                   ...prev,
-                  [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
+                  [axis.tag]: Number(e.target.value) >= (axis.min + axis.max) / 2 ? axis.max : axis.min,
                 }))
               }
-              style={{
-                width: 34,
-                height: 20,
-                borderRadius: 10,
-                border: "1.5px solid rgba(128,128,128,0.6)",
-                background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
-                cursor: "pointer",
-                padding: 0,
-                position: "relative",
-              }}
-              aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  top: 2,
-                  left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
-                  width: 14,
-                  height: 14,
-                  borderRadius: "50%",
-                  background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
-                  transition: "left 0.15s ease",
-                }}
-              />
-            </button>
+              className="size-slider"
+            />
           </div>
         ) : (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -1424,6 +1411,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       />
     </div>
   ) : null;
+
+  // Static-typeface fallback label, shared by Preview and Glyphs so both show
+  // "Regular" in the same control-area position.
+  const regularLabel = (
+    <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
+      Regular
+    </div>
+  );
 
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
@@ -1499,11 +1494,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             </div>
             {/* Variable-font controls — native fonts expose their configured axes,
                 SVG variable fonts keep the wght slider, static fonts show "Regular". */}
-            {variableControls ?? (
-              <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
-                Regular
-              </div>
-            )}
+            {variableControls ?? regularLabel}
           </div>
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
@@ -1588,7 +1579,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
         <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} controls={variableControls} />
+          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} controls={variableControls ?? regularLabel} />
         </div>
 
         {/* Gumroad purchase widget */}
