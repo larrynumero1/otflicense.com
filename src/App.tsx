@@ -927,21 +927,23 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
   return (
-    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem", transition: "background 0.25s ease" }}>
-      {/* Variable-font controls — top left, above the glyph categories. Shares
-          the exact same axis state as the Preview panel's controls. */}
-      {controls && (
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
-          {controls}
-        </div>
-      )}
-      <div style={{ display: "flex", gap: "1.5rem", alignItems: "stretch" }}>
-      {/* Showcase — left */}
-      <div style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
-        <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
-        <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
-          <div>Glyph: {glyphName}</div>
-          <div>Unicode: {glyphUnicode}</div>
+    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+      {/* Showcase — left. The variable-font / "Regular" controls sit at the top
+          of this column so they share the top row with the first glyph category
+          heading in the right column. Shares the exact same axis state as the
+          Preview panel's controls. */}
+      <div style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem", color: panelText, transition: "color 0.25s ease" }}>
+        {controls && (
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
+            {controls}
+          </div>
+        )}
+        <div style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
+          <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
+            <div>Glyph: {glyphName}</div>
+            <div>Unicode: {glyphUnicode}</div>
+          </div>
         </div>
       </div>
 
@@ -978,7 +980,6 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
             </div>
           </div>
         ))}
-      </div>
       </div>
     </div>
   );
@@ -1363,23 +1364,38 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
               {(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}
             </span>
-            {/* Binary toggle presented with the same thin-line appearance as the
-                other axis sliders — snaps between the min (Regular) and max
-                (Italic) endpoints only. */}
-            <input
-              type="range"
-              min={axis.min}
-              max={axis.max}
-              step={axis.max - axis.min}
-              value={(axisValues[axis.tag] ?? axis.default) >= axis.max ? axis.max : axis.min}
-              onChange={(e) =>
+            <button
+              onClick={() =>
                 setAxisValues((prev) => ({
                   ...prev,
-                  [axis.tag]: Number(e.target.value) >= (axis.min + axis.max) / 2 ? axis.max : axis.min,
+                  [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
                 }))
               }
-              className="size-slider"
-            />
+              style={{
+                width: 34,
+                height: 20,
+                borderRadius: 10,
+                border: "1.5px solid rgba(128,128,128,0.6)",
+                background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
+                cursor: "pointer",
+                padding: 0,
+                position: "relative",
+              }}
+              aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 2,
+                  left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
+                  transition: "left 0.15s ease",
+                }}
+              />
+            </button>
           </div>
         ) : (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
