@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type React from "react";
 import * as opentype from "opentype.js";
 import * as fontkit from "fontkit";
@@ -938,8 +938,8 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
             {controls}
           </div>
         )}
-        <div style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
+        <div style={{ position: "relative", flex: 1, minHeight: "clamp(20rem, 40vw, 38rem)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", paddingBottom: "3rem" }}>
+          <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1, overflow: "visible" }}>{hovered}</span>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
             <div>Unicode: {glyphUnicode}</div>
@@ -1233,6 +1233,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Track the preview box's rendered width so the overlay can wrap words to match.
   useEffect(() => {
@@ -1337,6 +1338,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Fit a single row by default; grow with each added line, up to four.
   const previewLines = Math.max(1, wrappedLines.length);
 
+  // Auto-grow the preview to its real rendered height, so both Enter and natural
+  // wrapping add rows. Re-measured once webfonts finish loading.
+  useLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const fit = () => {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+  });
+
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
   const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
@@ -1361,8 +1375,10 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       {nativeAxes!.map((axis) =>
         axis.onOff ? (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
-              {(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+              {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
+              <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
+              <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
             </span>
             <button
               onClick={() =>
@@ -1517,19 +1533,22 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
             <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
+                ref={textareaRef}
                 value={previewText}
                 onChange={(e) => {
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
-                rows={previewLines}
+                rows={1}
                 style={{
                   ...fieldBase,
                   display: "block",
-                  padding: 2,
+                  // Generous vertical padding (scaled to the font size) gives
+                  // extreme ascenders, accents and descenders room inside the box.
+                  padding: `${size * 0.45}rem 2px`,
                   fontSize: `${size}rem`,
                   lineHeight: 1.3,
                   textAlign: "center",
-                  height: `${previewLines * size * 1.3 + size * 0.35}rem`,
+                  overflow: "hidden",
                   // The large preview is rendered natively by the browser through
                   // the actual @font-face family for every typeface, so overlapping
                   // contours composite correctly (no SVG-outline fragmentation).
