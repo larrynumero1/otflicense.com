@@ -1523,45 +1523,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   lineHeight: 1.3,
                   textAlign: "center",
                   height: `${previewLines * size * 1.3 + size * 0.35}rem`,
-                  // Once the font is parsed the SVG overlay draws the glyphs, so
-                  // hide the textarea's own text (caret stays visible). Until then
-                  // fall back to normal rendering so text is never invisible.
-                  color: font && !isNative ? "transparent" : panelText,
+                  // The large preview is rendered natively by the browser through
+                  // the actual @font-face family for every typeface, so overlapping
+                  // contours composite correctly (no SVG-outline fragmentation).
+                  color: panelText,
                   caretColor: panelText,
                 }}
               />
-              {/* Purely visual overlay — draws the real glyphs on top of the
-                  transparent textarea, aligned to the same box/padding/metrics.
-                  Skipped for native variable fonts, which the browser renders. */}
-              {font && !isNative && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    pointerEvents: "none",
-                    boxSizing: "border-box",
-                    padding: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  {wrappedLines.map((line, idx) => (
-                    <GlyphLine
-                      key={idx}
-                      font={font}
-                      text={line}
-                      fontSizePx={size * 16}
-                      lineHeightPx={size * 16 * 1.3}
-                      fill={panelText}
-                      weightAxis={weightAxis}
-                      weightValue={weightValue}
-                      letterSpacing={spacing}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
