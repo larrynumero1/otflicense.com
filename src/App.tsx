@@ -938,8 +938,12 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
             {controls}
           </div>
         )}
-        <div style={{ position: "relative", flex: 1, minHeight: "clamp(20rem, 40vw, 38rem)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", paddingBottom: "3rem" }}>
-          <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1, overflow: "visible" }}>{hovered}</span>
+        <div style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+          {/* Keyed so each glyph gets a fresh node (no stale paint), and padded
+              (offset by an equal negative margin) so the element's paint box
+              covers ink beyond the line box — outlines outside it were leaving
+              fragments behind on repaint. Layout size is unchanged. */}
+          <span key={hovered} style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" }}>{hovered}</span>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
             <div>Unicode: {glyphUnicode}</div>
@@ -1542,20 +1546,41 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 style={{
                   ...fieldBase,
                   display: "block",
-                  // Generous vertical padding (scaled to the font size) gives
-                  // extreme ascenders, accents and descenders room inside the box.
-                  padding: `${size * 0.45}rem 2px`,
+                  padding: 2,
                   fontSize: `${size}rem`,
                   lineHeight: 1.3,
                   textAlign: "center",
                   overflow: "hidden",
-                  // The large preview is rendered natively by the browser through
-                  // the actual @font-face family for every typeface, so overlapping
-                  // contours composite correctly (no SVG-outline fragmentation).
-                  color: panelText,
+                  // A textarea always clips its own content box, so its glyphs are
+                  // drawn transparent and the visible text comes from the unclipped
+                  // mirror below. The caret and selection stay native.
+                  color: "transparent",
                   caretColor: panelText,
                 }}
               />
+              {/* Visible preview text — native browser rendering through the real
+                  @font-face family, laid out identically to the textarea but with
+                  overflow visible so extreme outlines are never cropped. */}
+              <div
+                aria-hidden
+                style={{
+                  ...fieldBase,
+                  background: "transparent",
+                  position: "absolute",
+                  inset: 0,
+                  padding: 2,
+                  fontSize: `${size}rem`,
+                  lineHeight: 1.3,
+                  textAlign: "center",
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "break-word",
+                  overflow: "visible",
+                  pointerEvents: "none",
+                  color: panelText,
+                }}
+              >
+                {previewText.endsWith("\n") ? previewText + "\u200b" : previewText}
+              </div>
             </div>
           </div>
         </div>
