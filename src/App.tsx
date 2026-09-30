@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type React from "react";
 import * as opentype from "opentype.js";
+import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
 import galleryImg1 from "./imports/gallery-1.jpg";
 import galleryImg2 from "./imports/gallery-2.jpg";
@@ -883,65 +884,29 @@ const GLYPH_NAMES: Record<string, string> = {
   "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "longst", "ﬆ": "st", "ª": "ordfeminine", "º": "ordmasculine", "µ": "mu",
 };
 
-// Detects whether a CSS-loaded font actually contains a glyph for `char`, without
-// parsing the font file. A missing glyph falls back to the generic family, so its
-// measured width matches the generic-alone width against BOTH monospace and
-// sans-serif fallbacks; a present glyph differs from at least one. Used for the
-// native variable fonts, whose WOFF2 files opentype.js cannot parse.
-function browserGlyphExists(ctx: CanvasRenderingContext2D, char: string, family: string): boolean {
-  ctx.font = `72px monospace`;
-  const monoBase = ctx.measureText(char).width;
-  ctx.font = `72px ${family}, monospace`;
-  const monoFam = ctx.measureText(char).width;
-  ctx.font = `72px sans-serif`;
-  const sansBase = ctx.measureText(char).width;
-  ctx.font = `72px ${family}, sans-serif`;
-  const sansFam = ctx.measureText(char).width;
-  return monoFam !== monoBase || sansFam !== sansBase;
-}
+// Glyphs Dukat hides from its panel even though they exist in the font file —
+// an explicit per-face display exception (the glyphs are not removed from the font).
+const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 
 // Full-width panel: large showcase on the left, categorised character list on the right.
-// When the parsed opentype font is available, only glyphs actually present in the
-// face are shown (missing chars are omitted and empty categories are hidden). Native
-// variable fonts (no parsed font) instead detect coverage via the browser.
-function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings }: { font: string; otFont: opentype.Font | null; panelBg: string; panelText: string; fontVariationSettings?: string }) {
-  // Browser-detected coverage for native fonts (otFont === null). Null while
-  // detecting, so the predefined list is never shown as-is.
-  const [detected, setDetected] = useState<Set<string> | null>(null);
-  useEffect(() => {
-    if (otFont) {
-      setDetected(null);
-      return;
-    }
-    let cancelled = false;
-    const family = font.split(",")[0].trim();
-    const run = () => {
-      const ctx = document.createElement("canvas").getContext("2d");
-      if (!ctx) return;
-      const found = new Set<string>();
-      for (const group of CHAR_GROUPS) {
-        for (const c of group.chars) {
-          if (browserGlyphExists(ctx, c, family)) found.add(c);
-        }
-      }
-      if (!cancelled) setDetected(found);
-    };
-    const fontsApi = (document as any).fonts;
-    if (fontsApi?.load) {
-      fontsApi.load(`72px ${family}`).then(() => { if (!cancelled) run(); }).catch(() => { if (!cancelled) run(); });
-    } else {
-      run();
-    }
-    return () => { cancelled = true; };
-  }, [otFont, font]);
-
+// Coverage is read from the selected font's own cmap: opentype.js for the parseable
+// (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
+// native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
+// when it genuinely exists in that font — never inferred from browser fallback.
+function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
-    chars: otFont
+    chars: (otFont
       ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0)
-      : detected
-      ? group.chars.filter((c) => detected.has(c))
-      : [],
+      : coverage
+      ? group.chars.filter((c) => coverage.has(c.codePointAt(0) ?? -1))
+      : []
+    ).filter((c) => {
+      // Dukat-only exception: hide these two glyphs from its Glyphs panel.
+      if (faceName !== "Dukat") return true;
+      const name = otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(c))?.name : undefined;
+      return !(name && DUKAT_HIDDEN_GLYPHS.has(name));
+    }),
   })).filter((group) => group.chars.length > 0);
 
   const firstChar = groups[0]?.chars[0] ?? "A";
@@ -949,7 +914,7 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
   useEffect(() => {
     setHovered(firstChar);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otFont, detected]);
+  }, [otFont, coverage]);
 
   // Metadata for the currently highlighted glyph. The Unicode value comes from
   // the character itself; the glyph name is read from the parsed font when
@@ -962,7 +927,15 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
   return (
-    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem", transition: "background 0.25s ease" }}>
+      {/* Variable-font controls — top left, above the glyph categories. Shares
+          the exact same axis state as the Preview panel's controls. */}
+      {controls && (
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
+          {controls}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: "1.5rem", alignItems: "stretch" }}>
       {/* Showcase — left */}
       <div style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
         <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
@@ -1005,6 +978,7 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );
@@ -1242,6 +1216,10 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const [top, setTop] = useState("");
   const [size, setSize] = useState(16); // rem — starts at the slider's max size
   const [font, setFont] = useState<opentype.Font | null>(null);
+  // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
+  // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
+  // which the Glyphs panel reads through the parsed `font` (opentype) instead.
+  const [coverage, setCoverage] = useState<Set<number> | null>(null);
   // Per-typeface weight control: variable fonts expose a wght axis (slider),
   // static fonts show a fixed "Regular" label instead.
   const [weightAxis, setWeightAxis] = useState<{ min: number; max: number; default: number } | null>(null);
@@ -1275,14 +1253,29 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   useEffect(() => {
     let cancelled = false;
     setFont(null);
+    setCoverage(null);
     setWeightAxis(null);
     setSpacing(0);
-    // Native variable fonts render through the browser using known axis data,
-    // so they don't need (and opentype.js often can't parse) the WOFF2 file.
+    // Native variable fonts render through the browser using known axis data.
+    // opentype.js cannot parse their WOFF2 files, so the Glyphs panel reads real
+    // cmap coverage via fontkit (which decodes WOFF2) — never browser fallback.
     if (nativeAxes) {
       const init: Record<string, number> = {};
       for (const a of nativeAxes) init[a.tag] = a.default;
       setAxisValues(init);
+      if (face?.file) {
+        fetch(face.file)
+          .then((res) => res.arrayBuffer())
+          .then((buffer) => {
+            if (cancelled) return;
+            const fk = (fontkit as any).create(new Uint8Array(buffer));
+            const cps: number[] = fk?.characterSet ?? [];
+            setCoverage(new Set(cps));
+          })
+          .catch(() => {
+            if (!cancelled) setCoverage(null);
+          });
+      }
       return () => {
         cancelled = true;
       };
@@ -1359,6 +1352,79 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     ? `'wght' ${weightValue}`
     : undefined;
 
+  // Variable-font controls shared between the Preview panel and the Glyphs
+  // panel so both interfaces read and write the exact same axis state. Null for
+  // non-variable typefaces (Preview falls back to a "Regular" label).
+  const variableControls = isNative ? (
+    <>
+      {nativeAxes!.map((axis) =>
+        axis.onOff ? (
+          <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
+            <button
+              onClick={() =>
+                setAxisValues((prev) => ({
+                  ...prev,
+                  [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
+                }))
+              }
+              style={{
+                width: 34,
+                height: 20,
+                borderRadius: 10,
+                border: "1.5px solid rgba(128,128,128,0.6)",
+                background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
+                cursor: "pointer",
+                padding: 0,
+                position: "relative",
+              }}
+              aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 2,
+                  left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
+                  transition: "left 0.15s ease",
+                }}
+              />
+            </button>
+          </div>
+        ) : (
+          <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
+            <input
+              type="range"
+              min={axis.min}
+              max={axis.max}
+              step={1}
+              value={axisValues[axis.tag] ?? axis.default}
+              onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
+              className="size-slider"
+            />
+          </div>
+        )
+      )}
+    </>
+  ) : weightAxis ? (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
+      <input
+        type="range"
+        min={weightAxis.min}
+        max={weightAxis.max}
+        step={1}
+        value={weightValue}
+        onChange={(e) => setWeightValue(Number(e.target.value))}
+        className="size-slider"
+      />
+    </div>
+  ) : null;
+
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
     fontVariationSettings,
@@ -1433,73 +1499,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             </div>
             {/* Variable-font controls — native fonts expose their configured axes,
                 SVG variable fonts keep the wght slider, static fonts show "Regular". */}
-            {isNative ? (
-              nativeAxes!.map((axis) =>
-                axis.onOff ? (
-                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
-                    <button
-                      onClick={() =>
-                        setAxisValues((prev) => ({
-                          ...prev,
-                          [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
-                        }))
-                      }
-                      style={{
-                        width: 34,
-                        height: 20,
-                        borderRadius: 10,
-                        border: "1.5px solid rgba(128,128,128,0.6)",
-                        background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
-                        cursor: "pointer",
-                        padding: 0,
-                        position: "relative",
-                      }}
-                      aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
-                    >
-                      <span
-                        style={{
-                          position: "absolute",
-                          top: 2,
-                          left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
-                          width: 14,
-                          height: 14,
-                          borderRadius: "50%",
-                          background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
-                          transition: "left 0.15s ease",
-                        }}
-                      />
-                    </button>
-                  </div>
-                ) : (
-                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
-                    <input
-                      type="range"
-                      min={axis.min}
-                      max={axis.max}
-                      step={1}
-                      value={axisValues[axis.tag] ?? axis.default}
-                      onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
-                      className="size-slider"
-                    />
-                  </div>
-                )
-              )
-            ) : weightAxis ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
-                <input
-                  type="range"
-                  min={weightAxis.min}
-                  max={weightAxis.max}
-                  step={1}
-                  value={weightValue}
-                  onChange={(e) => setWeightValue(Number(e.target.value))}
-                  className="size-slider"
-                />
-              </div>
-            ) : (
+            {variableControls ?? (
               <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
                 Regular
               </div>
@@ -1588,7 +1588,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
         <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} otFont={font} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} />
+          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} controls={variableControls} />
         </div>
 
         {/* Gumroad purchase widget */}
