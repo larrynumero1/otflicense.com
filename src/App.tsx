@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type React from "react";
+import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
 import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
@@ -30,6 +31,85 @@ import galleryLiljan1 from "./imports/liljan1.png";
 import galleryLiljan2 from "./imports/liljan2.png";
 import galleryLiljan3 from "./imports/liljan3.png";
 import galleryLiljan4 from "./imports/liljan4.png";
+import bildBip1 from "./imports/bild_bip1.png";
+import bildBip2 from "./imports/bild_bip2.png";
+import bildBip3 from "./imports/bild_bip3.png";
+import bildBip4 from "./imports/bild_bip4.png";
+import bildBip5 from "./imports/bild_bip5.png";
+import bildBrus1 from "./imports/bild_brus1.png";
+import bildBrus2 from "./imports/bild_brus2.png";
+import bildBrus3 from "./imports/bild_brus3.png";
+import bildBrus4 from "./imports/bild_brus4.png";
+import bildBrus5 from "./imports/bild_brus5.png";
+import bildCheiron1 from "./imports/bild_cheiron1.png";
+import bildCheiron2 from "./imports/bild_cheiron2.png";
+import bildCheiron3 from "./imports/bild_cheiron3.png";
+import bildCheiron4 from "./imports/bild_cheiron4.png";
+import bildCheiron5 from "./imports/bild_cheiron5.png";
+import bildCrypto1 from "./imports/bild_crypto1.png";
+import bildCrypto2 from "./imports/bild_crypto2.png";
+import bildCrypto3 from "./imports/bild_crypto3.png";
+import bildCrypto4 from "./imports/bild_crypto4.png";
+import bildCrypto5 from "./imports/bild_crypto5.png";
+import bildDukat1 from "./imports/bild_dukat1.png";
+import bildDukat2 from "./imports/bild_dukat2.png";
+import bildDukat3 from "./imports/bild_dukat3.png";
+import bildDukat4 from "./imports/bild_dukat4.png";
+import bildElla1 from "./imports/bild_ella1.png";
+import bildElla2 from "./imports/bild_ella2.png";
+import bildElla3 from "./imports/bild_ella3.png";
+import bildElla4 from "./imports/bild_ella4.png";
+import bildElla5 from "./imports/bild_ella5.png";
+import bildFacit1 from "./imports/bild_facit1.png";
+import bildFacit2 from "./imports/bild_facit2.png";
+import bildFacit3 from "./imports/bild_facit3.png";
+import bildFacit4 from "./imports/bild_facit4.png";
+import bildFacit5 from "./imports/bild_facit5.png";
+import bildGalanite1 from "./imports/bild_galanite1.png";
+import bildGalanite2 from "./imports/bild_galanite2.png";
+import bildGalanite3 from "./imports/bild_galanite3.png";
+import bildGalanite4 from "./imports/bild_galanite4.png";
+import bildGalanite5 from "./imports/bild_galanite5.png";
+import bildKuriren1 from "./imports/bild_kuriren1.png";
+import bildKuriren2 from "./imports/bild_kuriren2.png";
+import bildKuriren3 from "./imports/bild_kuriren3.png";
+import bildKuriren4 from "./imports/bild_kuriren4.png";
+import bildKuriren5 from "./imports/bild_kuriren5.png";
+import bildLastCall1 from "./imports/bild_lastcall1.png";
+import bildLastCall2 from "./imports/bild_lastcall2.png";
+import bildLastCall3 from "./imports/bild_lastcall3.png";
+import bildLastCall4 from "./imports/bild_lastcall4.png";
+import bildLastCall5 from "./imports/bild_lastcall5.png";
+import bildLcdUber1 from "./imports/bild_lcduber1.png";
+import bildLcdUber2 from "./imports/bild_lcduber2.png";
+import bildLcdUber3 from "./imports/bild_lcduber3.png";
+import bildLcdUber4 from "./imports/bild_lcduber4.png";
+import bildLcdUber5 from "./imports/bild_lcduber5.png";
+import bildLiljan1 from "./imports/bild_liljan1.png";
+import bildLiljan2 from "./imports/bild_liljan2.png";
+import bildLiljan3 from "./imports/bild_liljan3.png";
+import bildLiljan4 from "./imports/bild_liljan4.png";
+import bildLiljan5 from "./imports/bild_liljan5.png";
+import bildMormor1 from "./imports/bild_mormor1.png";
+import bildMormor2 from "./imports/bild_mormor2.png";
+import bildMormor3 from "./imports/bild_mormor3.png";
+import bildMormor4 from "./imports/bild_mormor4.png";
+import bildMormor5 from "./imports/bild_mormor5.png";
+import bildSonja1 from "./imports/bild_sonja1.png";
+import bildSonja2 from "./imports/bild_sonja2.png";
+import bildSonja3 from "./imports/bild_sonja3.png";
+import bildSonja4 from "./imports/bild_sonja4.png";
+import bildSonja5 from "./imports/bild_sonja5.png";
+import bildSvek1 from "./imports/bild_svek1.png";
+import bildSvek2 from "./imports/bild_svek2.png";
+import bildSvek3 from "./imports/bild_svek3.png";
+import bildSvek4 from "./imports/bild_svek4.png";
+import bildSvek5 from "./imports/bild_svek5.png";
+import bildXoxo1 from "./imports/bild_xoxo1.png";
+import bildXoxo2 from "./imports/bild_xoxo2.png";
+import bildXoxo3 from "./imports/bild_xoxo3.png";
+import bildXoxo4 from "./imports/bild_xoxo4.png";
+import bildXoxo5 from "./imports/bild_xoxo5.png";
 import galleryBrus1 from "./imports/brus1.png";
 import galleryFacit1 from "./imports/facit1.png";
 import galleryFacit2 from "./imports/facit2.png";
@@ -66,22 +146,6 @@ import galleryBip1 from "./imports/bip1.png";
 import galleryBip2 from "./imports/bip2.png";
 import galleryBip3 from "./imports/bip3.png";
 import galleryBip4 from "./imports/bip4.png";
-import placeholderBip from "./imports/Placeholder_BIP.png";
-import placeholderBrus from "./imports/Placeholder_Brus.png";
-import placeholderCheiron from "./imports/Placeholder_Cheiron.png";
-import placeholderCrypto from "./imports/Placeholder_Crypto.png";
-import placeholderDukat from "./imports/Placeholder_Dukat.png";
-import placeholderElla from "./imports/Placeholder_Ella.png";
-import placeholderFacit from "./imports/Placeholder_Facit.png";
-import placeholderGalanite from "./imports/Placeholder_Galanite.png";
-import placeholderKuriren from "./imports/Placeholder_Kuriren.png";
-import placeholderLastCall from "./imports/Placeholder_LastCall.png";
-import placeholderLcdUber from "./imports/Placeholder_LCDUber.png";
-import placeholderLiljan from "./imports/Placeholder_Liljan.png";
-import placeholderMormor from "./imports/Placeholder_Mormor.png";
-import placeholderSonja from "./imports/Placeholder_Sonja.png";
-import placeholderSvek from "./imports/Placeholder_Svek.png";
-import placeholderXoxo from "./imports/Placeholder_XOXO.png";
 import transitionSvgRaw from "./imports/transition-asset.svg?raw";
 
 const GALLERY_IMAGES = [galleryImg1, galleryImg2, galleryImg3];
@@ -167,25 +231,25 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [placeholderLastCall], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [placeholderXoxo], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [placeholderLiljan], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [placeholderKuriren], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
+  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [placeholderElla], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [placeholderSvek], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [placeholderCheiron], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27 },
-  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [placeholderLcdUber], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [placeholderBip], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27 },
+  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [placeholderGalanite], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [placeholderDukat], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [placeholderCrypto], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [placeholderFacit], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [placeholderSonja], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [placeholderMormor], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [placeholderBrus], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
 // Native variable-font typefaces — rendered directly by the browser (not the
@@ -524,29 +588,54 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
   );
 }
 
-function NavTextButton({ label, width, onClick, color = "#000" }: { label: string; width: number; onClick: () => void; color?: string }) {
+function NavTextButton({ label, width, onClick }: { label: string; width: number; onClick: () => void; color?: string }) {
+  // Fills with one random palette colour per hover; picked on enter so it
+  // stays stable for the whole hover.
+  const [hoverBg, setHoverBg] = useState<string | null>(null);
   return (
     <button
-      className="nav-link"
       onClick={onClick}
+      onMouseEnter={() => setHoverBg(PALETTE[Math.floor(Math.random() * PALETTE.length)])}
+      onMouseLeave={() => setHoverBg(null)}
       style={{
-        width,
+        minWidth: width,
         height: 48,
-        background: "none",
+        background: hoverBg ?? "none",
         border: "none",
         cursor: "pointer",
-        padding: 0,
+        padding: "0 0.75rem",
         fontFamily: "Arial, sans-serif",
-        fontSize: "20px",
-        color,
+        // Same size and weight as the homepage marquee text.
+        fontSize: "1.5rem",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        whiteSpace: "nowrap",
+        // Same text colour rule as the marquee: black on light colours, white otherwise.
+        color: hoverBg && !LIGHT_BAND_COLORS.has(hoverBg) ? "#fff" : "#000",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      {label}
+      {/* The static label always sizes the box; on hover it's hidden and the
+          same label loops right-to-left inside the fixed box instead. */}
+      <span style={{ visibility: hoverBg ? "hidden" : "visible" }}>{label}</span>
+      {hoverBg && (
+        <span aria-hidden style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", overflow: "hidden" }}>
+          <span
+            ref={(el) => { if (el) el.style.animationDuration = `${el.scrollWidth / 2 / bandSpeedPxPerSec}s`; }}
+            style={{ display: "inline-flex", animation: "marquee 6s linear infinite" }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span key={i} style={{ paddingRight: "1.5rem" }}>{label}</span>
+            ))}
+          </span>
+        </span>
+      )}
     </button>
   );
 }
 
-function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
+function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false }: { onNavigate: (p: Page) => void; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <nav
       className="sticky top-0 z-50"
@@ -562,8 +651,8 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       }}
     >
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="ABOUT" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
-        <NavTextButton label="FAQ" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
+        <NavTextButton label="ABOUT US" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="LICENSING STUFF" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
         onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
@@ -593,7 +682,13 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           />
         )}
       </button>
-      <NavTextButton label="BUY THE MEGA BUNDLE!" width={344} color={fg} onClick={() => onNavigate({ id: "bundle" })} />
+      {/* On the bundle page this becomes the way back to single typefaces. */}
+      <NavTextButton
+        label={onBundlePage ? "BUY A SINGLE TYPEFACE" : "BUY THE MEGA BUNDLE!"}
+        width={344}
+        color={fg}
+        onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
+      />
     </nav>
   );
 }
@@ -989,41 +1084,96 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
   );
 }
 
+// Fixed-size image field for each typeface page. Reads the current typeface's
+// image list, fills the field with cover-cropped images, auto-advances every ~5s
+// with a horizontal slide, and opens the clicked image in a contain-fit lightbox.
 function WipCarousel({ panelText, images = [] }: { panelText: string; images?: string[] }) {
   const count = images.length;
 
-  // Single-image or empty: no carousel needed
-  if (count <= 1) {
-    return (
-      <div style={{ position: "absolute", inset: 0, background: "#fff" }}>
-        {images[0] && <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />}
-      </div>
-    );
-  }
-
   // Infinite loop: [last, ...images, first]
-  const slides = [images[count - 1], ...images, images[0]];
+  const slides = count > 1 ? [images[count - 1], ...images, images[0]] : images;
   const total = slides.length;
 
   // Start at index 1 (the real first image)
   const [idx, setIdx] = useState(1);
   const [animated, setAnimated] = useState(true);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  // Reset when the typeface (and so its image list) changes.
+  useEffect(() => {
+    setAnimated(false);
+    setIdx(1);
+  }, [images]);
 
   const go = (d: number) => {
     setAnimated(true);
     setIdx((prev) => prev + d);
   };
 
+  // Auto-advance; restarts after every move (manual or automatic) and is paused
+  // while the lightbox is open.
+  useEffect(() => {
+    if (count <= 1 || lightbox) return;
+    // If a transitionend was missed (e.g. background tab), snap back into range.
+    if (idx <= 0 || idx >= total - 1) {
+      const t = window.setTimeout(handleTransitionEnd, 650);
+      return () => window.clearTimeout(t);
+    }
+    const t = window.setTimeout(() => go(1), 5000);
+    return () => window.clearTimeout(t);
+  }, [idx, count, lightbox]);
+
+  // Escape closes the lightbox.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setLightbox(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
+
   const handleTransitionEnd = () => {
     // Silently snap from clone to real slide with no animation
-    if (idx === 0) {
+    if (idx <= 0) {
       setAnimated(false);
       setIdx(count);
-    } else if (idx === total - 1) {
+    } else if (idx >= total - 1) {
       setAnimated(false);
       setIdx(1);
     }
   };
+
+  const imgStyle: React.CSSProperties = { width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", cursor: "zoom-in" };
+
+  const lightboxEl = lightbox && (
+    <div
+      onClick={() => setLightbox(null)}
+      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}
+    >
+      <img
+        src={lightbox}
+        alt=""
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }}
+      />
+      <button
+        onClick={() => setLightbox(null)}
+        aria-label="Close"
+        style={{ position: "absolute", top: 16, right: 20, background: "none", border: "none", color: "#fff", fontFamily: "Arial, sans-serif", fontSize: "1.8rem", lineHeight: 1, cursor: "pointer" }}
+      >
+        ×
+      </button>
+    </div>
+  );
+
+  // Empty: keep the reserved field. Single image: no slideshow.
+  if (count <= 1) {
+    return (
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
+        {images[0] && <img src={images[0]} alt="" onClick={() => setLightbox(images[0])} style={imgStyle} />}
+        {lightboxEl && createPortal(lightboxEl, document.body)}
+      </div>
+    );
+  }
 
   const arrowStyle: React.CSSProperties = {
     position: "absolute",
@@ -1045,23 +1195,24 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
       <div
-        onTransitionEnd={handleTransitionEnd}
+        onTransitionEnd={(e) => e.target === e.currentTarget && handleTransitionEnd()}
         style={{
           display: "flex",
           width: `${total * 100}%`,
           height: "100%",
           transform: `translateX(-${(idx / total) * 100}%)`,
-          transition: animated ? "transform 0.42s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
+          transition: animated ? "transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
         }}
       >
         {slides.map((src, i) => (
-          <div key={i} style={{ width: `${100 / total}%`, flexShrink: 0, height: "100%" }}>
-            <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+          <div key={i} style={{ width: `${100 / total}%`, flexShrink: 0, height: "100%", overflow: "hidden" }}>
+            <img src={src} alt="" onClick={() => setLightbox(src)} style={imgStyle} />
           </div>
         ))}
       </div>
       <button onClick={() => go(-1)} style={{ ...arrowStyle, left: 12 }} aria-label="Previous">‹</button>
       <button onClick={() => go(1)} style={{ ...arrowStyle, right: 12 }} aria-label="Next">›</button>
+      {lightboxEl && createPortal(lightboxEl, document.body)}
     </div>
   );
 }
@@ -1660,6 +1811,10 @@ const BAND_PHRASES = [
 // Colors that need black text for legibility
 const LIGHT_BAND_COLORS = new Set(["#fff800", "#c3872f", "#00ab53"]);
 
+// Scroll speed (px/s) of the marquee band, measured from its rendered track so
+// the nav-button hover loops can run at exactly the same tempo.
+let bandSpeedPxPerSec = 80;
+
 function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void }) {
   const [colorIdx, setColorIdx] = useState(0);
 
@@ -1701,7 +1856,10 @@ function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forwa
       onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
       style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: "pointer", transition: "background 0.3s ease" }}
     >
-      <div style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 80s linear infinite` }}>{words}</div>
+      <div
+        ref={(el) => { if (el && el.scrollWidth) bandSpeedPxPerSec = el.scrollWidth / 2 / 80; }}
+        style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 80s linear infinite` }}
+      >{words}</div>
     </button>
   );
 }
@@ -1719,7 +1877,7 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
-      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
         <div className="gumroad-product-embed" style={{ width: "100%", maxWidth: 740 }}>
           <a href={BUNDLE_URL}>Loading…</a>
