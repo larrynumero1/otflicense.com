@@ -279,7 +279,8 @@ html {
     grid-column: 1 / -1;
     grid-row: 1;
     justify-self: center;
-    display: block;
+    display: flex !important;
+    gap: 0.6rem !important;
     height: auto !important;
     line-height: normal !important;
     overflow: visible !important;
@@ -291,8 +292,7 @@ html {
   }
   /* Keep the header eyes inside the viewport so nothing widens the page. */
   .tf-nav .nav-eyes {
-    left: calc(100% + 0.6rem) !important;
-    top: 0.6rem !important;
+    margin-top: 0.6rem !important;
     height: 1.4rem !important;
   }
   .tf-nav .nav-text-btn {
@@ -398,6 +398,11 @@ html {
   .tf-glyph-showcase {
     flex: 0 0 auto !important;
     min-height: 16rem;
+  }
+  /* Glyph/Unicode metadata is absolutely positioned at the stage bottom; reserve
+     its height so the big glyph centres between the controls and the metadata. */
+  .tf-glyph-stage {
+    padding-bottom: 2.4rem;
   }
   /* The desktop paint-box padding (0.5em per side) made wide glyphs ~9rem wider
      than the column, which widened the whole document past the viewport and left
