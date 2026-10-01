@@ -522,7 +522,7 @@ html {
     justify-content: center;
     align-items: center !important;
     margin-top: 0;
-    padding: calc(var(--w) * 0.14 + 2.5vw) 0;
+    padding: calc(var(--w) * 0.11 + 1.25vw) 0;
     transform: translateX(calc(var(--zz-x) * 0.5 + 1vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
@@ -584,15 +584,26 @@ html {
   }
   /* Colour dots: narrow column on the right, under the options button,
      stacked bottom → top; absolutely placed so the slider keeps its width. */
+  /* Colour dots: horizontal row pinned to the panel bottom, spanning the same
+     width as the control row at the top. */
+  .tf-preview {
+    padding-bottom: calc(2.5rem + 22px) !important;
+  }
   .tf-preview .tf-color-dots {
     position: absolute;
-    top: calc(1rem + 40px);
-    right: calc(1rem + 5px);
-    flex-direction: column-reverse;
+    bottom: 1.25rem;
+    left: 2rem;
+    right: 2rem;
+    justify-content: center;
     z-index: 2;
   }
-  .tf-preview-field {
-    padding-right: calc(1rem + 34px) !important;
+  /* About paragraph in normal flow so it can never be clipped. */
+  .tf-info .tf-about-text[aria-hidden="true"] {
+    display: none;
+  }
+  .tf-info .tf-about-text {
+    position: static !important;
+    overflow: visible !important;
   }
   .tf-info-row {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -745,12 +756,12 @@ html {
     padding: 0.9rem 1.25rem 1.5rem !important;
   }
   .about-designer-cell {
-    background: #0074ff !important;
-    color: #fff !important;
+    background: var(--m-bg) !important;
+    color: var(--m-fg) !important;
     padding: 0 0.6rem !important;
   }
   .about-designer-cell a {
-    color: #fff !important;
+    color: var(--m-fg) !important;
   }
   .about-designer-name {
     font-size: 0.85rem !important;

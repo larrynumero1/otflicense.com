@@ -441,7 +441,7 @@ function MailIcon() {
   );
 }
 
-function DesignerCell({ d }: { d: typeof designers[0] }) {
+function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number }) {
   // One random palette colour picked on enter, held stable for the whole hover.
   const [hoverBg, setHoverBg] = useState<string | null>(null);
   const fg = hoverBg ? (hoverBg === "#fff800" ? "#000" : "#fff") : "#000";
@@ -458,7 +458,10 @@ function DesignerCell({ d }: { d: typeof designers[0] }) {
         WebkitMask: NOTCH_MASK, mask: NOTCH_MASK,
         display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
         padding: "0 1.25rem", fontFamily: "Arial, sans-serif", color: fg,
-      }}
+        // Permanent mobile card colour, cycled through the site palette.
+        "--m-bg": PALETTE[index % PALETTE.length],
+        "--m-fg": PALETTE[index % PALETTE.length] === "#fff800" ? "#000" : "#fff",
+      } as React.CSSProperties}
     >
       <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
       <div className="about-designer-links" style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
@@ -1028,7 +1031,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
         {/* Designer grid — full content width, as many columns as fit */}
         <div className="about-designer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(13rem, 1fr))", gap: "2.5rem 3rem", padding: "1.5rem 4rem 1.5rem 4rem" }}>
-          {[...shownDesigners].sort((a, b) => a.name.localeCompare(b.name, "sv")).map((d) => <DesignerCell key={d.name} d={d} />)}
+          {[...shownDesigners].sort((a, b) => a.name.localeCompare(b.name, "sv")).map((d, i) => <DesignerCell key={d.name} d={d} index={i} />)}
         </div>
         <SiteFooter />
       </div>
@@ -1824,6 +1827,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     return (
     <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
       <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+      {where === "preview" ? (
+        <select
+          aria-label="Choose control"
+          value={activeOption.key}
+          onChange={(e) => setActiveKey(e.target.value)}
+          style={{ flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", padding: "0.3rem 0.6rem", border: `1.5px solid ${panelText}`, background: panelBg, color: panelText, cursor: "pointer" }}
+        >
+          {options.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+        </select>
+      ) : <>
       <button
         type="button"
         aria-label="Choose control"
@@ -1851,6 +1864,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           ))}
         </div>
       )}
+      </>}
     </div>
     );
   };
