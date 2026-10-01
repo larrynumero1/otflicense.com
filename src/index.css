@@ -533,6 +533,17 @@ html {
   .shop-grid .cell[data-first] {
     margin-top: 0;
   }
+  /* Hand-placed mobile nudges; visual only, rotation untouched. */
+  .shop-grid .cell[data-name="Ella"] {
+    transform: translate(-11vw, 12vw) !important;
+  }
+  .shop-grid .cell[data-name="LCD Über"],
+  .shop-grid .cell[data-name="Mormor"] {
+    transform: translate(calc(var(--zz-x) * 0.5 + 1vw), -5vw) !important;
+  }
+  .shop-grid .cell[data-name="Sonja"] {
+    transform: translateX(-9vw) !important;
+  }
   .shop-grid .cell-inner {
     width: 100% !important;
     transform: rotate(var(--zz-rot, var(--hover-rot))) !important;
@@ -756,12 +767,7 @@ html {
     padding: 0.9rem 1.25rem 1.5rem !important;
   }
   .about-designer-cell {
-    background: var(--m-bg) !important;
-    color: var(--m-fg) !important;
     padding: 0 0.6rem !important;
-  }
-  .about-designer-cell a {
-    color: var(--m-fg) !important;
   }
   .about-designer-name {
     font-size: 0.85rem !important;

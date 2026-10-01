@@ -458,9 +458,6 @@ function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number
         WebkitMask: NOTCH_MASK, mask: NOTCH_MASK,
         display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
         padding: "0 1.25rem", fontFamily: "Arial, sans-serif", color: fg,
-        // Permanent mobile card colour, cycled through the site palette.
-        "--m-bg": PALETTE[index % PALETTE.length],
-        "--m-fg": PALETTE[index % PALETTE.length] === "#fff800" ? "#000" : "#fff",
       } as React.CSSProperties}
     >
       <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
@@ -538,6 +535,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
       // Mobile zig-zag hooks: side alternates by order, with a small per-sticker x jitter.
       data-side={index % 2 === 0 ? "left" : "right"}
       data-first={index === 0 ? "" : undefined}
+      data-name={face.name}
       style={{ "--zz-rot": `${[-6, 9, 2, -11, -1, 4, 12, -4, 7, -9, 0, 11, -3, -12, 5, 8][index % 16]}deg`, "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
@@ -1547,8 +1545,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
-  // TEMPORARY: in-progress text of the numeric Size readout while it's being edited.
-  const [sizeDraft, setSizeDraft] = useState<string | null>(null);
   const [font, setFont] = useState<opentype.Font | null>(null);
   // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
   // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
@@ -1791,8 +1787,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
       <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
       <input type="range" min={3} max={16} step={0.5} value={size} onChange={(e) => setSize(Number(e.target.value))} className="size-slider" />
-      {/* TEMPORARY mobile readout of the live Preview Size — takes no layout space. */}
-      <span aria-hidden="true" style={{ position: "absolute", top: "100%", left: "2.6rem", fontFamily: "Arial, sans-serif", fontSize: "0.65rem", lineHeight: 1, color: panelText, opacity: 0.6, pointerEvents: "none" }}>{size.toFixed(2)}</span>
     </div>
   );
   const spaceControl = (
@@ -1827,16 +1821,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     return (
     <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
       <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
-      {where === "preview" ? (
-        <select
-          aria-label="Choose control"
-          value={activeOption.key}
-          onChange={(e) => setActiveKey(e.target.value)}
-          style={{ flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", padding: "0.3rem 0.6rem", border: `1.5px solid ${panelText}`, background: panelBg, color: panelText, cursor: "pointer" }}
-        >
-          {options.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-        </select>
-      ) : <>
       <button
         type="button"
         aria-label="Choose control"
@@ -1864,7 +1848,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           ))}
         </div>
       )}
-      </>}
     </div>
     );
   };
@@ -1904,26 +1887,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             {isMobile && mobileControlRow("preview")}
             {/* Size */}
             {!isMobile && <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-              {/* TEMPORARY calibration readout — absolutely positioned so it never
-                  shifts the controls. Edits the same `size` state as the slider. */}
-              <input
-                type="number"
-                min={3}
-                max={16}
-                step={0.5}
-                value={sizeDraft ?? String(size)}
-                onFocus={() => setSizeDraft(String(size))}
-                onChange={(e) => {
-                  setSizeDraft(e.target.value);
-                  const v = Number(e.target.value);
-                  if (e.target.value !== "" && v >= 3 && v <= 16) setSize(v);
-                }}
-                onBlur={() => setSizeDraft(null)}
-                onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
-                className="size-readout"
-                aria-label="Size value"
-                style={{ position: "absolute", right: "100%", marginRight: 6, top: "50%", transform: "translateY(-50%)", width: "3.2ch", padding: 0, border: "none", outline: "none", background: "transparent", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, textAlign: "right", opacity: 0.7 }}
-              />
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
               <input
                 type="range"
