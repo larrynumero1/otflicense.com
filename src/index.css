@@ -91,7 +91,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'Svek';
   src: url('/fonts/SVEKVF.woff2') format('woff2');
@@ -203,7 +202,7 @@ html {
 .size-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 110px;
+  width: 120px;
   height: 2px;
   background: currentColor;
   border: none;
@@ -230,4 +229,134 @@ html {
 .size-slider::-moz-range-track {
   height: 2px;
   background: currentColor;
+}
+
+/* ── Typeface pages: mobile only (≤768px). Desktop styles are untouched. ── */
+@media (max-width: 768px) {
+  /* Page root spans the full viewport; content gets equal safe-area-aware insets. */
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+  .tf-page {
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    padding-top: 1.5rem !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .tf-page > * {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Nav: logo on its own row, the three buttons on one row beneath it. */
+  .tf-nav {
+    position: static !important;
+    flex-shrink: 0;
+    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: auto auto auto;
+    justify-content: space-between;
+    align-items: center;
+    row-gap: 1rem !important;
+    column-gap: 0.25rem !important;
+    padding: max(1.25rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 0.5rem max(1rem, env(safe-area-inset-left)) !important;
+  }
+  .tf-nav .nav-left {
+    display: contents !important;
+  }
+  .tf-nav .nav-logo {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    display: block;
+    height: auto !important;
+    line-height: normal !important;
+    overflow: visible !important;
+  }
+  .tf-nav .nav-logo > img:first-child {
+    height: 3rem !important;
+    width: auto !important;
+    max-width: none;
+  }
+  /* Keep the header eyes inside the viewport so nothing widens the page. */
+  .tf-nav .nav-eyes {
+    left: calc(100% + 0.6rem) !important;
+    top: 0.6rem !important;
+    height: 1.4rem !important;
+  }
+  .tf-nav .nav-text-btn {
+    min-width: 0 !important;
+    height: 34px !important;
+    padding: 0 0.3rem !important;
+    font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
+  }
+
+  /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */
+  .tf-buy-marquee {
+    position: static !important;
+    width: 100%;
+  }
+  /* Compact start height; the textarea's auto-grow drives any extra height. */
+  .tf-preview {
+    min-height: 0 !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .tf-preview-controls {
+    position: static !important;
+    flex-wrap: wrap;
+    gap: 12px 18px !important;
+    padding: 0 1rem 1rem;
+  }
+  .tf-preview-field {
+    padding: 0 1rem !important;
+  }
+  .tf-preview .size-slider {
+    width: 96px;
+  }
+  .tf-info-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+  .tf-info {
+    padding: 1.25rem !important;
+  }
+  .tf-gallery {
+    aspect-ratio: 4 / 3;
+  }
+  .tf-glyphs {
+    flex-direction: column;
+    padding: 1rem !important;
+  }
+  .tf-glyph-showcase {
+    flex: 0 0 auto !important;
+    min-height: 16rem;
+  }
+  /* The desktop paint-box padding (0.5em per side) made wide glyphs ~9rem wider
+     than the column, which widened the whole document past the viewport and left
+     an unpainted strip on the right. Keep the vertical paint room, drop the horizontal. */
+  .tf-glyph-big {
+    font-size: 9rem !important;
+    padding: 0.5em 0 !important;
+    margin: -0.5em 0 !important;
+    max-width: 100%;
+  }
+  .tf-buy > *,
+  .tf-buy .gumroad-product-embed,
+  .tf-buy iframe {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
 }
