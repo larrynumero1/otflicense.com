@@ -451,6 +451,7 @@ function DesignerCell({ d }: { d: typeof designers[0] }) {
     <div
       onMouseEnter={() => setHoverBg(PALETTE[Math.floor(Math.random() * PALETTE.length)])}
       onMouseLeave={() => setHoverBg(null)}
+      className="about-designer-cell"
       style={{
         position: "relative", aspectRatio: "2 / 1",
         background: hoverBg ?? "transparent",
@@ -459,8 +460,8 @@ function DesignerCell({ d }: { d: typeof designers[0] }) {
         padding: "0 1.25rem", fontFamily: "Arial, sans-serif", color: fg,
       }}
     >
-      <div style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
-      <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
+      <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
+      <div className="about-designer-links" style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
         <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
         <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
         <a href={`mailto:${d.email ?? "otflicense@gmail.com"}`} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
@@ -1001,14 +1002,14 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
       <div className="min-h-screen bg-white flex flex-col">
         <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", paddingTop: "5.5rem" }}>
+        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", paddingTop: "5.5rem" }}>
           {/* Left column */}
-          <div style={{ padding: "0 3rem 0 4rem" }}>
-            <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
+          <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
+            <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
               {PAGE_TEXT["ABOUT"]}
             </p>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+            <div className="about-designers-head" style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
               <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
               <select
                 value={klassFilter}
@@ -1026,7 +1027,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
         </div>
 
         {/* Designer grid — full content width, as many columns as fit */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(13rem, 1fr))", gap: "2.5rem 3rem", padding: "1.5rem 4rem 1.5rem 4rem" }}>
+        <div className="about-designer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(13rem, 1fr))", gap: "2.5rem 3rem", padding: "1.5rem 4rem 1.5rem 4rem" }}>
           {[...shownDesigners].sort((a, b) => a.name.localeCompare(b.name, "sv")).map((d) => <DesignerCell key={d.name} d={d} />)}
         </div>
         <SiteFooter />
@@ -2050,7 +2051,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   renders First sketched → Format from top to bottom. */}
               {[
                 ["Format:", "ttf, otf, woff"],
-                ["Range:", name === "Svek" ? "Regular, Italic" : variableControls ? "Light, Medium, Regular, Italic, Bold" : "Regular"],
+                ["Range:", name === "Ella"
+                  ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
+                  : name === "Svek"
+                    ? "Regular, Italic"
+                    : variableControls
+                      ? "Light, Medium, Regular, Italic, Bold"
+                      : "Regular"],
                 ["Language support:", "Latin Extended"],
                 ["Version:", "1.0"],
                 ["Last update:", "2026"],

@@ -713,3 +713,52 @@ html {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* About page — mobile only */
+@media (max-width: 768px) {
+  .about-intro {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding-top: 4.5rem !important;
+  }
+  .about-intro-col {
+    padding: 0 1.25rem !important;
+    max-width: none;
+  }
+  .about-intro-text {
+    max-width: none;
+    margin-bottom: 1.75rem !important;
+  }
+  .about-designers-head {
+    gap: 0.75rem !important;
+    margin-bottom: 0 !important;
+  }
+  .about-designers-head h2 {
+    font-size: 1.3rem !important;
+  }
+  .about-designers-head select {
+    font-size: 0.9rem !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+  .about-designer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.6rem !important;
+    padding: 0.9rem 1.25rem 1.5rem !important;
+  }
+  .about-designer-cell {
+    background: #0074ff !important;
+    color: #fff !important;
+    padding: 0 0.6rem !important;
+  }
+  .about-designer-cell a {
+    color: #fff !important;
+  }
+  .about-designer-name {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.4rem !important;
+    overflow-wrap: anywhere;
+  }
+  .about-designer-links {
+    gap: 0.9rem !important;
+    width: auto !important;
+  }
+}
