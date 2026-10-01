@@ -335,8 +335,11 @@ html {
   /* Height comes from an in-flow 4:3 spacer: the carousel inside is absolutely
      positioned, and iOS Safari collapsed the aspect-ratio box to 0px height. */
   .tf-gallery {
+    display: block !important;
+    width: 100%;
     height: auto !important;
     min-height: 0;
+    aspect-ratio: auto;
   }
   .tf-gallery::before {
     content: "";
@@ -367,4 +370,15 @@ html {
     min-width: 0 !important;
     max-width: 100% !important;
   }
+}
+
+/* TEMPORARY Size readout: hide number-input spinners. */
+.size-readout::-webkit-outer-spin-button,
+.size-readout::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.size-readout {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
