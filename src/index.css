@@ -192,6 +192,19 @@ html {
   to { transform: translateY(0); }
 }
 
+@keyframes designerMarqueeEnter {
+  from { transform: translateX(105%); }
+  to { transform: translateX(0); }
+}
+
+.tf-designer-marquee-enter {
+  animation: designerMarqueeEnter 1.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tf-designer-marquee-track {
+  animation: marquee 24s linear 1.45s infinite;
+}
+
 .intro-sequence {
   position: fixed;
   inset: 0;
@@ -206,7 +219,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: introExitLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s both;
+  animation: introExitLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.93s both;
 }
 
 .intro-sticker {
@@ -214,7 +227,7 @@ html {
   width: 90%;
   height: 90%;
   object-fit: contain;
-  animation: introStickerIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+  animation: introStickerIn 1.05s cubic-bezier(0.65, 0, 0.35, 1) 0.17s both;
 }
 
 .intro-band {
@@ -227,32 +240,28 @@ html {
 .intro-band-top {
   top: 0;
   animation:
-    introBandFromRight 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both,
-    introExitUp 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s forwards;
+    introBandFromRight 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0s both,
+    introExitUp 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.93s forwards;
 }
 
 .intro-band-bottom {
   bottom: 0;
-  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+  animation: introBandFromLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0s both;
 }
 
 .landing-enter .nav-text-btn,
 .landing-enter .nav-logo > img {
-  animation: landingPop 0.65s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: landingPop 0.75s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: 2.7s;
 }
 
-.landing-enter .nav-text-btn:nth-child(1) { animation-delay: 1.05s; }
-.landing-enter .nav-text-btn:nth-child(2) { animation-delay: 1.15s; }
-.landing-enter .nav-logo > img:first-child { animation-delay: 1.25s; }
-.landing-enter .nav-logo > .nav-eyes { animation-delay: 1.35s; }
-
 .landing-enter .cell-pop {
-  animation: landingPop 0.52s cubic-bezier(0.65, 0, 0.35, 1) both;
-  animation-delay: calc(1.05s + var(--sticker-index) * 0.05s);
+  animation: landingPop 0.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: calc(1.21s + var(--sticker-index) * 0.06s);
 }
 
 .landing-enter .shop-bottom-marquee {
-  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+  animation: introBandFromLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.21s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -264,6 +273,14 @@ html {
   .landing-enter .cell-pop,
   .landing-enter .shop-bottom-marquee {
     animation: none;
+  }
+
+  .tf-designer-marquee-enter {
+    animation: none;
+  }
+
+  .tf-designer-marquee-track {
+    animation-delay: 0s;
   }
 }
 
@@ -383,6 +400,7 @@ html {
   gap: 0.6rem;
   width: 100%;
   padding: 1.5rem 1rem 2rem;
+  margin-bottom: var(--fixed-marquee-h, 0px);
   box-sizing: border-box;
   font-family: Arial, sans-serif;
   text-align: center;
@@ -481,10 +499,14 @@ html {
     flex: none !important;
     padding: 2.5rem max(1.25rem, env(safe-area-inset-right)) 3.5rem max(1.25rem, env(safe-area-inset-left)) !important;
   }
+  /* Loose two-across composition: rows wrap in shop order, right-hand
+     stickers sit lower so it never reads as a rigid grid. */
   .shop-grid {
     display: flex !important;
-    flex-direction: column;
-    align-items: stretch !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start !important;
     row-gap: 0 !important;
   }
   .shop-row {
@@ -494,18 +516,19 @@ html {
     /* Width follows the desktop scale so relative sizes survive; the layout box
        is the real sticker size (no scale transform), padded vertically by the
        15° tilt overhang plus a gap so neighbouring stickers never touch. */
-    --w: min(80vw, calc(49vw * var(--s)));
+    --w: min(38vw, calc(24vw * var(--s)));
     width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
     align-items: center !important;
     margin-top: 0;
-    padding: calc(var(--w) * 0.1 + 1.5vw) 0;
-    transform: translateX(calc(var(--zz-x) + 4vw)) !important;
+    padding: calc(var(--w) * 0.14 + 2.5vw) 0;
+    transform: translateX(calc(var(--zz-x) * 0.5 + 1vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
-    align-self: flex-end;
-    transform: translateX(calc(var(--zz-x) - 4vw)) !important;
+    align-self: flex-start;
+    margin-top: 9vw;
+    transform: translateX(calc(var(--zz-x) * 0.5 - 1vw)) !important;
   }
   .shop-grid .cell[data-first] {
     margin-top: 0;
@@ -537,6 +560,39 @@ html {
   }
   .tf-preview .size-slider {
     width: 96px;
+  }
+  /* Larger finger-friendly thumbs; the input gets a taller hit area while the
+     visible track stays a 2px line drawn as a centred background. */
+  .size-slider,
+  .cols-slider {
+    height: 28px;
+    background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
+  }
+  .size-slider::-webkit-slider-thumb,
+  .cols-slider::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  .size-slider::-moz-range-thumb,
+  .cols-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  .size-slider::-moz-range-track,
+  .cols-slider::-moz-range-track {
+    background: transparent;
+  }
+  /* Colour dots: narrow column on the right, under the options button,
+     stacked bottom → top; absolutely placed so the slider keeps its width. */
+  .tf-preview .tf-color-dots {
+    position: absolute;
+    top: calc(1rem + 40px);
+    right: calc(1rem + 5px);
+    flex-direction: column-reverse;
+    z-index: 2;
+  }
+  .tf-preview-field {
+    padding-right: calc(1rem + 34px) !important;
   }
   .tf-info-row {
     grid-template-columns: minmax(0, 1fr) !important;
