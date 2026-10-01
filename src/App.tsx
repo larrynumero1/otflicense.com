@@ -1307,6 +1307,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
+  // TEMPORARY: in-progress text of the numeric Size readout while it's being edited.
+  const [sizeDraft, setSizeDraft] = useState<string | null>(null);
   const [font, setFont] = useState<opentype.Font | null>(null);
   // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
   // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
@@ -1566,7 +1568,27 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           {/* Size slider + colour dots, side by side and centred at the top. */}
           <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
             {/* Size */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+              {/* TEMPORARY calibration readout — absolutely positioned so it never
+                  shifts the controls. Edits the same `size` state as the slider. */}
+              <input
+                type="number"
+                min={3}
+                max={16}
+                step={0.5}
+                value={sizeDraft ?? String(size)}
+                onFocus={() => setSizeDraft(String(size))}
+                onChange={(e) => {
+                  setSizeDraft(e.target.value);
+                  const v = Number(e.target.value);
+                  if (e.target.value !== "" && v >= 3 && v <= 16) setSize(v);
+                }}
+                onBlur={() => setSizeDraft(null)}
+                onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+                className="size-readout"
+                aria-label="Size value"
+                style={{ position: "absolute", right: "100%", marginRight: 6, top: "50%", transform: "translateY(-50%)", width: "3.2ch", padding: 0, border: "none", outline: "none", background: "transparent", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, textAlign: "right", opacity: 0.7 }}
+              />
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
               <input
                 type="range"
@@ -1699,14 +1721,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
+              {/* Listed bottom-up: the container is column-reverse, so this
+                  renders First sketched → Format from top to bottom. */}
               {[
-                ["First sketched:", "2024"],
-                ["Released:", "2026"],
-                ["Update:", "2026"],
-                ["Version:", "1.0"],
-                ["Language support:", "Latin Extended"],
-                ["Range:", "Light, Medium, Regular, Italic, Bold"],
                 ["Format:", "ttf, otf, woff"],
+                ["Range:", "Light, Medium, Regular, Italic, Bold"],
+                ["Language support:", "Latin Extended"],
+                ["Version:", "1.0"],
+                ["Last update:", "2026"],
+                ["Released:", "2026"],
+                ["First sketched:", "2024"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
                   <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
