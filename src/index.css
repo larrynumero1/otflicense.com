@@ -332,8 +332,25 @@ html {
   .tf-info {
     padding: 1.25rem !important;
   }
+  /* Height comes from an in-flow 4:3 spacer: the carousel inside is absolutely
+     positioned, and iOS Safari collapsed the aspect-ratio box to 0px height. */
   .tf-gallery {
-    aspect-ratio: 4 / 3;
+    display: block !important;
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .tf-gallery::before {
+    content: "";
+    display: block;
+    padding-top: 75%;
+  }
+  /* iOS Safari: give the carousel's clipping root its own compositing layer so
+     the transformed slide track inside overflow:hidden is painted. */
+  .tf-gallery > div {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   .tf-glyphs {
     flex-direction: column;
@@ -359,4 +376,15 @@ html {
     min-width: 0 !important;
     max-width: 100% !important;
   }
+}
+
+/* TEMPORARY Size readout: hide number-input spinners. */
+.size-readout::-webkit-outer-spin-button,
+.size-readout::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.size-readout {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
