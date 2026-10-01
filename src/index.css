@@ -231,6 +231,35 @@ html {
   background: currentColor;
 }
 
+.gumroad-checkout {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.gumroad-checkout-frame {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  height: 900px;
+  border: 0;
+}
+
+.gumroad-checkout-status {
+  margin: 0;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.gumroad-checkout-status a {
+  color: inherit;
+  font-weight: bold;
+  text-underline-offset: 0.2em;
+}
+
 /* ── Typeface pages: mobile only (≤768px). Desktop styles are untouched. ── */
 @media (max-width: 768px) {
   /* Page root spans the full viewport; content gets equal safe-area-aware insets. */
@@ -302,37 +331,44 @@ html {
     font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
   }
 
-  /* Sticker page: plain 2-column grid in alphabetical order, page scrolls. */
+  /* Sticker page: loose LEFT → RIGHT zig-zag in shop order, page scrolls.
+     Each sticker keeps its desktop scale (--s) and rests at its hover tilt. */
   .shop-root {
     height: auto !important;
     min-height: 100vh;
   }
   .shop-stage {
     flex: none !important;
-    padding: 1.5rem max(1rem, env(safe-area-inset-right)) 2rem max(1rem, env(safe-area-inset-left)) !important;
+    padding: 2.5rem max(1.25rem, env(safe-area-inset-right)) 3.5rem max(1.25rem, env(safe-area-inset-left)) !important;
   }
   .shop-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem 1rem !important;
-    align-items: center;
-    justify-items: center;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch !important;
+    row-gap: 0 !important;
   }
   .shop-row {
     display: contents !important;
   }
   .shop-grid .cell {
-    width: 100% !important;
-    transform: none !important;
+    width: 50% !important;
+    align-self: flex-start;
     justify-content: center;
     align-items: center !important;
+    /* Pull each sticker up into the previous one's band. */
+    margin-top: -9vw;
+    transform: translateX(calc(var(--zz-x) + 4vw)) !important;
+  }
+  .shop-grid .cell[data-side="right"] {
+    align-self: flex-end;
+    transform: translateX(calc(var(--zz-x) - 4vw)) !important;
+  }
+  .shop-grid .cell[data-first] {
+    margin-top: 0;
   }
   .shop-grid .cell-inner {
-    width: 88% !important;
-    transform: none !important;
-  }
-  .shop-grid .cell-badge {
-    width: 21.505% !important;
+    width: 66% !important;
+    transform: rotate(var(--hover-rot)) scale(var(--s)) !important;
   }
 
   /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */
@@ -364,6 +400,18 @@ html {
   }
   .tf-info {
     padding: 1.25rem !important;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Wide/variable letterforms can produce single words wider than the column;
+     let them break inside the padding box instead of running past the edge. */
+  .tf-about-text {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    hyphens: auto;
   }
   /* Height comes from an in-flow 4:3 spacer: the carousel inside is absolutely
      positioned, and iOS Safari collapsed the aspect-ratio box to 0px height. */
@@ -395,6 +443,20 @@ html {
     flex-direction: column;
     padding: 1rem !important;
   }
+  /* Variable axes share one row, each label + slider pair taking equal width. */
+  .tf-glyph-controls {
+    flex-wrap: nowrap !important;
+    gap: 1rem !important;
+  }
+  .tf-glyph-controls > * {
+    flex: 1 1 0 !important;
+    min-width: 0;
+  }
+  .tf-glyph-controls .size-slider {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
   .tf-glyph-showcase {
     flex: 0 0 auto !important;
     min-height: 16rem;
@@ -414,7 +476,7 @@ html {
     max-width: 100%;
   }
   .tf-buy > *,
-  .tf-buy .gumroad-product-embed,
+  .tf-buy .gumroad-checkout,
   .tf-buy iframe {
     width: 100% !important;
     min-width: 0 !important;

@@ -305,6 +305,25 @@ const shopTypefaces = SHOP_TYPEFACE_NAMES.map(
   (name) => typefaces.find((face) => face.name === name)!,
 );
 
+const GUMROAD_PRODUCT_IDS: Record<string, string> = {
+  BIP: "triuuf",
+  Brus: "kzwbfn",
+  Cheiron: "eagsbq",
+  Crypto: "jgntpu",
+  Dukat: "pfvilv",
+  Ella: "iwggr",
+  Facit: "gjeoz",
+  Galanite: "owetjk",
+  Kuriren: "pynjvq",
+  "Last Call": "rlvhn",
+  "LCD Über": "gxuwda",
+  Liljan: "yzcepd",
+  Mormor: "garhny",
+  Sonja: "stlzzs",
+  Svek: "goowyt",
+  XOXO: "jcwvkd",
+};
+
 const VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Cheiron", "Ella", "Last Call"]);
 
 const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
@@ -319,7 +338,7 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
   Kuriren: { x: -4, y: -28, rotation: 2 },
   "Last Call": { x: 100, y: 22, rotation: -5 },
   // Slot values kept in place when the stickers were re-alphabetised.
-  "LCD Über": { x: 150, y: -10, rotation: 6 },
+  "LCD Über": { x: 170, y: -10, rotation: 6 },
   Liljan: { x: -104, y: 20, rotation: -4 },
   Mormor: { x: -52, y: -24, rotation: 6 },
   Sonja: { x: -2, y: 28, rotation: -2 },
@@ -441,8 +460,9 @@ function edgeToStyle(edge: Edge, pct: number): React.CSSProperties {
   return { right: half, top: `${pct}%`, transform: "translate(0, -50%)" };
 }
 
-function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }: {
+function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, index = 0 }: {
   face: typeof typefaces[0];
+  index?: number;
   width: string;
   onNavigate: (p: Page) => void;
   nudgeX?: number;
@@ -458,7 +478,10 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
   return (
     <div
       className="cell"
-      style={{ width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 }}
+      // Mobile zig-zag hooks: side alternates by order, with a small per-sticker x jitter.
+      data-side={index % 2 === 0 ? "left" : "right"}
+      data-first={index === 0 ? "" : undefined}
+      style={{ "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
         onMouseEnter={() => setHovered(true)}
@@ -476,7 +499,10 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
           transformOrigin: "center",
           position: "relative",
           zIndex: hovered ? 1 : 0,
-        }}
+          // Read by the mobile stylesheet: desktop scale + hover tilt as resting pose.
+          "--s": s,
+          "--hover-rot": `${hoverRotation}deg`,
+        } as React.CSSProperties}
       >
         <img
           src={face.img}
@@ -732,7 +758,7 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
       onMouseEnter={() => {
         setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -778,22 +804,92 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   );
 }
 
-function GumroadEmbed({ url }: { url: string }) {
-  // Re-inject Gumroad's embed script on every mount so it re-scans and renders
-  // the freshly-rendered embed div after client-side navigation.
+function gumroadProductUrl(url: string) {
+  const productUrl = new URL(url);
+  productUrl.searchParams.delete("embed");
+  productUrl.searchParams.delete("wanted");
+  return productUrl.toString();
+}
+
+function gumroadCheckoutUrl(url: string) {
+  const checkoutUrl = new URL(gumroadProductUrl(url));
+  checkoutUrl.searchParams.set("wanted", "true");
+  return checkoutUrl.toString();
+}
+
+function gumroadEmbeddedCheckoutUrl(productId: string) {
+  const checkoutUrl = new URL("https://gumroad.com/checkout");
+  checkoutUrl.searchParams.set("embed", "true");
+  checkoutUrl.searchParams.set("wanted", "true");
+  checkoutUrl.searchParams.set("product", productId);
+  checkoutUrl.searchParams.set("quantity", "1");
+  return checkoutUrl.toString();
+}
+
+function GumroadInlineCheckout({ url, productId }: { url: string; productId?: string }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const checkoutUrl = gumroadCheckoutUrl(url);
+  const embeddedCheckoutUrl = productId ? gumroadEmbeddedCheckoutUrl(productId) : null;
+
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://gumroad.com/js/gumroad-embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
+    setStatus("loading");
+    if (!embeddedCheckoutUrl) {
+      setStatus("error");
+      return;
+    }
+
+    const receiveHeight = (event: MessageEvent) => {
+      const iframe = iframeRef.current;
+      if (!iframe || event.source !== iframe.contentWindow) return;
+
+      try {
+        const origin = new URL(event.origin);
+        if (origin.hostname !== "gumroad.com" && !origin.hostname.endsWith(".gumroad.com")) return;
+      } catch {
+        return;
+      }
+
+      if (
+        typeof event.data === "object" &&
+        event.data !== null &&
+        event.data.type === "height" &&
+        typeof event.data.height === "number"
+      ) {
+        iframe.style.height = `${Math.max(640, event.data.height)}px`;
+      }
     };
-  }, [url]);
+
+    window.addEventListener("message", receiveHeight);
+    return () => window.removeEventListener("message", receiveHeight);
+  }, [embeddedCheckoutUrl]);
 
   return (
-    <div className="gumroad-product-embed">
-      <a href={url}>Loading...</a>
+    <div className="gumroad-checkout">
+      {embeddedCheckoutUrl && (
+        <iframe
+          ref={iframeRef}
+          className="gumroad-checkout-frame"
+          src={embeddedCheckoutUrl}
+          title="Gumroad checkout"
+          onLoad={() => setStatus("ready")}
+          onError={() => setStatus("error")}
+          allow="payment"
+        />
+      )}
+      {status === "loading" && (
+        <p className="gumroad-checkout-status" role="status">
+          Loading checkout...
+        </p>
+      )}
+      {status === "error" && (
+        <p className="gumroad-checkout-status" role="alert">
+          Checkout could not load.{" "}
+          <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+            Continue to Gumroad
+          </a>
+        </p>
+      )}
     </div>
   );
 }
@@ -977,7 +1073,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
           Preview panel's controls. */}
       <div className="tf-glyph-showcase" style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem", color: panelText, transition: "color 0.25s ease" }}>
         {controls && (
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
+          <div className="tf-glyph-controls" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
             {controls}
           </div>
         )}
@@ -1134,10 +1230,12 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
   // Empty: keep the reserved field. Single image: no slideshow.
   if (count <= 1) {
     return (
+      <>
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
         {images[0] && <img src={images[0]} alt="" onClick={() => setLightbox(images[0])} style={imgStyle} />}
-        {lightboxEl && createPortal(lightboxEl, document.body)}
       </div>
+      {lightboxEl && createPortal(lightboxEl, document.body)}
+      </>
     );
   }
 
@@ -1159,6 +1257,7 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
   };
 
   return (
+    <>
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
       <div
         onTransitionEnd={(e) => e.target === e.currentTarget && handleTransitionEnd()}
@@ -1178,8 +1277,9 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
       </div>
       <button onClick={() => go(-1)} style={{ ...arrowStyle, left: 12 }} aria-label="Previous">‹</button>
       <button onClick={() => go(1)} style={{ ...arrowStyle, right: 12 }} aria-label="Next">›</button>
-      {lightboxEl && createPortal(lightboxEl, document.body)}
     </div>
+    {lightboxEl && createPortal(lightboxEl, document.body)}
+    </>
   );
 }
 
@@ -1753,7 +1853,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+            <p className="tf-about-text" style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
               {applyCase(`${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
@@ -1791,7 +1891,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
         {/* Gumroad purchase widget */}
         <div className="tf-buy" style={{ marginTop: GAP, display: "flex", justifyContent: "center", maxWidth: "100%" }}>
-          <GumroadEmbed url={face.gumroad ?? "https://otflicense.gumroad.com"} />
+          <GumroadInlineCheckout
+            key={face.gumroad}
+            url={face.gumroad ?? "https://otflicense.gumroad.com"}
+            productId={GUMROAD_PRODUCT_IDS[face.name]}
+          />
         </div>
       </div>
     </div>
@@ -1849,7 +1953,7 @@ function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forwa
 
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
       style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: "pointer", transition: "background 0.3s ease" }}
     >
       <div
@@ -1860,24 +1964,15 @@ function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forwa
   );
 }
 
-const BUNDLE_URL = "https://otflicense.gumroad.com/l/megabundlepack?wanted=true";
+const BUNDLE_URL = "https://otflicense.gumroad.com/l/megabundlepack";
+const BUNDLE_PRODUCT_ID = "hrcidq";
 
 function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://gumroad.com/js/gumroad-embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
-
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
       <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
-        <div className="gumroad-product-embed" style={{ width: "100%", maxWidth: 740 }}>
-          <a href={BUNDLE_URL}>Loading…</a>
-        </div>
+        <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} />
       </div>
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
         <MarqueeBand direction="reverse" onNavigate={onNavigate} />
@@ -2096,7 +2191,7 @@ function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNaviga
           e.stopPropagation();
           onClose();
           if (onNavigate) onNavigate({ id: "bundle" });
-          else window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer");
+          else window.location.assign("/bundle");
         }}
         style={{
           width: "min(80vw, 420px)",
@@ -2229,18 +2324,18 @@ export default function App() {
       <div className="shop-stage" style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
         <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
-            {shopTypefaces.slice(0, 6).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+            {shopTypefaces.slice(0, 6).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap, marginTop: rowGap * 2 }}>
-            {shopTypefaces.slice(6, 11).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+            {shopTypefaces.slice(6, 11).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap * 2 }}>
-            {shopTypefaces.slice(11).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+            {shopTypefaces.slice(11).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
         </div>
