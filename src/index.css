@@ -235,6 +235,7 @@ html {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  background: #fff;
 }
 
 .gumroad-checkout-frame {
@@ -242,8 +243,11 @@ html {
   width: 100% !important;
   max-width: 100%;
   min-width: 0;
-  height: 900px;
+  height: 1080px;
   border: 0;
+  overflow: hidden;
+  background: #fff;
+  color-scheme: light;
 }
 
 .gumroad-checkout-status {
@@ -258,6 +262,30 @@ html {
   color: inherit;
   font-weight: bold;
   text-underline-offset: 0.2em;
+}
+
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1.5rem 1rem 2rem;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.55rem;
+  line-height: 1.2;
+}
+
+.site-footer img {
+  display: block;
+  width: 2.75rem;
+  height: auto;
 }
 
 /* ── Typeface pages: mobile only (≤768px). Desktop styles are untouched. ── */
@@ -351,12 +379,16 @@ html {
     display: contents !important;
   }
   .shop-grid .cell {
-    width: 50% !important;
+    /* Width follows the desktop scale so relative sizes survive; the layout box
+       is the real sticker size (no scale transform), padded vertically by the
+       15° tilt overhang plus a gap so neighbouring stickers never touch. */
+    --w: min(62vw, calc(37vw * var(--s)));
+    width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
     align-items: center !important;
-    /* Pull each sticker up into the previous one's band. */
-    margin-top: -9vw;
+    margin-top: 0;
+    padding: calc(var(--w) * 0.14 + 2vw) 0;
     transform: translateX(calc(var(--zz-x) + 4vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
@@ -367,8 +399,8 @@ html {
     margin-top: 0;
   }
   .shop-grid .cell-inner {
-    width: 66% !important;
-    transform: rotate(var(--hover-rot)) scale(var(--s)) !important;
+    width: 100% !important;
+    transform: rotate(var(--hover-rot)) !important;
   }
 
   /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */
@@ -457,6 +489,22 @@ html {
     width: auto;
     min-width: 0;
   }
+  /* Shared single-control row: slider takes the remaining width. */
+  .tf-mobile-control-active > * {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .tf-mobile-control .size-slider {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+  }
+  .tf-glyph-controls .tf-mobile-control > * {
+    flex: initial !important;
+  }
+  .tf-glyph-controls .tf-mobile-control > .tf-mobile-control-active {
+    flex: 1 1 0 !important;
+  }
   .tf-glyph-showcase {
     flex: 0 0 auto !important;
     min-height: 16rem;
@@ -470,7 +518,7 @@ html {
      than the column, which widened the whole document past the viewport and left
      an unpainted strip on the right. Keep the vertical paint room, drop the horizontal. */
   .tf-glyph-big {
-    font-size: 9rem !important;
+    font-size: var(--glyph-mobile-size, 9rem) !important;
     padding: 0.5em 0 !important;
     margin: -0.5em 0 !important;
     max-width: 100%;
@@ -481,6 +529,9 @@ html {
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
+  }
+  .tf-buy .gumroad-checkout-frame {
+    height: 1400px;
   }
 }
 

@@ -389,6 +389,25 @@ const NOTCH_MASK =
   "radial-gradient(circle at 50% 0, transparent 13px, #000 13.5px) top / 100% 51% no-repeat, " +
   "radial-gradient(circle at 50% 100%, transparent 13px, #000 13.5px) bottom / 100% 51% no-repeat";
 
+function GlobeIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5" />
+      <circle cx="12" cy="12" r="4.25" />
+      <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
 function DesignerCell({ d }: { d: typeof designers[0] }) {
   // One random palette colour picked on enter, held stable for the whole hover.
   const [hoverBg, setHoverBg] = useState<string | null>(null);
@@ -408,9 +427,9 @@ function DesignerCell({ d }: { d: typeof designers[0] }) {
       }}
     >
       <div style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
-      <div style={{ display: "flex", justifyContent: "space-between", width: "70%" }}>
-        <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={link}>Website</a>
-        <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={link}>Socials</a>
+      <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
+        <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
+        <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
       </div>
     </div>
   );
@@ -481,7 +500,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
       // Mobile zig-zag hooks: side alternates by order, with a small per-sticker x jitter.
       data-side={index % 2 === 0 ? "left" : "right"}
       data-first={index === 0 ? "" : undefined}
-      style={{ "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
+      style={{ "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
         onMouseEnter={() => setHovered(true)}
@@ -872,6 +891,7 @@ function GumroadInlineCheckout({ url, productId }: { url: string; productId?: st
           className="gumroad-checkout-frame"
           src={embeddedCheckoutUrl}
           title="Gumroad checkout"
+          scrolling="no"
           onLoad={() => setStatus("ready")}
           onError={() => setStatus("error")}
           allow="payment"
@@ -891,6 +911,19 @@ function GumroadInlineCheckout({ url, productId }: { url: string; productId?: st
         </p>
       )}
     </div>
+  );
+}
+
+function SiteFooter({ color = "#000" }: { color?: string }) {
+  return (
+    <footer className="site-footer" style={{ color }}>
+      <p>© 2026 OTF License. All rights reserved.</p>
+      <img
+        src={eyesSvg}
+        alt="OTF License"
+        style={{ filter: color === "#fff" ? "invert(1)" : undefined }}
+      />
+    </footer>
   );
 }
 
@@ -931,6 +964,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(13rem, 1fr))", gap: "2.5rem 3rem", padding: "1.5rem 4rem 6rem 4rem" }}>
           {[...shownDesigners].sort((a, b) => a.name.localeCompare(b.name, "sv")).map((d) => <DesignerCell key={d.name} d={d} />)}
         </div>
+        <SiteFooter />
       </div>
     );
   }
@@ -1016,7 +1050,7 @@ const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode }) {
+function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1082,7 +1116,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
               (offset by an equal negative margin) so the element's paint box
               covers ink beyond the line box — outlines outside it were leaving
               fragments behind on repaint. Layout size is unchanged. */}
-          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" }}>{hovered}</span>
+          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
             <div>Unicode: {glyphUnicode}</div>
@@ -1460,6 +1494,17 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const nativeAxes = NATIVE_VF[name] ?? null;
   const isNative = nativeAxes !== null;
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
+  // Mobile only: ONE active control shared by Preview and Glyphs. It only picks
+  // which control is visible — values live in the states above and never reset.
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [activeControl, setActiveControl] = useState("size");
+  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -1599,9 +1644,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Variable-font controls shared between the Preview panel and the Glyphs
   // panel so both interfaces read and write the exact same axis state. Null for
   // non-variable typefaces (Preview falls back to a "Regular" label).
-  const variableControls = isNative ? (
-    <>
-      {nativeAxes!.map((axis) =>
+  const renderAxis = (axis: VFAxis) =>
         axis.onOff ? (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
@@ -1655,10 +1698,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               className="size-slider"
             />
           </div>
-        )
-      )}
-    </>
-  ) : weightAxis ? (
+        );
+  const weightControl = weightAxis ? (
     <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
       <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
       <input
@@ -1672,6 +1713,65 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       />
     </div>
   ) : null;
+  const variableControls = isNative ? <>{nativeAxes!.map(renderAxis)}</> : weightControl;
+
+  const sizeControl = (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
+      <input type="range" min={3} max={16} step={0.5} value={size} onChange={(e) => setSize(Number(e.target.value))} className="size-slider" />
+    </div>
+  );
+  const spaceControl = (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Space</span>
+      <input type="range" min={0} max={0.2} step={0.01} value={spacing} onChange={(e) => setSpacing(Number(e.target.value))} className="size-slider" />
+    </div>
+  );
+
+  // Every control this typeface actually has — Size, Space, then its real axes.
+  const mobileOptions: { key: string; label: string; node: React.ReactNode }[] = [
+    { key: "size", label: "Size", node: sizeControl },
+    { key: "space", label: "Space", node: spaceControl },
+    ...(isNative
+      ? nativeAxes!.map((a) => ({ key: a.tag, label: a.label, node: renderAxis(a) }))
+      : weightControl
+      ? [{ key: "wght", label: "Weight", node: weightControl }]
+      : []),
+  ];
+  const activeOption = mobileOptions.find((o) => o.key === activeControl) ?? mobileOptions[0];
+
+  // Mobile compact control row: [active control] [options button + menu].
+  const mobileControlRow = (where: "preview" | "glyphs") => (
+    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
+      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+      <button
+        type="button"
+        aria-label="Choose control"
+        aria-haspopup="menu"
+        aria-expanded={controlMenu === where}
+        onClick={() => setControlMenu((m) => (m === where ? null : where))}
+        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: "1.5px solid rgba(128,128,128,0.6)", background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="2.5" cy="7" r="1.4" fill="currentColor" /><circle cx="7" cy="7" r="1.4" fill="currentColor" /><circle cx="11.5" cy="7" r="1.4" fill="currentColor" /></svg>
+      </button>
+      {controlMenu === where && (
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+          {mobileOptions.map((o) => (
+            <button
+              key={o.key}
+              type="button"
+              role="menuitemradio"
+              aria-checked={o.key === activeOption.key}
+              onClick={() => { setActiveControl(o.key); setControlMenu(null); }}
+              style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: o.key === activeOption.key ? panelText : "transparent", color: o.key === activeOption.key ? panelBg : panelText, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", cursor: "pointer" }}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   // Static-typeface fallback label, shared by Preview and Glyphs so both show
   // "Regular" in the same control-area position.
@@ -1703,8 +1803,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
           {/* Size slider + colour dots, side by side and centred at the top. */}
           <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
+            {isMobile && mobileControlRow("preview")}
             {/* Size */}
-            <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            {!isMobile && <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
               {/* TEMPORARY calibration readout — absolutely positioned so it never
                   shifts the controls. Edits the same `size` state as the slider. */}
               <input
@@ -1735,9 +1836,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
-            </div>
+            </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Space</span>
               <input
                 type="range"
@@ -1748,7 +1849,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSpacing(Number(e.target.value))}
                 className="size-slider"
               />
-            </div>
+            </div>}
             <div style={{ display: "flex", gap: 10 }}>
               {([
                 { m: "color" as Mode, c: face.bg },
@@ -1774,8 +1875,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               ))}
             </div>
             {/* Variable-font controls — native fonts expose their configured axes,
-                SVG variable fonts keep the wght slider, static fonts show "Regular". */}
-            {variableControls ?? regularLabel}
+                SVG variable fonts keep the wght slider; static fonts show no label. */}
+            {!isMobile && variableControls}
           </div>
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
@@ -1861,7 +1962,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   renders First sketched → Format from top to bottom. */}
               {[
                 ["Format:", "ttf, otf, woff"],
-                ["Range:", "Light, Medium, Regular, Italic, Bold"],
+                ["Range:", name === "Svek" ? "Regular, Italic" : variableControls ? "Light, Medium, Regular, Italic, Bold" : "Regular"],
                 ["Language support:", "Latin Extended"],
                 ["Version:", "1.0"],
                 ["Last update:", "2026"],
@@ -1886,7 +1987,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} controls={variableControls ?? regularLabel} />
+          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
+            controls={isMobile ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.75rem", width: "100%" }}>
+                {/* "Regular" — future weight/style preset placeholder (variable) or static style label. */}
+                {regularLabel}
+                {mobileControlRow("glyphs")}
+              </div>
+            ) : variableControls ?? regularLabel}
+            mobileGlyphSize={`${Math.min(12, Math.max(5, (size / (face.mobilePreviewSize ?? size)) * 9)).toFixed(2)}rem`}
+          />
         </div>
 
         {/* Gumroad purchase widget */}
@@ -1897,6 +2007,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             productId={GUMROAD_PRODUCT_IDS[face.name]}
           />
         </div>
+        <SiteFooter color={pageText} />
       </div>
     </div>
   );
@@ -1971,8 +2082,9 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
       <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
         <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} />
+        <SiteFooter />
       </div>
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
         <MarqueeBand direction="reverse" onNavigate={onNavigate} />
@@ -2114,6 +2226,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
           />
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }
