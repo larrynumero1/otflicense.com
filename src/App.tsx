@@ -233,13 +233,13 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 const typefaces = [
   // — top row: stay —
   { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5 },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 6.5 },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
   { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5 },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
   { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
   { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
@@ -247,9 +247,9 @@ const typefaces = [
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
   { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 5 },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
@@ -463,6 +463,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        className="cell-inner"
         onClick={() => onNavigate({ id: "typeface", name: face.name })}
         style={{
           width: "100%",
@@ -485,6 +486,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
         {VARIABLE_FONT_STICKERS.has(face.name) && (
           <img
             src={variableFontSticker}
+            className="cell-badge"
             alt=""
             aria-hidden="true"
             style={{
@@ -596,7 +598,7 @@ function NavTextButton({ label, width, onClick, color = "#000" }: { label: strin
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <nav
-      className={`sticky top-0 z-50 ${className ?? ""}`}
+      className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
       style={{
         position: "sticky",
         background: bg,
@@ -1408,7 +1410,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Type the typeface name into the preview window on entry. Faces marked
   // "upperInitial" default to CAPS but stay freely editable to either case.
   useEffect(() => {
-    const seed = face?.casing === "upperInitial" ? name.toUpperCase() : name;
+    const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? name.toUpperCase() : name;
     let i = 0;
     setTop("");
     const id = setInterval(() => {
@@ -1562,7 +1564,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
-      <NavBar className="tf-nav" onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
@@ -2186,24 +2188,24 @@ export default function App() {
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className="shop-root" style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
-      <div style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
+      <div className="shop-stage" style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+        <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
             {shopTypefaces.slice(0, 6).map((face) => (
               <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
             ))}
           </div>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap, marginTop: rowGap * 2 }}>
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap, marginTop: rowGap * 2 }}>
             {shopTypefaces.slice(6, 11).map((face) => (
               <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
             ))}
           </div>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap * 2 }}>
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap * 2 }}>
             {shopTypefaces.slice(11).map((face) => (
               <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
             ))}
@@ -2252,7 +2254,7 @@ export default function App() {
             dangerouslySetInnerHTML={{
               __html: transitionSvgRaw
                 .replace(/#00ab53/gi, transColor)
-                .replace("<svg ", '<svg preserveAspectRatio="none" style="width:100%;height:100%;display:block" '),
+                .replace("<svg ", `<svg preserveAspectRatio="${window.innerWidth <= 768 ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
             }}
           />
         </div>

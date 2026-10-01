@@ -302,6 +302,39 @@ html {
     font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
   }
 
+  /* Sticker page: plain 2-column grid in alphabetical order, page scrolls. */
+  .shop-root {
+    height: auto !important;
+    min-height: 100vh;
+  }
+  .shop-stage {
+    flex: none !important;
+    padding: 1.5rem max(1rem, env(safe-area-inset-right)) 2rem max(1rem, env(safe-area-inset-left)) !important;
+  }
+  .shop-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem !important;
+    align-items: center;
+    justify-items: center;
+  }
+  .shop-row {
+    display: contents !important;
+  }
+  .shop-grid .cell {
+    width: 100% !important;
+    transform: none !important;
+    justify-content: center;
+    align-items: center !important;
+  }
+  .shop-grid .cell-inner {
+    width: 88% !important;
+    transform: none !important;
+  }
+  .shop-grid .cell-badge {
+    width: 21.505% !important;
+  }
+
   /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */
   .tf-buy-marquee {
     position: static !important;
