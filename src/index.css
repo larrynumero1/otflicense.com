@@ -155,6 +155,118 @@ html {
   50% { opacity: 0.15; }
 }
 
+/* Automatic intro → foundry choreography. The symmetric curve gives the
+   requested slow start, fast middle and soft landing. */
+@keyframes introStickerIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes introBandFromRight {
+  from { transform: translateX(105%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes introBandFromLeft {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes introExitLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-110vw); }
+}
+
+@keyframes introExitUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-110%); }
+}
+
+@keyframes landingPop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes landingMarqueeUp {
+  from { transform: translateY(110%); }
+  to { transform: translateY(0); }
+}
+
+.intro-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.intro-sticker-shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: introExitLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s both;
+}
+
+.intro-sticker {
+  display: block;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  animation: introStickerIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+}
+
+.intro-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.intro-band-top {
+  top: 0;
+  animation:
+    introBandFromRight 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both,
+    introExitUp 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s forwards;
+}
+
+.intro-band-bottom {
+  bottom: 0;
+  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+}
+
+.landing-enter .nav-text-btn,
+.landing-enter .nav-logo > img {
+  animation: landingPop 0.65s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.landing-enter .nav-text-btn:nth-child(1) { animation-delay: 1.05s; }
+.landing-enter .nav-text-btn:nth-child(2) { animation-delay: 1.15s; }
+.landing-enter .nav-logo > img:first-child { animation-delay: 1.25s; }
+.landing-enter .nav-logo > .nav-eyes { animation-delay: 1.35s; }
+
+.landing-enter .cell-pop {
+  animation: landingPop 0.52s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: calc(1.05s + var(--sticker-index) * 0.05s);
+}
+
+.landing-enter .shop-bottom-marquee {
+  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-sticker-shell,
+  .intro-sticker,
+  .intro-band,
+  .landing-enter .nav-text-btn,
+  .landing-enter .nav-logo > img,
+  .landing-enter .cell-pop,
+  .landing-enter .shop-bottom-marquee {
+    animation: none;
+  }
+}
+
 .cell {
   transition: width 0.2s ease;
 }
@@ -382,13 +494,13 @@ html {
     /* Width follows the desktop scale so relative sizes survive; the layout box
        is the real sticker size (no scale transform), padded vertically by the
        15° tilt overhang plus a gap so neighbouring stickers never touch. */
-    --w: min(62vw, calc(37vw * var(--s)));
+    --w: min(80vw, calc(49vw * var(--s)));
     width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
     align-items: center !important;
     margin-top: 0;
-    padding: calc(var(--w) * 0.14 + 2vw) 0;
+    padding: calc(var(--w) * 0.1 + 1.5vw) 0;
     transform: translateX(calc(var(--zz-x) + 4vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
@@ -400,7 +512,7 @@ html {
   }
   .shop-grid .cell-inner {
     width: 100% !important;
-    transform: rotate(var(--hover-rot)) !important;
+    transform: rotate(var(--zz-rot, var(--hover-rot))) !important;
   }
 
   /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */

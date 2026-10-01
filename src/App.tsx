@@ -168,7 +168,6 @@ import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 import eyesSvg from "./imports/eyes.svg";
 import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import enterButtonSvg from "./imports/enter-button.svg";
 import variableFontSticker from "./imports/ChatGPT_Image_Sep_30__2026__08_16_47_PM__1_.png";
 
 type Page =
@@ -373,6 +372,8 @@ const designers = typefaces.map((t) => {
     textColor: t.fg,
     site: `${handle}.se`,
     social: handle,
+    // Per-designer address goes here once it exists; falls back to the foundry contact.
+    email: undefined as string | undefined,
   };
 });
 
@@ -408,6 +409,15 @@ function InstagramIcon() {
   );
 }
 
+function MailIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="2.75" y="5.25" width="18.5" height="13.5" rx="1.5" />
+      <path d="M3.25 6l8.75 7 8.75-7" />
+    </svg>
+  );
+}
+
 function DesignerCell({ d }: { d: typeof designers[0] }) {
   // One random palette colour picked on enter, held stable for the whole hover.
   const [hoverBg, setHoverBg] = useState<string | null>(null);
@@ -430,6 +440,7 @@ function DesignerCell({ d }: { d: typeof designers[0] }) {
       <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
         <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
         <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
+        <a href={`mailto:${d.email ?? "otflicense@gmail.com"}`} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
       </div>
     </div>
   );
@@ -500,51 +511,56 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
       // Mobile zig-zag hooks: side alternates by order, with a small per-sticker x jitter.
       data-side={index % 2 === 0 ? "left" : "right"}
       data-first={index === 0 ? "" : undefined}
-      style={{ "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
+      style={{ "--zz-rot": `${[-6, 9, 2, -11, -1, 4, 12, -4, 7, -9, 0, 11, -3, -12, 5, 8][index % 16]}deg`, "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="cell-inner"
-        onClick={() => onNavigate({ id: "typeface", name: face.name })}
-        style={{
-          width: "100%",
-          cursor: "pointer",
-          pointerEvents: "auto",
-          transform: hovered
-            ? `rotate(${hoverRotation}deg) scale(${s})`
-            : `rotate(${rotation}deg) scale(${s})`,
-          transition: "none",
-          transformOrigin: "center",
-          position: "relative",
-          zIndex: hovered ? 1 : 0,
-          // Read by the mobile stylesheet: desktop scale + hover tilt as resting pose.
-          "--s": s,
-          "--hover-rot": `${hoverRotation}deg`,
-        } as React.CSSProperties}
+        className="cell-pop"
+        style={{ width: "100%", transformOrigin: "center", "--sticker-index": index } as React.CSSProperties}
       >
-        <img
-          src={face.img}
-          alt={face.name}
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
-        {VARIABLE_FONT_STICKERS.has(face.name) && (
+        <div
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="cell-inner"
+          onClick={() => onNavigate({ id: "typeface", name: face.name })}
+          style={{
+            width: "100%",
+            cursor: "pointer",
+            pointerEvents: "auto",
+            transform: hovered
+              ? `rotate(${hoverRotation}deg) scale(${s})`
+              : `rotate(${rotation}deg) scale(${s})`,
+            transition: "none",
+            transformOrigin: "center",
+            position: "relative",
+            zIndex: hovered ? 1 : 0,
+            // Read by the mobile stylesheet: desktop scale + hover tilt as resting pose.
+            "--s": s,
+            "--hover-rot": `${hoverRotation}deg`,
+          } as React.CSSProperties}
+        >
           <img
-            src={variableFontSticker}
-            className="cell-badge"
-            alt=""
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              top: "-1%",
-              right: "-1%",
-              width: `${21.505 / s}%`,
-              height: "auto",
-              display: "block",
-              pointerEvents: "none",
-            }}
+            src={face.img}
+            alt={face.name}
+            style={{ width: "100%", height: "auto", display: "block" }}
           />
-        )}
+          {VARIABLE_FONT_STICKERS.has(face.name) && (
+            <img
+              src={variableFontSticker}
+              className="cell-badge"
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: "-1%",
+                right: "-1%",
+                width: `${21.505 / s}%`,
+                height: "auto",
+                display: "block",
+                pointerEvents: "none",
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1050,7 +1066,7 @@ const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string }) {
+function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1116,11 +1132,12 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
               (offset by an equal negative margin) so the element's paint box
               covers ink beyond the line box — outlines outside it were leaving
               fragments behind on repaint. Layout size is unchanged. */}
-          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
+          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
             <div>Unicode: {glyphUnicode}</div>
           </div>
+          {sizeDebug}
         </div>
       </div>
 
@@ -1505,6 +1522,15 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   }, []);
   const [activeControl, setActiveControl] = useState("size");
   const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | null>(null);
+  // Mobile Glyphs has its own control picker (axes only — no Size/Space).
+  const [glyphControl, setGlyphControl] = useState("wght");
+  // TEMPORARY calibration values (rem) — desktop and mobile tuned independently.
+  const [aboutTextSizeDesktop, setAboutTextSizeDesktop] = useState(0.95);
+  const [aboutTextSizeMobile, setAboutTextSizeMobile] = useState(0.95);
+  const [glyphShowcaseSizeDesktop, setGlyphShowcaseSizeDesktop] = useState(() =>
+    Math.round(Math.min(18, Math.max(7, (window.innerWidth * 0.18) / 16)) * 4) / 4
+  );
+  const [glyphShowcaseSizeMobile, setGlyphShowcaseSizeMobile] = useState(9);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -1738,10 +1764,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       ? [{ key: "wght", label: "Weight", node: weightControl }]
       : []),
   ];
-  const activeOption = mobileOptions.find((o) => o.key === activeControl) ?? mobileOptions[0];
+  // Mobile Glyphs: only the real sliders (Svek's on/off italic is rendered as its toggle instead).
+  const glyphOptions = mobileOptions.filter((o) => o.key !== "size" && o.key !== "space" && !nativeAxes?.find((a) => a.tag === o.key)?.onOff);
+  const glyphToggleAxes = nativeAxes?.filter((a) => a.onOff) ?? [];
 
   // Mobile compact control row: [active control] [options button + menu].
-  const mobileControlRow = (where: "preview" | "glyphs") => (
+  const mobileControlRow = (
+    where: "preview" | "glyphs",
+    options = mobileOptions,
+    activeKey = activeControl,
+    setActiveKey: (k: string) => void = setActiveControl,
+  ) => {
+    const activeOption = options.find((o) => o.key === activeKey) ?? options[0];
+    return (
     <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
       <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
       <button
@@ -1752,17 +1787,18 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         onClick={() => setControlMenu((m) => (m === where ? null : where))}
         style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: "1.5px solid rgba(128,128,128,0.6)", background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="2.5" cy="7" r="1.4" fill="currentColor" /><circle cx="7" cy="7" r="1.4" fill="currentColor" /><circle cx="11.5" cy="7" r="1.4" fill="currentColor" /></svg>
+        {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
+        <span aria-hidden="true" style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
       </button>
       {controlMenu === where && (
         <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
-          {mobileOptions.map((o) => (
+          {options.map((o) => (
             <button
               key={o.key}
               type="button"
               role="menuitemradio"
               aria-checked={o.key === activeOption.key}
-              onClick={() => { setActiveControl(o.key); setControlMenu(null); }}
+              onClick={() => { setActiveKey(o.key); setControlMenu(null); }}
               style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: o.key === activeOption.key ? panelText : "transparent", color: o.key === activeOption.key ? panelBg : panelText, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", cursor: "pointer" }}
             >
               {o.label}
@@ -1770,6 +1806,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           ))}
         </div>
       )}
+    </div>
+    );
+  };
+
+  // TEMPORARY calibration slider: absolutely positioned overlay, never takes layout space.
+  const debugSlider = (label: string, value: number, set: (v: number) => void, min: number, max: number, step: number, pos: React.CSSProperties) => (
+    <div style={{ position: "absolute", zIndex: 3, display: "flex", alignItems: "center", gap: 6, padding: "2px 6px", borderRadius: 4, background: "rgba(0,0,0,0.55)", color: "#fff", fontFamily: "Arial, sans-serif", fontSize: 10, lineHeight: 1, pointerEvents: "auto", ...pos }}>
+      <span style={{ opacity: 0.8 }}>{label}</span>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} style={{ width: 80, height: 12, margin: 0 }} />
+      <span style={{ minWidth: "4.5ch", textAlign: "right" }}>{value.toFixed(2)}rem</span>
     </div>
   );
 
@@ -1953,8 +1999,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         {/* Info (left) + Work-in-progress images (right), side by side */}
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
-          <div className="tf-info" style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p className="tf-about-text" style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+          <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
+            {isMobile
+              ? debugSlider("TEMP about (mobile)", aboutTextSizeMobile, setAboutTextSizeMobile, 0.5, 2.5, 0.05, { top: 2, right: 4 })
+              : debugSlider("TEMP about (desktop)", aboutTextSizeDesktop, setAboutTextSizeDesktop, 0.5, 2.5, 0.05, { top: 4, right: 8 })}
+            <p className="tf-about-text" style={{ fontFamily: face.font, fontSize: `${isMobile ? aboutTextSizeMobile : aboutTextSizeDesktop}rem`, color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
               {applyCase(`${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
@@ -1989,13 +2038,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
             controls={isMobile ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.75rem", width: "100%" }}>
-                {/* "Regular" — future weight/style preset placeholder (variable) or static style label. */}
-                {regularLabel}
-                {mobileControlRow("glyphs")}
-              </div>
+              glyphToggleAxes.length > 0
+                ? <>{glyphToggleAxes.map(renderAxis)}</>
+                : glyphOptions.length > 1
+                ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
+                : glyphOptions.length === 1
+                ? glyphOptions[0].node
+                : regularLabel
             ) : variableControls ?? regularLabel}
-            mobileGlyphSize={`${Math.min(12, Math.max(5, (size / (face.mobilePreviewSize ?? size)) * 9)).toFixed(2)}rem`}
+            mobileGlyphSize={`${glyphShowcaseSizeMobile}rem`}
+            desktopGlyphSize={`${glyphShowcaseSizeDesktop}rem`}
+            sizeDebug={isMobile
+              ? debugSlider("TEMP glyph (mobile)", glyphShowcaseSizeMobile, setGlyphShowcaseSizeMobile, 3, 16, 0.25, { right: 0, bottom: 0 })
+              : debugSlider("TEMP glyph (desktop)", glyphShowcaseSizeDesktop, setGlyphShowcaseSizeDesktop, 4, 28, 0.25, { right: 0, bottom: 0 })}
           />
         </div>
 
@@ -2026,7 +2081,7 @@ const LIGHT_BAND_COLORS = new Set(["#fff800", "#c3872f", "#00ab53"]);
 // the nav-button hover loops can run at exactly the same tempo.
 let bandSpeedPxPerSec = 80;
 
-function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void }) {
+function MarqueeBand({ direction = "forward", onNavigate, interactive = true }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void; interactive?: boolean }) {
   const [colorIdx, setColorIdx] = useState(0);
 
   useEffect(() => {
@@ -2064,8 +2119,13 @@ function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forwa
 
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
-      style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: "pointer", transition: "background 0.3s ease" }}
+      onClick={() => {
+        if (!interactive) return;
+        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle");
+      }}
+      tabIndex={interactive ? 0 : -1}
+      aria-hidden={interactive ? undefined : true}
+      style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: interactive ? "pointer" : "default", transition: "background 0.3s ease" }}
     >
       <div
         ref={(el) => { if (el && el.scrollWidth) bandSpeedPxPerSec = el.scrollWidth / 2 / 80; }}
@@ -2093,66 +2153,28 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   );
 }
 
-function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
-  const enter = () => onNavigate({ id: "foundry" });
-
+function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLButtonElement) return;
-      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-        e.preventDefault();
-        enter();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timeout = window.setTimeout(onIntroComplete, reducedMotion ? 100 : 2350);
+    return () => window.clearTimeout(timeout);
+  }, [onIntroComplete]);
 
   return (
-    <div
-      onClick={enter}
-      style={{ position: "fixed", inset: 0, overflow: "hidden", background: "#fff", cursor: "pointer" }}
-    >
-      {/* GIF — 80% of viewport, centred */}
-      <img
-        src={introGif}
-        alt={BRAND}
-        style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: "90%", height: "90%", objectFit: "contain", display: "block" }}
-      />
+    <div className="intro-sequence">
+      <div className="intro-sticker-shell">
+        <img className="intro-sticker" src={introGif} alt={BRAND} />
+      </div>
 
       {/* Top band — travels right to left */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="forward" onNavigate={onNavigate} />
+      <div className="intro-band intro-band-top">
+        <MarqueeBand direction="forward" interactive={false} />
       </div>
 
       {/* Bottom band — travels left to right */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="reverse" onNavigate={onNavigate} />
+      <div className="intro-band intro-band-bottom">
+        <MarqueeBand direction="reverse" interactive={false} />
       </div>
-
-      {/* Enter button — true SVG oval, stop-motion hover */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          enter();
-        }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translate(-50%, 0) scale(1.08) rotate(-3deg)"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translate(-50%, 0) scale(1) rotate(0deg)"; }}
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "65%",
-          transform: "translate(-50%, 0)",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: 0,
-          zIndex: 3,
-          transition: "none",
-        }}
-      >
-        <img src={enterButtonSvg} alt="Enter the shop" style={{ width: 160, display: "block" }} />
-      </button>
     </div>
   );
 }
@@ -2335,7 +2357,16 @@ function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNaviga
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>(() => pageFromPath(window.location.pathname));
+  const [page, setPage] = useState<Page>(() => {
+    const initialPage = pageFromPath(window.location.pathname);
+    return initialPage.id === "home" ? { id: "foundry" } : initialPage;
+  });
+  const [showIntro, setShowIntro] = useState(
+    () => pageFromPath(window.location.pathname).id === "home",
+  );
+  const [landingEntrance, setLandingEntrance] = useState(
+    () => pageFromPath(window.location.pathname).id === "home",
+  );
   const [transY, setTransY] = useState<string | null>(null);
   const [transColor, setTransColor] = useState(PALETTE[0]);
   const navigating = useRef(false);
@@ -2395,7 +2426,19 @@ export default function App() {
     if (window.location.pathname !== path) {
       window.history.pushState(null, "", path);
     }
+    if (p.id === "home") {
+      setPage({ id: "foundry" });
+      setLandingEntrance(true);
+      setShowIntro(true);
+      return;
+    }
     transitionTo(p);
+  }
+
+  function completeIntro() {
+    window.history.replaceState(null, "", "/shop");
+    setShowIntro(false);
+    window.setTimeout(() => setLandingEntrance(false), 100);
   }
 
   useEffect(() => {
@@ -2406,7 +2449,14 @@ export default function App() {
     }
 
     const handlePopState = () => {
-      transitionTo(pageFromPath(window.location.pathname));
+      const nextPage = pageFromPath(window.location.pathname);
+      if (nextPage.id === "home") {
+        setPage({ id: "foundry" });
+        setLandingEntrance(true);
+        setShowIntro(true);
+      } else {
+        transitionTo(nextPage);
+      }
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -2423,13 +2473,12 @@ export default function App() {
   const staticEyesProps  = { showEyes: true };
 
   let content: React.ReactNode;
-  if (page.id === "home")     content = <HomePage onNavigate={navigate} />;
-  else if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
+  if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div className="shop-root" style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
@@ -2453,7 +2502,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div style={{ flexShrink: 0 }}>
+      <div className="shop-bottom-marquee" style={{ flexShrink: 0 }}>
         <MarqueeBand direction="reverse" onNavigate={navigate} />
       </div>
     </div>
@@ -2462,6 +2511,7 @@ export default function App() {
   return (
     <>
       {content}
+      {showIntro && <HomePage onIntroComplete={completeIntro} />}
 
       {/* Eyes easter egg — floating hops (phases 1-3), foundry page only */}
       {page.id === "foundry" && eyesPhase >= 1 && eyesPhase <= 3 && (
