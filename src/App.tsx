@@ -232,21 +232,21 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5.5 },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5 },
   // — middle —
   { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 6.5 },
   { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5 },
-  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5 },
+  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 6, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 5 },
@@ -293,11 +293,11 @@ const SHOP_TYPEFACE_NAMES = [
   "Galanite",
   "Kuriren",
   "Last Call",
+  "LCD Über",
   "Liljan",
   "Mormor",
   "Sonja",
   "Svek",
-  "LCD Über",
   "XOXO",
 ] as const;
 
@@ -318,11 +318,12 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
   Galanite: { x: -95, y: -20, rotation: -4 },
   Kuriren: { x: -4, y: -28, rotation: 2 },
   "Last Call": { x: 100, y: 22, rotation: -5 },
-  Liljan: { x: 150, y: -10, rotation: 6 },
-  Mormor: { x: -104, y: 20, rotation: -4 },
-  Sonja: { x: -52, y: -24, rotation: 6 },
-  Svek: { x: -2, y: 28, rotation: -2 },
-  "LCD Über": { x: 50, y: -18, rotation: 5 },
+  // Slot values kept in place when the stickers were re-alphabetised.
+  "LCD Über": { x: 150, y: -10, rotation: 6 },
+  Liljan: { x: -104, y: 20, rotation: -4 },
+  Mormor: { x: -52, y: -24, rotation: 6 },
+  Sonja: { x: -2, y: 28, rotation: -2 },
+  Svek: { x: 50, y: -18, rotation: 5 },
   XOXO: { x: 104, y: 12, rotation: -6 },
 };
 
@@ -457,7 +458,7 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
   return (
     <div
       className="cell"
-      style={{ width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)` }}
+      style={{ width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 }}
     >
       <div
         onMouseEnter={() => setHovered(true)}
@@ -1718,7 +1719,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
             <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
-              {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
+              {applyCase(`${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {/* Listed bottom-up: the container is column-reverse, so this
@@ -1749,7 +1750,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         {/* Full-width Glyphs panel — showcase (left) + character list (right).
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
-        <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
+        <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} controls={variableControls ?? regularLabel} />
         </div>
 
@@ -2189,7 +2190,8 @@ export default function App() {
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
-      <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+      {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
+      <div style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
         <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
           <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
             {shopTypefaces.slice(0, 6).map((face) => (

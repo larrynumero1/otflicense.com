@@ -352,6 +352,12 @@ html {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
+  /* Stacked sections share the About → slideshow gap (12px row gap of .tf-info-row,
+     equal to the .tf-page flex gap), so drop the extra desktop margins. */
+  .tf-glyphs-wrap,
+  .tf-buy {
+    margin-top: 0 !important;
+  }
   .tf-glyphs {
     flex-direction: column;
     padding: 1rem !important;
