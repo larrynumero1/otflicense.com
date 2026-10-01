@@ -155,6 +155,118 @@ html {
   50% { opacity: 0.15; }
 }
 
+/* Automatic intro → foundry choreography. The symmetric curve gives the
+   requested slow start, fast middle and soft landing. */
+@keyframes introStickerIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes introBandFromRight {
+  from { transform: translateX(105%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes introBandFromLeft {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes introExitLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-110vw); }
+}
+
+@keyframes introExitUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-110%); }
+}
+
+@keyframes landingPop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes landingMarqueeUp {
+  from { transform: translateY(110%); }
+  to { transform: translateY(0); }
+}
+
+.intro-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.intro-sticker-shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: introExitLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s both;
+}
+
+.intro-sticker {
+  display: block;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  animation: introStickerIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+}
+
+.intro-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.intro-band-top {
+  top: 0;
+  animation:
+    introBandFromRight 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both,
+    introExitUp 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s forwards;
+}
+
+.intro-band-bottom {
+  bottom: 0;
+  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+}
+
+.landing-enter .nav-text-btn,
+.landing-enter .nav-logo > img {
+  animation: landingPop 0.65s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.landing-enter .nav-text-btn:nth-child(1) { animation-delay: 1.05s; }
+.landing-enter .nav-text-btn:nth-child(2) { animation-delay: 1.15s; }
+.landing-enter .nav-logo > img:first-child { animation-delay: 1.25s; }
+.landing-enter .nav-logo > .nav-eyes { animation-delay: 1.35s; }
+
+.landing-enter .cell-pop {
+  animation: landingPop 0.52s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: calc(1.05s + var(--sticker-index) * 0.05s);
+}
+
+.landing-enter .shop-bottom-marquee {
+  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-sticker-shell,
+  .intro-sticker,
+  .intro-band,
+  .landing-enter .nav-text-btn,
+  .landing-enter .nav-logo > img,
+  .landing-enter .cell-pop,
+  .landing-enter .shop-bottom-marquee {
+    animation: none;
+  }
+}
+
 .cell {
   transition: width 0.2s ease;
 }
@@ -231,6 +343,63 @@ html {
   background: currentColor;
 }
 
+.gumroad-checkout {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: #fff;
+}
+
+.gumroad-checkout-frame {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  height: 1080px;
+  border: 0;
+  overflow: hidden;
+  background: #fff;
+  color-scheme: light;
+}
+
+.gumroad-checkout-status {
+  margin: 0;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.gumroad-checkout-status a {
+  color: inherit;
+  font-weight: bold;
+  text-underline-offset: 0.2em;
+}
+
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1.5rem 1rem 2rem;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.55rem;
+  line-height: 1.2;
+}
+
+.site-footer img {
+  display: block;
+  width: 2.75rem;
+  height: auto;
+}
+
 /* ── Typeface pages: mobile only (≤768px). Desktop styles are untouched. ── */
 @media (max-width: 768px) {
   /* Page root spans the full viewport; content gets equal safe-area-aware insets. */
@@ -279,7 +448,8 @@ html {
     grid-column: 1 / -1;
     grid-row: 1;
     justify-self: center;
-    display: block;
+    display: flex !important;
+    gap: 0.6rem !important;
     height: auto !important;
     line-height: normal !important;
     overflow: visible !important;
@@ -291,8 +461,7 @@ html {
   }
   /* Keep the header eyes inside the viewport so nothing widens the page. */
   .tf-nav .nav-eyes {
-    left: calc(100% + 0.6rem) !important;
-    top: 0.6rem !important;
+    margin-top: 0.6rem !important;
     height: 1.4rem !important;
   }
   .tf-nav .nav-text-btn {
@@ -300,6 +469,50 @@ html {
     height: 34px !important;
     padding: 0 0.3rem !important;
     font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
+  }
+
+  /* Sticker page: loose LEFT → RIGHT zig-zag in shop order, page scrolls.
+     Each sticker keeps its desktop scale (--s) and rests at its hover tilt. */
+  .shop-root {
+    height: auto !important;
+    min-height: 100vh;
+  }
+  .shop-stage {
+    flex: none !important;
+    padding: 2.5rem max(1.25rem, env(safe-area-inset-right)) 3.5rem max(1.25rem, env(safe-area-inset-left)) !important;
+  }
+  .shop-grid {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch !important;
+    row-gap: 0 !important;
+  }
+  .shop-row {
+    display: contents !important;
+  }
+  .shop-grid .cell {
+    /* Width follows the desktop scale so relative sizes survive; the layout box
+       is the real sticker size (no scale transform), padded vertically by the
+       15° tilt overhang plus a gap so neighbouring stickers never touch. */
+    --w: min(80vw, calc(49vw * var(--s)));
+    width: var(--w) !important;
+    align-self: flex-start;
+    justify-content: center;
+    align-items: center !important;
+    margin-top: 0;
+    padding: calc(var(--w) * 0.1 + 1.5vw) 0;
+    transform: translateX(calc(var(--zz-x) + 4vw)) !important;
+  }
+  .shop-grid .cell[data-side="right"] {
+    align-self: flex-end;
+    transform: translateX(calc(var(--zz-x) - 4vw)) !important;
+  }
+  .shop-grid .cell[data-first] {
+    margin-top: 0;
+  }
+  .shop-grid .cell-inner {
+    width: 100% !important;
+    transform: rotate(var(--zz-rot, var(--hover-rot))) !important;
   }
 
   /* BUY NOW marquee: last item in the page flow instead of fixed to the viewport. */
@@ -331,6 +544,18 @@ html {
   }
   .tf-info {
     padding: 1.25rem !important;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Wide/variable letterforms can produce single words wider than the column;
+     let them break inside the padding box instead of running past the edge. */
+  .tf-about-text {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    hyphens: auto;
   }
   /* Height comes from an in-flow 4:3 spacer: the carousel inside is absolutely
      positioned, and iOS Safari collapsed the aspect-ratio box to 0px height. */
@@ -346,29 +571,79 @@ html {
     display: block;
     padding-top: 75%;
   }
+  /* iOS Safari: give the carousel's clipping root its own compositing layer so
+     the transformed slide track inside overflow:hidden is painted. */
+  .tf-gallery > div {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  /* Stacked sections share the About → slideshow gap (12px row gap of .tf-info-row,
+     equal to the .tf-page flex gap), so drop the extra desktop margins. */
+  .tf-glyphs-wrap,
+  .tf-buy {
+    margin-top: 0 !important;
+  }
   .tf-glyphs {
     flex-direction: column;
     padding: 1rem !important;
+  }
+  /* Variable axes share one row, each label + slider pair taking equal width. */
+  .tf-glyph-controls {
+    flex-wrap: nowrap !important;
+    gap: 1rem !important;
+  }
+  .tf-glyph-controls > * {
+    flex: 1 1 0 !important;
+    min-width: 0;
+  }
+  .tf-glyph-controls .size-slider {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+  /* Shared single-control row: slider takes the remaining width. */
+  .tf-mobile-control-active > * {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .tf-mobile-control .size-slider {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+  }
+  .tf-glyph-controls .tf-mobile-control > * {
+    flex: initial !important;
+  }
+  .tf-glyph-controls .tf-mobile-control > .tf-mobile-control-active {
+    flex: 1 1 0 !important;
   }
   .tf-glyph-showcase {
     flex: 0 0 auto !important;
     min-height: 16rem;
   }
+  /* Glyph/Unicode metadata is absolutely positioned at the stage bottom; reserve
+     its height so the big glyph centres between the controls and the metadata. */
+  .tf-glyph-stage {
+    padding-bottom: 2.4rem;
+  }
   /* The desktop paint-box padding (0.5em per side) made wide glyphs ~9rem wider
      than the column, which widened the whole document past the viewport and left
      an unpainted strip on the right. Keep the vertical paint room, drop the horizontal. */
   .tf-glyph-big {
-    font-size: 9rem !important;
+    font-size: var(--glyph-mobile-size, 9rem) !important;
     padding: 0.5em 0 !important;
     margin: -0.5em 0 !important;
     max-width: 100%;
   }
   .tf-buy > *,
-  .tf-buy .gumroad-product-embed,
+  .tf-buy .gumroad-checkout,
   .tf-buy iframe {
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
+  }
+  .tf-buy .gumroad-checkout-frame {
+    height: 1400px;
   }
 }
 

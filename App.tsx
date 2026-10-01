@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type React from "react";
+import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
+import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
 import galleryImg1 from "./imports/gallery-1.jpg";
 import galleryImg2 from "./imports/gallery-2.jpg";
@@ -29,6 +31,85 @@ import galleryLiljan1 from "./imports/liljan1.png";
 import galleryLiljan2 from "./imports/liljan2.png";
 import galleryLiljan3 from "./imports/liljan3.png";
 import galleryLiljan4 from "./imports/liljan4.png";
+import bildBip1 from "./imports/bild_bip1.png";
+import bildBip2 from "./imports/bild_bip2.png";
+import bildBip3 from "./imports/bild_bip3.png";
+import bildBip4 from "./imports/bild_bip4.png";
+import bildBip5 from "./imports/bild_bip5.png";
+import bildBrus1 from "./imports/bild_brus1.png";
+import bildBrus2 from "./imports/bild_brus2.png";
+import bildBrus3 from "./imports/bild_brus3.png";
+import bildBrus4 from "./imports/bild_brus4.png";
+import bildBrus5 from "./imports/bild_brus5.png";
+import bildCheiron1 from "./imports/bild_cheiron1.png";
+import bildCheiron2 from "./imports/bild_cheiron2.png";
+import bildCheiron3 from "./imports/bild_cheiron3.png";
+import bildCheiron4 from "./imports/bild_cheiron4.png";
+import bildCheiron5 from "./imports/bild_cheiron5.png";
+import bildCrypto1 from "./imports/bild_crypto1.png";
+import bildCrypto2 from "./imports/bild_crypto2.png";
+import bildCrypto3 from "./imports/bild_crypto3.png";
+import bildCrypto4 from "./imports/bild_crypto4.png";
+import bildCrypto5 from "./imports/bild_crypto5.png";
+import bildDukat1 from "./imports/bild_dukat1.png";
+import bildDukat2 from "./imports/bild_dukat2.png";
+import bildDukat3 from "./imports/bild_dukat3.png";
+import bildDukat4 from "./imports/bild_dukat4.png";
+import bildElla1 from "./imports/bild_ella1.png";
+import bildElla2 from "./imports/bild_ella2.png";
+import bildElla3 from "./imports/bild_ella3.png";
+import bildElla4 from "./imports/bild_ella4.png";
+import bildElla5 from "./imports/bild_ella5.png";
+import bildFacit1 from "./imports/bild_facit1.png";
+import bildFacit2 from "./imports/bild_facit2.png";
+import bildFacit3 from "./imports/bild_facit3.png";
+import bildFacit4 from "./imports/bild_facit4.png";
+import bildFacit5 from "./imports/bild_facit5.png";
+import bildGalanite1 from "./imports/bild_galanite1.png";
+import bildGalanite2 from "./imports/bild_galanite2.png";
+import bildGalanite3 from "./imports/bild_galanite3.png";
+import bildGalanite4 from "./imports/bild_galanite4.png";
+import bildGalanite5 from "./imports/bild_galanite5.png";
+import bildKuriren1 from "./imports/bild_kuriren1.png";
+import bildKuriren2 from "./imports/bild_kuriren2.png";
+import bildKuriren3 from "./imports/bild_kuriren3.png";
+import bildKuriren4 from "./imports/bild_kuriren4.png";
+import bildKuriren5 from "./imports/bild_kuriren5.png";
+import bildLastCall1 from "./imports/bild_lastcall1.png";
+import bildLastCall2 from "./imports/bild_lastcall2.png";
+import bildLastCall3 from "./imports/bild_lastcall3.png";
+import bildLastCall4 from "./imports/bild_lastcall4.png";
+import bildLastCall5 from "./imports/bild_lastcall5.png";
+import bildLcdUber1 from "./imports/bild_lcduber1.png";
+import bildLcdUber2 from "./imports/bild_lcduber2.png";
+import bildLcdUber3 from "./imports/bild_lcduber3.png";
+import bildLcdUber4 from "./imports/bild_lcduber4.png";
+import bildLcdUber5 from "./imports/bild_lcduber5.png";
+import bildLiljan1 from "./imports/bild_liljan1.png";
+import bildLiljan2 from "./imports/bild_liljan2.png";
+import bildLiljan3 from "./imports/bild_liljan3.png";
+import bildLiljan4 from "./imports/bild_liljan4.png";
+import bildLiljan5 from "./imports/bild_liljan5.png";
+import bildMormor1 from "./imports/bild_mormor1.png";
+import bildMormor2 from "./imports/bild_mormor2.png";
+import bildMormor3 from "./imports/bild_mormor3.png";
+import bildMormor4 from "./imports/bild_mormor4.png";
+import bildMormor5 from "./imports/bild_mormor5.png";
+import bildSonja1 from "./imports/bild_sonja1.png";
+import bildSonja2 from "./imports/bild_sonja2.png";
+import bildSonja3 from "./imports/bild_sonja3.png";
+import bildSonja4 from "./imports/bild_sonja4.png";
+import bildSonja5 from "./imports/bild_sonja5.png";
+import bildSvek1 from "./imports/bild_svek1.png";
+import bildSvek2 from "./imports/bild_svek2.png";
+import bildSvek3 from "./imports/bild_svek3.png";
+import bildSvek4 from "./imports/bild_svek4.png";
+import bildSvek5 from "./imports/bild_svek5.png";
+import bildXoxo1 from "./imports/bild_xoxo1.png";
+import bildXoxo2 from "./imports/bild_xoxo2.png";
+import bildXoxo3 from "./imports/bild_xoxo3.png";
+import bildXoxo4 from "./imports/bild_xoxo4.png";
+import bildXoxo5 from "./imports/bild_xoxo5.png";
 import galleryBrus1 from "./imports/brus1.png";
 import galleryFacit1 from "./imports/facit1.png";
 import galleryFacit2 from "./imports/facit2.png";
@@ -65,22 +146,6 @@ import galleryBip1 from "./imports/bip1.png";
 import galleryBip2 from "./imports/bip2.png";
 import galleryBip3 from "./imports/bip3.png";
 import galleryBip4 from "./imports/bip4.png";
-import placeholderBip from "./imports/Placeholder_BIP.png";
-import placeholderBrus from "./imports/Placeholder_Brus.png";
-import placeholderCheiron from "./imports/Placeholder_Cheiron.png";
-import placeholderCrypto from "./imports/Placeholder_Crypto.png";
-import placeholderDukat from "./imports/Placeholder_Dukat.png";
-import placeholderElla from "./imports/Placeholder_Ella.png";
-import placeholderFacit from "./imports/Placeholder_Facit.png";
-import placeholderGalanite from "./imports/Placeholder_Galanite.png";
-import placeholderKuriren from "./imports/Placeholder_Kuriren.png";
-import placeholderLastCall from "./imports/Placeholder_LastCall.png";
-import placeholderLcdUber from "./imports/Placeholder_LCDUber.png";
-import placeholderLiljan from "./imports/Placeholder_Liljan.png";
-import placeholderMormor from "./imports/Placeholder_Mormor.png";
-import placeholderSonja from "./imports/Placeholder_Sonja.png";
-import placeholderSvek from "./imports/Placeholder_Svek.png";
-import placeholderXoxo from "./imports/Placeholder_XOXO.png";
 import transitionSvgRaw from "./imports/transition-asset.svg?raw";
 
 const GALLERY_IMAGES = [galleryImg1, galleryImg2, galleryImg3];
@@ -103,7 +168,7 @@ import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 import eyesSvg from "./imports/eyes.svg";
 import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import enterButtonSvg from "./imports/enter-button.svg";
+import variableFontSticker from "./imports/ChatGPT_Image_Sep_30__2026__08_16_47_PM__1_.png";
 
 type Page =
   | { id: "home" }
@@ -166,25 +231,25 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [placeholderLastCall], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [placeholderXoxo], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/oilldc?wanted=true" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [placeholderLiljan], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kurir",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [placeholderKuriren], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42 },
+  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [placeholderElla], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11 },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [placeholderSvek], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [placeholderCheiron], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", scale: 1.27 },
-  { name: "Uber",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [placeholderLcdUber], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [placeholderBip], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 8.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 11, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
+  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [placeholderGalanite], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [placeholderDukat], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [placeholderCrypto], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [placeholderFacit], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/facitsans?wanted=true" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [placeholderSonja], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [placeholderMormor], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65 },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [placeholderBrus], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
 // Native variable-font typefaces — rendered directly by the browser (not the
@@ -225,19 +290,40 @@ const SHOP_TYPEFACE_NAMES = [
   "Ella",
   "Facit",
   "Galanite",
-  "Kurir",
+  "Kuriren",
   "Last Call",
+  "LCD Über",
   "Liljan",
   "Mormor",
   "Sonja",
   "Svek",
-  "Uber",
   "XOXO",
 ] as const;
 
 const shopTypefaces = SHOP_TYPEFACE_NAMES.map(
   (name) => typefaces.find((face) => face.name === name)!,
 );
+
+const GUMROAD_PRODUCT_IDS: Record<string, string> = {
+  BIP: "triuuf",
+  Brus: "kzwbfn",
+  Cheiron: "eagsbq",
+  Crypto: "jgntpu",
+  Dukat: "pfvilv",
+  Ella: "iwggr",
+  Facit: "gjeoz",
+  Galanite: "owetjk",
+  Kuriren: "pynjvq",
+  "Last Call": "rlvhn",
+  "LCD Über": "gxuwda",
+  Liljan: "yzcepd",
+  Mormor: "garhny",
+  Sonja: "stlzzs",
+  Svek: "goowyt",
+  XOXO: "jcwvkd",
+};
+
+const VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Cheiron", "Ella", "Last Call"]);
 
 const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
   BIP: { x: -65, y: 14, rotation: -6 },
@@ -248,13 +334,14 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
   Ella: { x: 170, y: -12, rotation: 3 },
   Facit: { x: -145, y: -18, rotation: 5 },
   Galanite: { x: -95, y: -20, rotation: -4 },
-  Kurir: { x: -4, y: -28, rotation: 2 },
+  Kuriren: { x: -4, y: -28, rotation: 2 },
   "Last Call": { x: 100, y: 22, rotation: -5 },
-  Liljan: { x: 150, y: -10, rotation: 6 },
-  Mormor: { x: -104, y: 20, rotation: -4 },
-  Sonja: { x: -52, y: -24, rotation: 6 },
-  Svek: { x: -2, y: 28, rotation: -2 },
-  Uber: { x: 50, y: -18, rotation: 5 },
+  // Slot values kept in place when the stickers were re-alphabetised.
+  "LCD Über": { x: 170, y: -10, rotation: 6 },
+  Liljan: { x: -104, y: 20, rotation: -4 },
+  Mormor: { x: -52, y: -24, rotation: 6 },
+  Sonja: { x: -2, y: 28, rotation: -2 },
+  Svek: { x: 50, y: -18, rotation: 5 },
   XOXO: { x: 104, y: 12, rotation: -6 },
 };
 
@@ -285,110 +372,75 @@ const designers = typefaces.map((t) => {
     textColor: t.fg,
     site: `${handle}.se`,
     social: handle,
+    // Per-designer address goes here once it exists; falls back to the foundry contact.
+    email: undefined as string | undefined,
   };
 });
 
+// Class codes map to graduation years: shown as "2027" in the filter, "Class of 2027" in the marquee.
+const KLASS_YEAR: Record<string, string> = { VK27: "2027" };
+const klassYear = (k: string) => KLASS_YEAR[k] ?? k;
+const klassLabel = (k: string) => `Class of ${klassYear(k)}`;
+
 const DESIGNER_CLASSES = ["All", ...Array.from(new Set(designers.map((d) => d.klass)))];
 
-// Ticket/stamp SVG path: rounded-corner rectangle with semicircular notches at top and bottom centre.
-// viewBox 0 0 200 100. Corner radius 10, notch radius 12 centred at (100, 0) and (100, 100).
-const TICKET_PATH = [
-  "M 10 0",
-  "L 88 0",
-  "A 12 12 0 0 1 112 0",   // top notch bites downward into shape
-  "L 190 0",
-  "A 10 10 0 0 1 200 10",  // top-right rounded corner
-  "L 200 90",
-  "A 10 10 0 0 1 190 100", // bottom-right rounded corner
-  "L 112 100",
-  "A 12 12 0 0 1 88 100",  // bottom notch bites upward into shape
-  "L 10 100",
-  "A 10 10 0 0 1 0 90",    // bottom-left rounded corner
-  "L 0 10",
-  "A 10 10 0 0 1 10 0",    // top-left rounded corner
-  "Z",
-].join(" ");
+// Semicircular notches cut into the top and bottom centre of a sharp rectangle.
+// Two mask layers, each covering one half, so the cut-outs are true negative space.
+const NOTCH_MASK =
+  "radial-gradient(circle at 50% 0, transparent 13px, #000 13.5px) top / 100% 51% no-repeat, " +
+  "radial-gradient(circle at 50% 100%, transparent 13px, #000 13.5px) bottom / 100% 51% no-repeat";
 
-function NameCell({ d }: { d: typeof designers[0] }) {
-  const [cardHover, setCardHover] = useState(false);
-  const [leftHover, setLeftHover] = useState(false);
-  const [rightHover, setRightHover] = useState(false);
-  const id = d.name.replace(/\s+/g, "-");
+function GlobeIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5" />
+      <circle cx="12" cy="12" r="4.25" />
+      <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="2.75" y="5.25" width="18.5" height="13.5" rx="1.5" />
+      <path d="M3.25 6l8.75 7 8.75-7" />
+    </svg>
+  );
+}
+
+function DesignerCell({ d }: { d: typeof designers[0] }) {
+  // One random palette colour picked on enter, held stable for the whole hover.
+  const [hoverBg, setHoverBg] = useState<string | null>(null);
+  const fg = hoverBg ? (hoverBg === "#fff800" ? "#000" : "#fff") : "#000";
+  const link: React.CSSProperties = { color: fg, textDecoration: "none", fontSize: "0.85rem" };
 
   return (
     <div
-      onMouseEnter={() => setCardHover(true)}
-      onMouseLeave={() => { setCardHover(false); setLeftHover(false); setRightHover(false); }}
-      style={{ position: "relative", minHeight: 80, display: "flex", alignItems: "center", justifyContent: "center", cursor: "default" }}
+      onMouseEnter={() => setHoverBg(PALETTE[Math.floor(Math.random() * PALETTE.length)])}
+      onMouseLeave={() => setHoverBg(null)}
+      style={{
+        position: "relative", aspectRatio: "2 / 1",
+        background: hoverBg ?? "transparent",
+        WebkitMask: NOTCH_MASK, mask: NOTCH_MASK,
+        display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",
+        padding: "0 1.25rem", fontFamily: "Arial, sans-serif", color: fg,
+      }}
     >
-      <div style={{ position: "relative", width: "100%" }}>
-        <svg viewBox="0 0 200 100" style={{ width: "100%", height: "auto", display: "block" }}>
-          <defs>
-            <clipPath id={`clip-${id}`}>
-              <path d={TICKET_PATH} />
-            </clipPath>
-          </defs>
-          {/* Left half fill — white until hovered */}
-          <rect x="0" y="0" width="100" height="100" fill={cardHover && leftHover ? d.color : "#fff"} clipPath={`url(#clip-${id})`} style={{ transition: "fill 0.15s ease" }} />
-          {/* Right half fill */}
-          <rect x="100" y="0" width="100" height="100" fill={cardHover && rightHover ? d.color : "#fff"} clipPath={`url(#clip-${id})`} style={{ transition: "fill 0.15s ease" }} />
-          {/* Vertical dividing line — only on hover */}
-          {cardHover && <line x1="100" y1="0" x2="100" y2="100" stroke="#000" strokeWidth="1.5" />}
-          {/* Stamp outline — always visible */}
-          <path d={TICKET_PATH} fill="none" stroke="#000" strokeWidth="1.5" />
-        </svg>
-
-        {/* Name — centred inside stamp, hidden on hover */}
-        {!cardHover && (
-          <div style={{
-            position: "absolute", inset: 0,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "1rem", color: "#000", textAlign: "center", padding: "0 1rem",
-            pointerEvents: "none",
-          }}>
-            {d.name}
-          </div>
-        )}
-
-        {/* Left half — Website (only active on card hover) */}
-        {cardHover && (
-          <a
-            href={`https://${d.site}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() => setLeftHover(true)}
-            onMouseLeave={() => setLeftHover(false)}
-            style={{
-              position: "absolute", top: 0, left: 0, width: "50%", bottom: 0,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "0.8rem",
-              color: leftHover ? d.textColor : "#000",
-              textDecoration: "none", transition: "color 0.15s ease",
-            }}
-          >
-            Website
-          </a>
-        )}
-
-        {/* Right half — Social (only active on card hover) */}
-        {cardHover && (
-          <a
-            href={`https://instagram.com/${d.social}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() => setRightHover(true)}
-            onMouseLeave={() => setRightHover(false)}
-            style={{
-              position: "absolute", top: 0, left: "50%", right: 0, bottom: 0,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "0.8rem",
-              color: rightHover ? d.textColor : "#000",
-              textDecoration: "none", transition: "color 0.15s ease",
-            }}
-          >
-            Social
-          </a>
-        )}
+      <div style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
+      <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
+        <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
+        <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
+        <a href={`mailto:${d.email ?? "otflicense@gmail.com"}`} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
       </div>
     </div>
   );
@@ -438,8 +490,9 @@ function edgeToStyle(edge: Edge, pct: number): React.CSSProperties {
   return { right: half, top: `${pct}%`, transform: "translate(0, -50%)" };
 }
 
-function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }: {
+function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, index = 0 }: {
   face: typeof typefaces[0];
+  index?: number;
   width: string;
   onNavigate: (p: Page) => void;
   nudgeX?: number;
@@ -455,29 +508,60 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0 }:
   return (
     <div
       className="cell"
-      style={{ width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)` }}
+      // Mobile zig-zag hooks: side alternates by order, with a small per-sticker x jitter.
+      data-side={index % 2 === 0 ? "left" : "right"}
+      data-first={index === 0 ? "" : undefined}
+      style={{ "--zz-rot": `${[-6, 9, 2, -11, -1, 4, 12, -4, 7, -9, 0, 11, -3, -12, 5, 8][index % 16]}deg`, "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
-      <img
-        src={face.img}
-        alt={face.name}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={() => onNavigate({ id: "typeface", name: face.name })}
-        style={{
-          width: "100%",
-          height: "auto",
-          display: "block",
-          cursor: "pointer",
-          pointerEvents: "auto",
-          transform: hovered
-            ? `rotate(${hoverRotation}deg) scale(${s})`
-            : `rotate(${rotation}deg) scale(${s})`,
-          transition: "none",
-          transformOrigin: "center",
-          position: "relative",
-          zIndex: hovered ? 1 : 0,
-        }}
-      />
+      <div
+        className="cell-pop"
+        style={{ width: "100%", transformOrigin: "center", "--sticker-index": index } as React.CSSProperties}
+      >
+        <div
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="cell-inner"
+          onClick={() => onNavigate({ id: "typeface", name: face.name })}
+          style={{
+            width: "100%",
+            cursor: "pointer",
+            pointerEvents: "auto",
+            transform: hovered
+              ? `rotate(${hoverRotation}deg) scale(${s})`
+              : `rotate(${rotation}deg) scale(${s})`,
+            transition: "none",
+            transformOrigin: "center",
+            position: "relative",
+            zIndex: hovered ? 1 : 0,
+            // Read by the mobile stylesheet: desktop scale + hover tilt as resting pose.
+            "--s": s,
+            "--hover-rot": `${hoverRotation}deg`,
+          } as React.CSSProperties}
+        >
+          <img
+            src={face.img}
+            alt={face.name}
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
+          {VARIABLE_FONT_STICKERS.has(face.name) && (
+            <img
+              src={variableFontSticker}
+              className="cell-badge"
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: "-1%",
+                right: "-1%",
+                width: `${21.505 / s}%`,
+                height: "auto",
+                display: "block",
+                pointerEvents: "none",
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -524,31 +608,58 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
 }
 
 function NavTextButton({ label, width, onClick, color = "#000" }: { label: string; width: number; onClick: () => void; color?: string }) {
+  // Fills with one random palette colour per hover; picked on enter so it
+  // stays stable for the whole hover.
+  const [hoverBg, setHoverBg] = useState<string | null>(null);
   return (
     <button
-      className="nav-link"
+      className="nav-text-btn"
       onClick={onClick}
+      onMouseEnter={() => setHoverBg(PALETTE[Math.floor(Math.random() * PALETTE.length)])}
+      onMouseLeave={() => setHoverBg(null)}
       style={{
-        width,
+        minWidth: width,
         height: 48,
-        background: "none",
+        background: hoverBg ?? "none",
         border: "none",
         cursor: "pointer",
-        padding: 0,
+        padding: "0 0.75rem",
         fontFamily: "Arial, sans-serif",
-        fontSize: "20px",
-        color,
+        // Same size and weight as the homepage marquee text.
+        fontSize: "1.5rem",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        whiteSpace: "nowrap",
+        // Same text colour rule as the marquee: black on light colours, white otherwise.
+        // Idle: the nav's text colour (white on the black page mode).
+        color: hoverBg ? (LIGHT_BAND_COLORS.has(hoverBg) ? "#000" : "#fff") : color,
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      {label}
+      {/* The static label always sizes the box; on hover it's hidden and the
+          same label loops right-to-left inside the fixed box instead. */}
+      <span style={{ visibility: hoverBg ? "hidden" : "visible" }}>{label}</span>
+      {hoverBg && (
+        <span aria-hidden style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", overflow: "hidden" }}>
+          <span
+            ref={(el) => { if (el) el.style.animationDuration = `${el.scrollWidth / 2 / bandSpeedPxPerSec}s`; }}
+            style={{ display: "inline-flex", animation: "marquee 6s linear infinite" }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span key={i} style={{ paddingRight: "1.5rem" }}>{label}</span>
+            ))}
+          </span>
+        </span>
+      )}
     </button>
   );
 }
 
-function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover }: { onNavigate: (p: Page) => void; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
+function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <nav
-      className="sticky top-0 z-50"
+      className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
       style={{
         position: "sticky",
         background: bg,
@@ -560,39 +671,47 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
         gap: "1.5rem",
       }}
     >
-      <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="ABOUT" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
-        <NavTextButton label="FAQ" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
+      <div className="nav-left" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+        <NavTextButton label="ABOUT US" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="LICENSING STUFF" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
+        className="nav-logo"
         onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
-        style={{ position: "absolute", left: "50%", top: logoTop, transform: "translateX(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
+        style={{ position: "absolute", left: "50%", top: logoTop, transform: "translateX(-50%)", display: "flex", alignItems: "flex-start", gap: "1.1rem", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
       >
         <img
           src={logo}
           alt={BRAND}
           style={{ height: logoHeight, display: "block", filter: fg === "#fff" ? "invert(1)" : "none" }}
         />
-        {showEyes && (
-          <img
-            src={headerEyesSvg}
-            alt=""
-            aria-hidden="true"
-            onMouseEnter={(e) => { e.stopPropagation(); onEyesHover?.(); }}
-            style={{
-              position: "absolute",
-              left: "calc(100% + 1.1rem)",
-              top: "0.5rem",
-              height: "1.75rem",
-              width: "auto",
-              display: "block",
-              filter: fg === "#fff" ? "invert(1)" : "none",
-              cursor: "pointer",
-            }}
-          />
-        )}
+        {/* Eyes sit in flow beside the wordmark so the pair centres as one unit.
+            When hidden (easter egg hops) they keep their space to avoid a shift. */}
+        <img
+          className="nav-eyes"
+          src={headerEyesSvg}
+          alt=""
+          aria-hidden="true"
+          onMouseEnter={showEyes ? (e) => { e.stopPropagation(); onEyesHover?.(); } : undefined}
+          style={{
+            marginTop: "0.5rem",
+            height: "1.75rem",
+            width: "auto",
+            display: "block",
+            flexShrink: 0,
+            visibility: showEyes ? "visible" : "hidden",
+            filter: fg === "#fff" ? "invert(1)" : "none",
+            cursor: "pointer",
+          }}
+        />
       </button>
-      <NavTextButton label="BUY THE MEGA BUNDLE!" width={344} color={fg} onClick={() => onNavigate({ id: "bundle" })} />
+      {/* On the bundle page this becomes the way back to single typefaces. */}
+      <NavTextButton
+        label={onBundlePage ? "BUY A SINGLE TYPEFACE" : "BUY THE MEGA BUNDLE!"}
+        width={344}
+        color={fg}
+        onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
+      />
     </nav>
   );
 }
@@ -674,7 +793,7 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
       onMouseEnter={() => {
         setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -720,66 +839,122 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   );
 }
 
-function GumroadEmbed({ url }: { url: string }) {
-  // Re-inject Gumroad's embed script on every mount so it re-scans and renders
-  // the freshly-rendered embed div after client-side navigation.
+function gumroadProductUrl(url: string) {
+  const productUrl = new URL(url);
+  productUrl.searchParams.delete("embed");
+  productUrl.searchParams.delete("wanted");
+  return productUrl.toString();
+}
+
+function gumroadCheckoutUrl(url: string) {
+  const checkoutUrl = new URL(gumroadProductUrl(url));
+  checkoutUrl.searchParams.set("wanted", "true");
+  return checkoutUrl.toString();
+}
+
+function gumroadEmbeddedCheckoutUrl(productId: string) {
+  const checkoutUrl = new URL("https://gumroad.com/checkout");
+  checkoutUrl.searchParams.set("embed", "true");
+  checkoutUrl.searchParams.set("wanted", "true");
+  checkoutUrl.searchParams.set("product", productId);
+  checkoutUrl.searchParams.set("quantity", "1");
+  return checkoutUrl.toString();
+}
+
+function GumroadInlineCheckout({ url, productId }: { url: string; productId?: string }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const checkoutUrl = gumroadCheckoutUrl(url);
+  const embeddedCheckoutUrl = productId ? gumroadEmbeddedCheckoutUrl(productId) : null;
+
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://gumroad.com/js/gumroad-embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
+    setStatus("loading");
+    if (!embeddedCheckoutUrl) {
+      setStatus("error");
+      return;
+    }
+
+    const receiveHeight = (event: MessageEvent) => {
+      const iframe = iframeRef.current;
+      if (!iframe || event.source !== iframe.contentWindow) return;
+
+      try {
+        const origin = new URL(event.origin);
+        if (origin.hostname !== "gumroad.com" && !origin.hostname.endsWith(".gumroad.com")) return;
+      } catch {
+        return;
+      }
+
+      if (
+        typeof event.data === "object" &&
+        event.data !== null &&
+        event.data.type === "height" &&
+        typeof event.data.height === "number"
+      ) {
+        iframe.style.height = `${Math.max(640, event.data.height)}px`;
+      }
     };
-  }, [url]);
+
+    window.addEventListener("message", receiveHeight);
+    return () => window.removeEventListener("message", receiveHeight);
+  }, [embeddedCheckoutUrl]);
 
   return (
-    <div className="gumroad-product-embed">
-      <a href={url}>Loading...</a>
+    <div className="gumroad-checkout">
+      {embeddedCheckoutUrl && (
+        <iframe
+          ref={iframeRef}
+          className="gumroad-checkout-frame"
+          src={embeddedCheckoutUrl}
+          title="Gumroad checkout"
+          scrolling="no"
+          onLoad={() => setStatus("ready")}
+          onError={() => setStatus("error")}
+          allow="payment"
+        />
+      )}
+      {status === "loading" && (
+        <p className="gumroad-checkout-status" role="status">
+          Loading checkout...
+        </p>
+      )}
+      {status === "error" && (
+        <p className="gumroad-checkout-status" role="alert">
+          Checkout could not load.{" "}
+          <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+            Continue to Gumroad
+          </a>
+        </p>
+      )}
     </div>
   );
 }
 
-function ScrollGallery() {
-  const [scrollY, setScrollY] = useState(0);
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const boxes = [320, 260, 400, 280, 360, 300, 380, 250];
-
+function SiteFooter({ color = "#000" }: { color?: string }) {
   return (
-    <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
-      <div style={{ transform: `translateY(${120 - scrollY * 0.65}px)`, willChange: "transform" }}>
-        {boxes.map((h, i) => (
-          <div
-            key={i}
-            style={{
-              background: `hsl(0,0%,${84 - i * 3}%)`,
-              height: h,
-              marginBottom: 16,
-            }}
-          />
-        ))}
-      </div>
-    </div>
+    <footer className="site-footer" style={{ color }}>
+      <p>© 2026 OTF License. All rights reserved.</p>
+      <img
+        src={eyesSvg}
+        alt="OTF License"
+        style={{ filter: color === "#fff" ? "invert(1)" : undefined }}
+      />
+    </footer>
   );
 }
 
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
-  const [klassFilter, setKlassFilter] = useState<string>("All");
-  const shownDesigners = klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
+  const [klassFilter, setKlassFilter] = useState<string>("");
+  const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
   if (title === "ABOUT") {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, paddingTop: "5.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", paddingTop: "5.5rem" }}>
           {/* Left column */}
-          <div style={{ padding: "0 3rem 6rem 4rem" }}>
+          <div style={{ padding: "0 3rem 0 4rem" }}>
             <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
               {PAGE_TEXT["ABOUT"]}
             </p>
@@ -791,22 +966,21 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
                 onChange={(e) => setKlassFilter(e.target.value)}
                 style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", padding: "0.4rem 0.75rem", border: "1.5px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
               >
+                <option value="" disabled hidden>Class of...</option>
                 {DESIGNER_CLASSES.map((c) => (
-                  <option key={c} value={c}>{c === "All" ? "All classes" : c}</option>
+                  <option key={c} value={c}>{c === "All" ? "All" : klassYear(c)}</option>
                 ))}
               </select>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
-              {shownDesigners.map((d) => <NameCell key={d.name} d={d} />)}
-            </div>
-          </div>
-
-          {/* Right column — sticky scroll gallery */}
-          <div style={{ paddingTop: "1rem" }}>
-            <ScrollGallery />
           </div>
         </div>
+
+        {/* Designer grid — full content width, as many columns as fit */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(13rem, 1fr))", gap: "2.5rem 3rem", padding: "1.5rem 4rem 6rem 4rem" }}>
+          {[...shownDesigners].sort((a, b) => a.name.localeCompare(b.name, "sv")).map((d) => <DesignerCell key={d.name} d={d} />)}
+        </div>
+        <SiteFooter />
       </div>
     );
   }
@@ -883,21 +1057,53 @@ const GLYPH_NAMES: Record<string, string> = {
   "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "longst", "ﬆ": "st", "ª": "ordfeminine", "º": "ordmasculine", "µ": "mu",
 };
 
+// Glyphs Dukat hides from its panel even though they exist in the font file —
+// an explicit per-face display exception (the glyphs are not removed from the font).
+const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
+
 // Full-width panel: large showcase on the left, categorised character list on the right.
-// When the parsed opentype font is available, only glyphs actually present in the
-// face are shown (missing chars are omitted and empty categories are hidden).
-function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings }: { font: string; otFont: opentype.Font | null; panelBg: string; panelText: string; fontVariationSettings?: string }) {
+// Coverage is read from the selected font's own cmap: opentype.js for the parseable
+// (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
+// native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
+// when it genuinely exists in that font — never inferred from browser fallback.
+function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
-    chars: otFont ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0) : group.chars,
+    chars: (otFont
+      ? group.chars.filter((c) => otFont.charToGlyphIndex(c) > 0)
+      : coverage
+      ? group.chars.filter((c) => coverage.has(c.codePointAt(0) ?? -1))
+      : []
+    ).filter((c) => {
+      // Dukat-only exception: hide these two glyphs from its Glyphs panel.
+      if (faceName !== "Dukat") return true;
+      const name = otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(c))?.name : undefined;
+      return !(name && DUKAT_HIDDEN_GLYPHS.has(name));
+    }),
   })).filter((group) => group.chars.length > 0);
+
+  // Mobile only: categories act as independent accordions, all collapsed on load.
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set());
+  const toggleGroup = (label: string) =>
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label); else next.add(label);
+      return next;
+    });
 
   const firstChar = groups[0]?.chars[0] ?? "A";
   const [hovered, setHovered] = useState(firstChar);
   useEffect(() => {
     setHovered(firstChar);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otFont]);
+  }, [otFont, coverage]);
 
   // Metadata for the currently highlighted glyph. The Unicode value comes from
   // the character itself; the glyph name is read from the parsed font when
@@ -910,28 +1116,59 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
   return (
-    <div style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
-      {/* Showcase — left */}
-      <div style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", color: panelText, transition: "color 0.25s ease" }}>
-        <span style={{ fontFamily: font, fontVariationSettings, fontSize: "clamp(7rem, 18vw, 18rem)", lineHeight: 1 }}>{hovered}</span>
-        <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
-          <div>Glyph: {glyphName}</div>
-          <div>Unicode: {glyphUnicode}</div>
+    <div className="tf-glyphs" style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+      {/* Showcase — left. The variable-font / "Regular" controls sit at the top
+          of this column so they share the top row with the first glyph category
+          heading in the right column. Shares the exact same axis state as the
+          Preview panel's controls. */}
+      <div className="tf-glyph-showcase" style={{ position: "relative", flex: "0 0 38%", minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem", color: panelText, transition: "color 0.25s ease" }}>
+        {controls && (
+          <div className="tf-glyph-controls" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>
+            {controls}
+          </div>
+        )}
+        <div className="tf-glyph-stage" style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+          {/* Keyed so each glyph gets a fresh node (no stale paint), and padded
+              (offset by an equal negative margin) so the element's paint box
+              covers ink beyond the line box — outlines outside it were leaving
+              fragments behind on repaint. Layout size is unchanged. */}
+          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
+          <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
+            <div>Glyph: {glyphName}</div>
+            <div>Unicode: {glyphUnicode}</div>
+          </div>
+          {sizeDebug}
         </div>
       </div>
 
       {/* Character list — right, grouped by category */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {groups.map((group) => (
+        {groups.map((group) => {
+          const open = !isMobile || openGroups.has(group.label);
+          return (
           <div key={group.label}>
+            {isMobile ? (
+              <button
+                type="button"
+                aria-expanded={open}
+                onClick={() => toggleGroup(group.label)}
+                style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: open ? "0.4rem" : 0, textAlign: "left" }}
+              >
+                <span>{group.label}</span>
+                <span aria-hidden="true">{open ? "−" : "+"}</span>
+              </button>
+            ) : (
             <div style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
               {group.label}
             </div>
+            )}
+            {open && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
               {group.chars.map((g, i) => (
                 <div
                   key={i}
                   onMouseEnter={() => setHovered(g)}
+                  onClick={() => setHovered(g)}
                   style={{
                     fontFamily: font,
                     fontVariationSettings,
@@ -951,48 +1188,107 @@ function GlyphSection({ font, otFont, panelBg, panelText, fontVariationSettings 
                 </div>
               ))}
             </div>
+            )}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
+// Fixed-size image field for each typeface page. Reads the current typeface's
+// image list, fills the field with cover-cropped images, auto-advances every ~5s
+// with a horizontal slide, and opens the clicked image in a contain-fit lightbox.
 function WipCarousel({ panelText, images = [] }: { panelText: string; images?: string[] }) {
   const count = images.length;
 
-  // Single-image or empty: no carousel needed
-  if (count <= 1) {
-    return (
-      <div style={{ position: "absolute", inset: 0, background: "#fff" }}>
-        {images[0] && <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />}
-      </div>
-    );
-  }
-
   // Infinite loop: [last, ...images, first]
-  const slides = [images[count - 1], ...images, images[0]];
+  const slides = count > 1 ? [images[count - 1], ...images, images[0]] : images;
   const total = slides.length;
 
   // Start at index 1 (the real first image)
   const [idx, setIdx] = useState(1);
   const [animated, setAnimated] = useState(true);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  // Reset when the typeface (and so its image list) changes.
+  useEffect(() => {
+    setAnimated(false);
+    setIdx(1);
+  }, [images]);
 
   const go = (d: number) => {
     setAnimated(true);
     setIdx((prev) => prev + d);
   };
 
+  // Auto-advance; restarts after every move (manual or automatic) and is paused
+  // while the lightbox is open.
+  useEffect(() => {
+    if (count <= 1 || lightbox) return;
+    // If a transitionend was missed (e.g. background tab), snap back into range.
+    if (idx <= 0 || idx >= total - 1) {
+      const t = window.setTimeout(handleTransitionEnd, 650);
+      return () => window.clearTimeout(t);
+    }
+    const t = window.setTimeout(() => go(1), 5000);
+    return () => window.clearTimeout(t);
+  }, [idx, count, lightbox]);
+
+  // Escape closes the lightbox.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setLightbox(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
+
   const handleTransitionEnd = () => {
     // Silently snap from clone to real slide with no animation
-    if (idx === 0) {
+    if (idx <= 0) {
       setAnimated(false);
       setIdx(count);
-    } else if (idx === total - 1) {
+    } else if (idx >= total - 1) {
       setAnimated(false);
       setIdx(1);
     }
   };
+
+  const imgStyle: React.CSSProperties = { width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", cursor: "zoom-in" };
+
+  const lightboxEl = lightbox && (
+    <div
+      onClick={() => setLightbox(null)}
+      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}
+    >
+      <img
+        src={lightbox}
+        alt=""
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }}
+      />
+      <button
+        onClick={() => setLightbox(null)}
+        aria-label="Close"
+        style={{ position: "absolute", top: 16, right: 20, background: "none", border: "none", color: "#fff", fontFamily: "Arial, sans-serif", fontSize: "1.8rem", lineHeight: 1, cursor: "pointer" }}
+      >
+        ×
+      </button>
+    </div>
+  );
+
+  // Empty: keep the reserved field. Single image: no slideshow.
+  if (count <= 1) {
+    return (
+      <>
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
+        {images[0] && <img src={images[0]} alt="" onClick={() => setLightbox(images[0])} style={imgStyle} />}
+      </div>
+      {lightboxEl && createPortal(lightboxEl, document.body)}
+      </>
+    );
+  }
 
   const arrowStyle: React.CSSProperties = {
     position: "absolute",
@@ -1012,26 +1308,29 @@ function WipCarousel({ panelText, images = [] }: { panelText: string; images?: s
   };
 
   return (
+    <>
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "#fff" }}>
       <div
-        onTransitionEnd={handleTransitionEnd}
+        onTransitionEnd={(e) => e.target === e.currentTarget && handleTransitionEnd()}
         style={{
           display: "flex",
           width: `${total * 100}%`,
           height: "100%",
           transform: `translateX(-${(idx / total) * 100}%)`,
-          transition: animated ? "transform 0.42s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
+          transition: animated ? "transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
         }}
       >
         {slides.map((src, i) => (
-          <div key={i} style={{ width: `${100 / total}%`, flexShrink: 0, height: "100%" }}>
-            <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+          <div key={i} style={{ width: `${100 / total}%`, flexShrink: 0, height: "100%", overflow: "hidden" }}>
+            <img src={src} alt="" onClick={() => setLightbox(src)} style={imgStyle} />
           </div>
         ))}
       </div>
       <button onClick={() => go(-1)} style={{ ...arrowStyle, left: 12 }} aria-label="Previous">‹</button>
       <button onClick={() => go(1)} style={{ ...arrowStyle, right: 12 }} aria-label="Next">›</button>
     </div>
+    {lightboxEl && createPortal(lightboxEl, document.body)}
+    </>
   );
 }
 
@@ -1188,8 +1487,20 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Local state — automatically resets on unmount (back to foundry) or refresh.
   const [mode, setMode] = useState<Mode>("color");
   const [top, setTop] = useState("");
-  const [size, setSize] = useState(16); // rem — starts at the slider's max size
+  // rem — initial size per typeface: desktop uses previewSize, ≤768px uses
+  // mobilePreviewSize. Chosen once on open; the Size slider owns it afterwards.
+  const [size, setSize] = useState(() =>
+    window.matchMedia("(max-width: 768px)").matches
+      ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
+      : face?.previewSize ?? 16
+  );
+  // TEMPORARY: in-progress text of the numeric Size readout while it's being edited.
+  const [sizeDraft, setSizeDraft] = useState<string | null>(null);
   const [font, setFont] = useState<opentype.Font | null>(null);
+  // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
+  // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
+  // which the Glyphs panel reads through the parsed `font` (opentype) instead.
+  const [coverage, setCoverage] = useState<Set<number> | null>(null);
   // Per-typeface weight control: variable fonts expose a wght axis (slider),
   // static fonts show a fixed "Regular" label instead.
   const [weightAxis, setWeightAxis] = useState<{ min: number; max: number; default: number } | null>(null);
@@ -1200,8 +1511,29 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const nativeAxes = NATIVE_VF[name] ?? null;
   const isNative = nativeAxes !== null;
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
+  // Mobile only: ONE active control shared by Preview and Glyphs. It only picks
+  // which control is visible — values live in the states above and never reset.
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [activeControl, setActiveControl] = useState("size");
+  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | null>(null);
+  // Mobile Glyphs has its own control picker (axes only — no Size/Space).
+  const [glyphControl, setGlyphControl] = useState("wght");
+  // TEMPORARY calibration values (rem) — desktop and mobile tuned independently.
+  const [aboutTextSizeDesktop, setAboutTextSizeDesktop] = useState(0.95);
+  const [aboutTextSizeMobile, setAboutTextSizeMobile] = useState(0.95);
+  const [glyphShowcaseSizeDesktop, setGlyphShowcaseSizeDesktop] = useState(() =>
+    Math.round(Math.min(18, Math.max(7, (window.innerWidth * 0.18) / 16)) * 4) / 4
+  );
+  const [glyphShowcaseSizeMobile, setGlyphShowcaseSizeMobile] = useState(9);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Track the preview box's rendered width so the overlay can wrap words to match.
   useEffect(() => {
@@ -1223,14 +1555,29 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   useEffect(() => {
     let cancelled = false;
     setFont(null);
+    setCoverage(null);
     setWeightAxis(null);
     setSpacing(0);
-    // Native variable fonts render through the browser using known axis data,
-    // so they don't need (and opentype.js often can't parse) the WOFF2 file.
+    // Native variable fonts render through the browser using known axis data.
+    // opentype.js cannot parse their WOFF2 files, so the Glyphs panel reads real
+    // cmap coverage via fontkit (which decodes WOFF2) — never browser fallback.
     if (nativeAxes) {
       const init: Record<string, number> = {};
       for (const a of nativeAxes) init[a.tag] = a.default;
       setAxisValues(init);
+      if (face?.file) {
+        fetch(face.file)
+          .then((res) => res.arrayBuffer())
+          .then((buffer) => {
+            if (cancelled) return;
+            const fk = (fontkit as any).create(new Uint8Array(buffer));
+            const cps: number[] = fk?.characterSet ?? [];
+            setCoverage(new Set(cps));
+          })
+          .catch(() => {
+            if (!cancelled) setCoverage(null);
+          });
+      }
       return () => {
         cancelled = true;
       };
@@ -1264,14 +1611,16 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     };
   }, [name]);
 
-  // Type the typeface name into the preview window on entry.
+  // Type the typeface name into the preview window on entry. Faces marked
+  // "upperInitial" default to CAPS but stay freely editable to either case.
   useEffect(() => {
+    const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? name.toUpperCase() : name;
     let i = 0;
     setTop("");
     const id = setInterval(() => {
       i++;
-      setTop(name.slice(0, i));
-      if (i >= name.length) clearInterval(id);
+      setTop(seed.slice(0, i));
+      if (i >= seed.length) clearInterval(id);
     }, 100);
     return () => clearInterval(id);
   }, [name]);
@@ -1289,6 +1638,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Fit a single row by default; grow with each added line, up to four.
   const previewLines = Math.max(1, wrappedLines.length);
 
+  // Auto-grow the preview to its real rendered height, so both Enter and natural
+  // wrapping add rows. Re-measured once webfonts finish loading.
+  useLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const fit = () => {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+  });
+
   // Panel (column) colours + surrounding page colours by mode.
   const panelBg = mode === "color" ? face.bg : mode === "invert" ? face.fg : mode === "panelsDark" ? "#000" : "#fff";
   const panelText = mode === "color" ? face.fg : mode === "invert" ? face.bg : mode === "panelsDark" ? "#fff" : "#000";
@@ -1304,6 +1666,166 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     : weightAxis
     ? `'wght' ${weightValue}`
     : undefined;
+
+  // Variable-font controls shared between the Preview panel and the Glyphs
+  // panel so both interfaces read and write the exact same axis state. Null for
+  // non-variable typefaces (Preview falls back to a "Regular" label).
+  const renderAxis = (axis: VFAxis) =>
+        axis.onOff ? (
+          <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+              {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
+              <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
+              <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
+            </span>
+            <button
+              onClick={() =>
+                setAxisValues((prev) => ({
+                  ...prev,
+                  [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
+                }))
+              }
+              style={{
+                width: 34,
+                height: 20,
+                borderRadius: 10,
+                border: "1.5px solid rgba(128,128,128,0.6)",
+                background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
+                cursor: "pointer",
+                padding: 0,
+                position: "relative",
+              }}
+              aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 2,
+                  left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
+                  transition: "left 0.15s ease",
+                }}
+              />
+            </button>
+          </div>
+        ) : (
+          <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
+            <input
+              type="range"
+              min={axis.min}
+              max={axis.max}
+              step={1}
+              value={axisValues[axis.tag] ?? axis.default}
+              onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
+              className="size-slider"
+            />
+          </div>
+        );
+  const weightControl = weightAxis ? (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
+      <input
+        type="range"
+        min={weightAxis.min}
+        max={weightAxis.max}
+        step={1}
+        value={weightValue}
+        onChange={(e) => setWeightValue(Number(e.target.value))}
+        className="size-slider"
+      />
+    </div>
+  ) : null;
+  const variableControls = isNative ? <>{nativeAxes!.map(renderAxis)}</> : weightControl;
+
+  const sizeControl = (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
+      <input type="range" min={3} max={16} step={0.5} value={size} onChange={(e) => setSize(Number(e.target.value))} className="size-slider" />
+    </div>
+  );
+  const spaceControl = (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Space</span>
+      <input type="range" min={0} max={0.2} step={0.01} value={spacing} onChange={(e) => setSpacing(Number(e.target.value))} className="size-slider" />
+    </div>
+  );
+
+  // Every control this typeface actually has — Size, Space, then its real axes.
+  const mobileOptions: { key: string; label: string; node: React.ReactNode }[] = [
+    { key: "size", label: "Size", node: sizeControl },
+    { key: "space", label: "Space", node: spaceControl },
+    ...(isNative
+      ? nativeAxes!.map((a) => ({ key: a.tag, label: a.label, node: renderAxis(a) }))
+      : weightControl
+      ? [{ key: "wght", label: "Weight", node: weightControl }]
+      : []),
+  ];
+  // Mobile Glyphs: only the real sliders (Svek's on/off italic is rendered as its toggle instead).
+  const glyphOptions = mobileOptions.filter((o) => o.key !== "size" && o.key !== "space" && !nativeAxes?.find((a) => a.tag === o.key)?.onOff);
+  const glyphToggleAxes = nativeAxes?.filter((a) => a.onOff) ?? [];
+
+  // Mobile compact control row: [active control] [options button + menu].
+  const mobileControlRow = (
+    where: "preview" | "glyphs",
+    options = mobileOptions,
+    activeKey = activeControl,
+    setActiveKey: (k: string) => void = setActiveControl,
+  ) => {
+    const activeOption = options.find((o) => o.key === activeKey) ?? options[0];
+    return (
+    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
+      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+      <button
+        type="button"
+        aria-label="Choose control"
+        aria-haspopup="menu"
+        aria-expanded={controlMenu === where}
+        onClick={() => setControlMenu((m) => (m === where ? null : where))}
+        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: "1.5px solid rgba(128,128,128,0.6)", background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
+        <span aria-hidden="true" style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+      </button>
+      {controlMenu === where && (
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+          {options.map((o) => (
+            <button
+              key={o.key}
+              type="button"
+              role="menuitemradio"
+              aria-checked={o.key === activeOption.key}
+              onClick={() => { setActiveKey(o.key); setControlMenu(null); }}
+              style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: o.key === activeOption.key ? panelText : "transparent", color: o.key === activeOption.key ? panelBg : panelText, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", cursor: "pointer" }}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+    );
+  };
+
+  // TEMPORARY calibration slider: absolutely positioned overlay, never takes layout space.
+  const debugSlider = (label: string, value: number, set: (v: number) => void, min: number, max: number, step: number, pos: React.CSSProperties) => (
+    <div style={{ position: "absolute", zIndex: 3, display: "flex", alignItems: "center", gap: 6, padding: "2px 6px", borderRadius: 4, background: "rgba(0,0,0,0.55)", color: "#fff", fontFamily: "Arial, sans-serif", fontSize: 10, lineHeight: 1, pointerEvents: "auto", ...pos }}>
+      <span style={{ opacity: 0.8 }}>{label}</span>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} style={{ width: 80, height: 12, margin: 0 }} />
+      <span style={{ minWidth: "4.5ch", textAlign: "right" }}>{value.toFixed(2)}rem</span>
+    </div>
+  );
+
+  // Static-typeface fallback label, shared by Preview and Glyphs so both show
+  // "Regular" in the same control-area position.
+  const regularLabel = (
+    <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
+      Regular
+    </div>
+  );
 
   const fieldBase: React.CSSProperties = {
     fontFamily: face.font,
@@ -1322,13 +1844,34 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div className="flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
+      <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
-        <div style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
+        <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
           {/* Size slider + colour dots, side by side and centred at the top. */}
-          <div style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
+          <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
+            {isMobile && mobileControlRow("preview")}
             {/* Size */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            {!isMobile && <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+              {/* TEMPORARY calibration readout — absolutely positioned so it never
+                  shifts the controls. Edits the same `size` state as the slider. */}
+              <input
+                type="number"
+                min={3}
+                max={16}
+                step={0.5}
+                value={sizeDraft ?? String(size)}
+                onFocus={() => setSizeDraft(String(size))}
+                onChange={(e) => {
+                  setSizeDraft(e.target.value);
+                  const v = Number(e.target.value);
+                  if (e.target.value !== "" && v >= 3 && v <= 16) setSize(v);
+                }}
+                onBlur={() => setSizeDraft(null)}
+                onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+                className="size-readout"
+                aria-label="Size value"
+                style={{ position: "absolute", right: "100%", marginRight: 6, top: "50%", transform: "translateY(-50%)", width: "3.2ch", padding: 0, border: "none", outline: "none", background: "transparent", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, textAlign: "right", opacity: 0.7 }}
+              />
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
               <input
                 type="range"
@@ -1339,9 +1882,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
-            </div>
+            </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Space</span>
               <input
                 type="range"
@@ -1352,7 +1895,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSpacing(Number(e.target.value))}
                 className="size-slider"
               />
-            </div>
+            </div>}
             <div style={{ display: "flex", gap: 10 }}>
               {([
                 { m: "color" as Mode, c: face.bg },
@@ -1378,89 +1921,20 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               ))}
             </div>
             {/* Variable-font controls — native fonts expose their configured axes,
-                SVG variable fonts keep the wght slider, static fonts show "Regular". */}
-            {isNative ? (
-              nativeAxes!.map((axis) =>
-                axis.onOff ? (
-                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
-                    <button
-                      onClick={() =>
-                        setAxisValues((prev) => ({
-                          ...prev,
-                          [axis.tag]: (prev[axis.tag] ?? axis.default) >= axis.max ? axis.min : axis.max,
-                        }))
-                      }
-                      style={{
-                        width: 34,
-                        height: 20,
-                        borderRadius: 10,
-                        border: "1.5px solid rgba(128,128,128,0.6)",
-                        background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
-                        cursor: "pointer",
-                        padding: 0,
-                        position: "relative",
-                      }}
-                      aria-pressed={(axisValues[axis.tag] ?? axis.default) >= axis.max}
-                    >
-                      <span
-                        style={{
-                          position: "absolute",
-                          top: 2,
-                          left: (axisValues[axis.tag] ?? axis.default) >= axis.max ? 16 : 2,
-                          width: 14,
-                          height: 14,
-                          borderRadius: "50%",
-                          background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText,
-                          transition: "left 0.15s ease",
-                        }}
-                      />
-                    </button>
-                  </div>
-                ) : (
-                  <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                    <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>{axis.label}</span>
-                    <input
-                      type="range"
-                      min={axis.min}
-                      max={axis.max}
-                      step={1}
-                      value={axisValues[axis.tag] ?? axis.default}
-                      onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
-                      className="size-slider"
-                    />
-                  </div>
-                )
-              )
-            ) : weightAxis ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Weight</span>
-                <input
-                  type="range"
-                  min={weightAxis.min}
-                  max={weightAxis.max}
-                  step={1}
-                  value={weightValue}
-                  onChange={(e) => setWeightValue(Number(e.target.value))}
-                  className="size-slider"
-                />
-              </div>
-            ) : (
-              <div style={{ width: 96, flexShrink: 0, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>
-                Regular
-              </div>
-            )}
+                SVG variable fonts keep the wght slider; static fonts show no label. */}
+            {!isMobile && variableControls}
           </div>
           {/* Editable preview — one row by default, grows with content up to four rows.
               Extra bottom room keeps descenders on the last line fully visible. */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
+          <div className="tf-preview-field" style={{ display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible", padding: "0 2rem" }}>
             <div ref={boxRef} style={{ position: "relative", width: "100%" }}>
               <textarea
+                ref={textareaRef}
                 value={previewText}
                 onChange={(e) => {
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
-                rows={previewLines}
+                rows={1}
                 style={{
                   ...fieldBase,
                   display: "block",
@@ -1468,46 +1942,37 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   fontSize: `${size}rem`,
                   lineHeight: 1.3,
                   textAlign: "center",
-                  height: `${previewLines * size * 1.3 + size * 0.35}rem`,
-                  // Once the font is parsed the SVG overlay draws the glyphs, so
-                  // hide the textarea's own text (caret stays visible). Until then
-                  // fall back to normal rendering so text is never invisible.
-                  color: font && !isNative ? "transparent" : panelText,
+                  overflow: "hidden",
+                  // A textarea always clips its own content box, so its glyphs are
+                  // drawn transparent and the visible text comes from the unclipped
+                  // mirror below. The caret and selection stay native.
+                  color: "transparent",
                   caretColor: panelText,
                 }}
               />
-              {/* Purely visual overlay — draws the real glyphs on top of the
-                  transparent textarea, aligned to the same box/padding/metrics.
-                  Skipped for native variable fonts, which the browser renders. */}
-              {font && !isNative && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    pointerEvents: "none",
-                    boxSizing: "border-box",
-                    padding: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  {wrappedLines.map((line, idx) => (
-                    <GlyphLine
-                      key={idx}
-                      font={font}
-                      text={line}
-                      fontSizePx={size * 16}
-                      lineHeightPx={size * 16 * 1.3}
-                      fill={panelText}
-                      weightAxis={weightAxis}
-                      weightValue={weightValue}
-                      letterSpacing={spacing}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Visible preview text — native browser rendering through the real
+                  @font-face family, laid out identically to the textarea but with
+                  overflow visible so extreme outlines are never cropped. */}
+              <div
+                aria-hidden
+                style={{
+                  ...fieldBase,
+                  background: "transparent",
+                  position: "absolute",
+                  inset: 0,
+                  padding: 2,
+                  fontSize: `${size}rem`,
+                  lineHeight: 1.3,
+                  textAlign: "center",
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "break-word",
+                  overflow: "visible",
+                  pointerEvents: "none",
+                  color: panelText,
+                }}
+              >
+                {previewText.endsWith("\n") ? previewText + "\u200b" : previewText}
+              </div>
             </div>
           </div>
         </div>
@@ -1524,7 +1989,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   key={k}
                   style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", fontWeight: "normal", color: pageText, paddingRight: "2.5rem", whiteSpace: "nowrap" }}
                 >
-                  {k % 2 === 0 ? face.designer : face.klass}
+                  {k % 2 === 0 ? face.designer : klassLabel(face.klass)}
                 </span>
               ))}
             </div>
@@ -1532,21 +1997,26 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         </div>
 
         {/* Info (left) + Work-in-progress images (right), side by side */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
+        <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
-          <div style={{ background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p style={{ fontFamily: face.font, fontSize: "0.95rem", color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
-              {applyCase(`${face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
+          <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
+            {isMobile
+              ? debugSlider("TEMP about (mobile)", aboutTextSizeMobile, setAboutTextSizeMobile, 0.5, 2.5, 0.05, { top: 2, right: 4 })
+              : debugSlider("TEMP about (desktop)", aboutTextSizeDesktop, setAboutTextSizeDesktop, 0.5, 2.5, 0.05, { top: 4, right: 8 })}
+            <p className="tf-about-text" style={{ fontFamily: face.font, fontSize: `${isMobile ? aboutTextSizeMobile : aboutTextSizeDesktop}rem`, color: panelText, opacity: 0.85, marginTop: 0, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+              {applyCase(`${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
+              {/* Listed bottom-up: the container is column-reverse, so this
+                  renders First sketched → Format from top to bottom. */}
               {[
-                ["First sketched:", "2024"],
-                ["Released:", "2026"],
-                ["Update:", "2026"],
-                ["Version:", "1.0"],
-                ["Language support:", "Latin Extended"],
-                ["Range:", "Light, Medium, Regular, Italic, Bold"],
                 ["Format:", "ttf, otf, woff"],
+                ["Range:", name === "Svek" ? "Regular, Italic" : variableControls ? "Light, Medium, Regular, Italic, Bold" : "Regular"],
+                ["Language support:", "Latin Extended"],
+                ["Version:", "1.0"],
+                ["Last update:", "2026"],
+                ["Released:", "2026"],
+                ["First sketched:", "2024"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
                   <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
@@ -1557,7 +2027,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           </div>
 
           {/* Image field — right */}
-          <div style={{ position: "relative", overflow: "hidden", background: panelBg, transition: "background 0.25s ease" }}>
+          <div className="tf-gallery" style={{ position: "relative", overflow: "hidden", background: panelBg, transition: "background 0.25s ease" }}>
             <WipCarousel panelText={panelText} images={face.gallery ?? GALLERY_IMAGES} />
           </div>
         </div>
@@ -1565,14 +2035,34 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         {/* Full-width Glyphs panel — showcase (left) + character list (right).
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
-        <div style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} otFont={font} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings} />
+        <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
+          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
+            controls={isMobile ? (
+              glyphToggleAxes.length > 0
+                ? <>{glyphToggleAxes.map(renderAxis)}</>
+                : glyphOptions.length > 1
+                ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
+                : glyphOptions.length === 1
+                ? glyphOptions[0].node
+                : regularLabel
+            ) : variableControls ?? regularLabel}
+            mobileGlyphSize={`${glyphShowcaseSizeMobile}rem`}
+            desktopGlyphSize={`${glyphShowcaseSizeDesktop}rem`}
+            sizeDebug={isMobile
+              ? debugSlider("TEMP glyph (mobile)", glyphShowcaseSizeMobile, setGlyphShowcaseSizeMobile, 3, 16, 0.25, { right: 0, bottom: 0 })
+              : debugSlider("TEMP glyph (desktop)", glyphShowcaseSizeDesktop, setGlyphShowcaseSizeDesktop, 4, 28, 0.25, { right: 0, bottom: 0 })}
+          />
         </div>
 
         {/* Gumroad purchase widget */}
-        <div style={{ marginTop: GAP, display: "flex", justifyContent: "center" }}>
-          <GumroadEmbed url={face.gumroad ?? "https://otflicense.gumroad.com"} />
+        <div className="tf-buy" style={{ marginTop: GAP, display: "flex", justifyContent: "center", maxWidth: "100%" }}>
+          <GumroadInlineCheckout
+            key={face.gumroad}
+            url={face.gumroad ?? "https://otflicense.gumroad.com"}
+            productId={GUMROAD_PRODUCT_IDS[face.name]}
+          />
         </div>
+        <SiteFooter color={pageText} />
       </div>
     </div>
   );
@@ -1587,7 +2077,11 @@ const BAND_PHRASES = [
 // Colors that need black text for legibility
 const LIGHT_BAND_COLORS = new Set(["#fff800", "#c3872f", "#00ab53"]);
 
-function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void }) {
+// Scroll speed (px/s) of the marquee band, measured from its rendered track so
+// the nav-button hover loops can run at exactly the same tempo.
+let bandSpeedPxPerSec = 80;
+
+function MarqueeBand({ direction = "forward", onNavigate, interactive = true }: { direction?: "forward" | "reverse"; onNavigate?: (p: Page) => void; interactive?: boolean }) {
   const [colorIdx, setColorIdx] = useState(0);
 
   useEffect(() => {
@@ -1625,32 +2119,32 @@ function MarqueeBand({ direction = "forward", onNavigate }: { direction?: "forwa
 
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer")}
-      style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: "pointer", transition: "background 0.3s ease" }}
+      onClick={() => {
+        if (!interactive) return;
+        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle");
+      }}
+      tabIndex={interactive ? 0 : -1}
+      aria-hidden={interactive ? undefined : true}
+      style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: interactive ? "pointer" : "default", transition: "background 0.3s ease" }}
     >
-      <div style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 80s linear infinite` }}>{words}</div>
+      <div
+        ref={(el) => { if (el && el.scrollWidth) bandSpeedPxPerSec = el.scrollWidth / 2 / 80; }}
+        style={{ display: "inline-flex", animation: `${direction === "reverse" ? "marqueeReverse" : "marquee"} 80s linear infinite` }}
+      >{words}</div>
     </button>
   );
 }
 
-const BUNDLE_URL = "https://otflicense.gumroad.com/l/megabundlepack?wanted=true";
+const BUNDLE_URL = "https://otflicense.gumroad.com/l/megabundlepack";
+const BUNDLE_PRODUCT_ID = "hrcidq";
 
 function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://gumroad.com/js/gumroad-embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
-
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
-      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
-        <div className="gumroad-product-embed" style={{ width: "100%", maxWidth: 740 }}>
-          <a href={BUNDLE_URL}>Loading…</a>
-        </div>
+      <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+        <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} />
+        <SiteFooter />
       </div>
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
         <MarqueeBand direction="reverse" onNavigate={onNavigate} />
@@ -1659,66 +2153,28 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   );
 }
 
-function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
-  const enter = () => onNavigate({ id: "foundry" });
-
+function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLButtonElement) return;
-      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-        e.preventDefault();
-        enter();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timeout = window.setTimeout(onIntroComplete, reducedMotion ? 100 : 2350);
+    return () => window.clearTimeout(timeout);
+  }, [onIntroComplete]);
 
   return (
-    <div
-      onClick={enter}
-      style={{ position: "fixed", inset: 0, overflow: "hidden", background: "#fff", cursor: "pointer" }}
-    >
-      {/* GIF — 80% of viewport, centred */}
-      <img
-        src={introGif}
-        alt={BRAND}
-        style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: "90%", height: "90%", objectFit: "contain", display: "block" }}
-      />
+    <div className="intro-sequence">
+      <div className="intro-sticker-shell">
+        <img className="intro-sticker" src={introGif} alt={BRAND} />
+      </div>
 
       {/* Top band — travels right to left */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="forward" onNavigate={onNavigate} />
+      <div className="intro-band intro-band-top">
+        <MarqueeBand direction="forward" interactive={false} />
       </div>
 
       {/* Bottom band — travels left to right */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2 }}>
-        <MarqueeBand direction="reverse" onNavigate={onNavigate} />
+      <div className="intro-band intro-band-bottom">
+        <MarqueeBand direction="reverse" interactive={false} />
       </div>
-
-      {/* Enter button — true SVG oval, stop-motion hover */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          enter();
-        }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translate(-50%, 0) scale(1.08) rotate(-3deg)"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translate(-50%, 0) scale(1) rotate(0deg)"; }}
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "65%",
-          transform: "translate(-50%, 0)",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: 0,
-          zIndex: 3,
-          transition: "none",
-        }}
-      >
-        <img src={enterButtonSvg} alt="Enter the shop" style={{ width: 160, display: "block" }} />
-      </button>
     </div>
   );
 }
@@ -1792,6 +2248,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
           />
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }
@@ -1837,9 +2294,22 @@ function FloatingEyes({ pos, onHover, filter }: { pos: { x: number; y: number };
 
 function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNavigate?: (p: Page) => void }) {
   const [entered, setEntered] = useState(false);
+  const [colorIdx, setColorIdx] = useState(0);
+
   useEffect(() => {
     requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
   }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setColorIdx((prev) => (prev + 1) % PALETTE.length);
+    }, 1200);
+    return () => clearInterval(id);
+  }, []);
+
+  const modalBg = PALETTE[colorIdx];
+  const modalText = LIGHT_BAND_COLORS.has(modalBg) ? "#000" : "#fff";
+
   return (
     <div
       style={{
@@ -1856,24 +2326,30 @@ function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNaviga
           e.stopPropagation();
           onClose();
           if (onNavigate) onNavigate({ id: "bundle" });
-          else window.open("https://otflicense.gumroad.com/l/megabundlepack?wanted=true", "_blank", "noopener,noreferrer");
+          else window.location.assign("/bundle");
         }}
         style={{
-          background: "#fff",
-          border: "2px solid #000",
-          padding: "3rem 4rem",
+          width: "min(80vw, 420px)",
+          aspectRatio: "1",
+          boxSizing: "border-box",
+          background: modalBg,
+          border: "none",
+          padding: "3rem",
           textAlign: "center",
           cursor: "pointer",
           transform: entered ? "translateY(0)" : "translateY(24px)",
-          transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
-          maxWidth: 420,
+          transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <p style={{ fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "2rem", color: "#000", margin: "0 0 0.75rem" }}>
-          alright, you got me.
+        <p style={{ fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "2rem", color: modalText, margin: "0 0 0.75rem", transition: "color 0.3s ease" }}>
+          Good job!
         </p>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", color: "#000", margin: 0 }}>
-          click me to earn a reward
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", color: modalText, margin: 0, transition: "color 0.3s ease" }}>
+          Click to redeem your offer.
         </p>
       </div>
     </div>
@@ -1881,7 +2357,16 @@ function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNaviga
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>(() => pageFromPath(window.location.pathname));
+  const [page, setPage] = useState<Page>(() => {
+    const initialPage = pageFromPath(window.location.pathname);
+    return initialPage.id === "home" ? { id: "foundry" } : initialPage;
+  });
+  const [showIntro, setShowIntro] = useState(
+    () => pageFromPath(window.location.pathname).id === "home",
+  );
+  const [landingEntrance, setLandingEntrance] = useState(
+    () => pageFromPath(window.location.pathname).id === "home",
+  );
   const [transY, setTransY] = useState<string | null>(null);
   const [transColor, setTransColor] = useState(PALETTE[0]);
   const navigating = useRef(false);
@@ -1941,7 +2426,19 @@ export default function App() {
     if (window.location.pathname !== path) {
       window.history.pushState(null, "", path);
     }
+    if (p.id === "home") {
+      setPage({ id: "foundry" });
+      setLandingEntrance(true);
+      setShowIntro(true);
+      return;
+    }
     transitionTo(p);
+  }
+
+  function completeIntro() {
+    window.history.replaceState(null, "", "/shop");
+    setShowIntro(false);
+    window.setTimeout(() => setLandingEntrance(false), 100);
   }
 
   useEffect(() => {
@@ -1952,7 +2449,14 @@ export default function App() {
     }
 
     const handlePopState = () => {
-      transitionTo(pageFromPath(window.location.pathname));
+      const nextPage = pageFromPath(window.location.pathname);
+      if (nextPage.id === "home") {
+        setPage({ id: "foundry" });
+        setLandingEntrance(true);
+        setShowIntro(true);
+      } else {
+        transitionTo(nextPage);
+      }
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -1969,36 +2473,36 @@ export default function App() {
   const staticEyesProps  = { showEyes: true };
 
   let content: React.ReactNode;
-  if (page.id === "home")     content = <HomePage onNavigate={navigate} />;
-  else if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
+  if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
-      <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
-            {shopTypefaces.slice(0, 6).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+      {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
+      <div className="shop-stage" style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+        <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
+            {shopTypefaces.slice(0, 6).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap, marginTop: rowGap * 2 }}>
-            {shopTypefaces.slice(6, 11).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap, marginTop: rowGap * 2 }}>
+            {shopTypefaces.slice(6, 11).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
-          <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap * 2 }}>
-            {shopTypefaces.slice(11).map((face) => (
-              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} />
+          <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap * 2 }}>
+            {shopTypefaces.slice(11).map((face, i) => (
+              <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
             ))}
           </div>
         </div>
       </div>
-      <div style={{ flexShrink: 0 }}>
+      <div className="shop-bottom-marquee" style={{ flexShrink: 0 }}>
         <MarqueeBand direction="reverse" onNavigate={navigate} />
       </div>
     </div>
@@ -2007,6 +2511,7 @@ export default function App() {
   return (
     <>
       {content}
+      {showIntro && <HomePage onIntroComplete={completeIntro} />}
 
       {/* Eyes easter egg — floating hops (phases 1-3), foundry page only */}
       {page.id === "foundry" && eyesPhase >= 1 && eyesPhase <= 3 && (
@@ -2020,7 +2525,7 @@ export default function App() {
 
       {/* Global fixed marquee — visible on every page, sits above content */}
       {page.id !== "home" && page.id !== "foundry" && page.id !== "bundle" && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+        <div className={page.id === "typeface" ? "tf-buy-marquee" : undefined} style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
           <MarqueeBand direction="reverse" onNavigate={navigate} />
         </div>
       )}
@@ -2040,7 +2545,7 @@ export default function App() {
             dangerouslySetInnerHTML={{
               __html: transitionSvgRaw
                 .replace(/#00ab53/gi, transColor)
-                .replace("<svg ", '<svg preserveAspectRatio="none" style="width:100%;height:100%;display:block" '),
+                .replace("<svg ", `<svg preserveAspectRatio="${window.innerWidth <= 768 ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
             }}
           />
         </div>
