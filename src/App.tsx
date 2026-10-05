@@ -245,7 +245,7 @@ const typefaces = [
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto",         designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
@@ -485,7 +485,7 @@ function StarTag({ face }: { face: typeof typefaces[0] }) {
         textAlign: "center", padding: "30px 16px",
       }}>
         <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.55rem", fontWeight: "bold", color: "#000", lineHeight: 1.3 }}>
-          {face.name}
+          {(face as { displayName?: string }).displayName ?? face.name}
         </p>
         <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.47rem", color: "#333", lineHeight: 1.2, marginTop: 1 }}>
           {face.designer}
@@ -632,13 +632,13 @@ function FitText({ text, font, color }: { text: string; font: string; color: str
   );
 }
 
-function NavTextButton({ label, width, onClick, color = "#000" }: { label: string; width: number; onClick: () => void; color?: string }) {
+function NavTextButton({ label, width, onClick, color = "#000", className = "" }: { label: string; width: number; onClick: () => void; color?: string; className?: string }) {
   // Fills with one random palette colour per hover; picked on enter so it
   // stays stable for the whole hover.
   const [hoverBg, setHoverBg] = useState<string | null>(null);
   return (
     <button
-      className="nav-text-btn"
+      className={`nav-text-btn ${className}`}
       onClick={onClick}
       onMouseEnter={() => setHoverBg(PALETTE[Math.floor(Math.random() * PALETTE.length)])}
       onMouseLeave={() => setHoverBg(null)}
@@ -682,6 +682,7 @@ function NavTextButton({ label, width, onClick, color = "#000" }: { label: strin
 }
 
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <nav
       className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
@@ -732,11 +733,36 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       </button>
       {/* On the bundle page this becomes the way back to single typefaces. */}
       <NavTextButton
+        className="nav-bundle"
         label={onBundlePage ? "BUY A SINGLE TYPEFACE" : "BUY THE MEGA BUNDLE!"}
         width={344}
         color={fg}
         onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
       />
+      {/* Mobile only: the three links collapse into a hamburger menu. */}
+      <button
+        type="button"
+        className="nav-burger"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((o) => !o)}
+        style={{ color: fg }}
+      >
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+          {menuOpen ? <path d="M5 5l16 16M21 5L5 21" /> : <path d="M3 6h20M3 13h20M3 20h20" />}
+        </svg>
+      </button>
+      {menuOpen && (
+        <div className="nav-menu" style={{ background: bg }}>
+          {[
+            { label: "ABOUT US", to: { id: "about" } as Page },
+            { label: "LICENSING STUFF", to: { id: "contact" } as Page },
+            onBundlePage ? { label: "BUY A SINGLE TYPEFACE", to: { id: "foundry" } as Page } : { label: "BUY THE MEGA BUNDLE!", to: { id: "bundle" } as Page },
+          ].map(({ label, to }) => (
+            <NavTextButton key={label} label={label} width={0} color={fg} onClick={() => { setMenuOpen(false); onNavigate(to); }} />
+          ))}
+        </div>
+      )}
     </nav>
   );
 }
@@ -886,8 +912,10 @@ function gumroadEmbeddedCheckoutUrl(productId: string) {
   return checkoutUrl.toString();
 }
 
-function GumroadInlineCheckout({ url, productId }: { url: string; productId?: string }) {
+function GumroadInlineCheckout({ url, productId, minHeight = 640 }: { url: string; productId?: string; minHeight?: number }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const minHeightRef = useRef(minHeight);
+  minHeightRef.current = minHeight;
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const checkoutUrl = gumroadCheckoutUrl(url);
   const embeddedCheckoutUrl = productId ? gumroadEmbeddedCheckoutUrl(productId) : null;
@@ -916,7 +944,7 @@ function GumroadInlineCheckout({ url, productId }: { url: string; productId?: st
         event.data.type === "height" &&
         typeof event.data.height === "number"
       ) {
-        iframe.style.height = `${Math.max(640, event.data.height)}px`;
+        iframe.style.height = `${Math.max(minHeightRef.current, event.data.height)}px`;
       }
     };
 
@@ -933,6 +961,7 @@ function GumroadInlineCheckout({ url, productId }: { url: string; productId?: st
           src={embeddedCheckoutUrl}
           title="Gumroad checkout"
           scrolling="no"
+          style={minHeight > 640 ? { height: minHeight } : undefined}
           onLoad={() => setStatus("ready")}
           onError={() => setStatus("error")}
           allow="payment"
@@ -954,6 +983,9 @@ function GumroadInlineCheckout({ url, productId }: { url: string; productId?: st
     </div>
   );
 }
+
+// EULA link shown on every typeface page; set `eula` on a typeface to override.
+const DEFAULT_EULA_URL = "https://otflicense.gumroad.com";
 
 // Final About paragraph sizes (rem) per typeface.
 const ABOUT_SIZE: Record<string, { desktop: number; mobile: number }> = {
@@ -1057,9 +1089,9 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
 // Characters shown in the glyph list, grouped in the order the categories appear.
 const CHAR_GROUPS: { label: string; chars: string[] }[] = [
-  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
-  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyz".split("") },
-  { label: "Accents", chars: "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ".split("") },
+  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".split("") },
+  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyzåäö".split("") },
+  { label: "Accents", chars: "ÀÁÂÃÆÇÈÉÊËÌÍÎÏÑÒÓÔÕØÙÚÛÜÝàáâãæçèéêëìíîïñòóôõøùúûüýÿ".split("") },
   { label: "Numbers", chars: "0123456789".split("") },
   {
     label: "Punctuations",
@@ -1656,7 +1688,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Type the typeface name into the preview window on entry. Faces marked
   // "upperInitial" default to CAPS but stay freely editable to either case.
   useEffect(() => {
-    const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? name.toUpperCase() : name;
+    const shown = name === "Crypto" ? "Crypto Mono" : name;
+    const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? shown.toUpperCase() : shown;
     let i = 0;
     setTop("");
     const id = setInterval(() => {
@@ -2012,21 +2045,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            {/* The panel keeps its original footprint: an invisible copy at the
-                original 0.95rem reserves the space, and the per-typeface text
-                is overlaid inside it so its size never changes panel dimensions. */}
-            <div style={{ position: "relative", marginBottom: "1.75rem" }}>
-              <p aria-hidden="true" className="tf-about-text" style={{ fontFamily: face.font, fontSize: "0.95rem", visibility: "hidden", margin: 0, lineHeight: 1.6 }}>
-                {applyCase(aboutText)}
-              </p>
-              <p className="tf-about-text" style={{ position: "absolute", inset: 0, overflow: "hidden", fontFamily: face.font, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: 0, lineHeight: 1.6 }}>
-                {applyCase(aboutText)}
-              </p>
-            </div>
+            <p className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
+              {applyCase(aboutText)}
+            </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {/* Listed bottom-up: the container is column-reverse, so this
                   renders First sketched → Format from top to bottom. */}
               {[
+                ["EULA", ""],
                 ["Format:", "ttf, otf, woff"],
                 ["Range:", name === "Ella"
                   ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
@@ -2035,15 +2061,18 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                     : variableControls
                       ? "Light, Medium, Regular, Italic, Bold"
                       : "Regular"],
-                ["Language support:", "Latin Extended"],
                 ["Version:", "1.0"],
-                ["Last update:", "2026"],
-                ["Released:", "2026"],
-                ["First sketched:", "2024"],
+                ["Last update:", "October 2026"],
+                ["Released:", "October 2026"],
+                ["First sketched:", "October 2025"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
-                  <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
-                  <span style={{ flex: 1 }}>{value}</span>
+                  {label === "EULA" ? (
+                    <a href={(face as { eula?: string }).eula ?? DEFAULT_EULA_URL} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "bold", color: "inherit" }}>EULA</a>
+                  ) : <>
+                    <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
+                    <span style={{ flex: 1 }}>{value}</span>
+                  </>}
                 </div>
               ))}
             </div>
@@ -2162,8 +2191,8 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
       <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
-        <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} />
+      <div style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+        <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} minHeight={2600} />
         <SiteFooter />
       </div>
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
@@ -2234,34 +2263,65 @@ const FAQ_ITEMS = [
   },
 ];
 
+// Collapsible licensing section: invisible at rest, the contact-cell notch shape
+// in a palette colour on hover, held while open and through the collapse.
+function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color: string; children?: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const active = hover || open || closing;
+  const fg = active ? (LIGHT_BAND_COLORS.has(color) ? "#000" : "#fff") : "#000";
+  const toggle = () => {
+    if (open) {
+      setClosing(true);
+      window.setTimeout(() => setClosing(false), 350);
+    }
+    setOpen((o) => !o);
+  };
+  return (
+    <div
+      className="faq-item"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ marginBottom: "1.4rem", padding: "1.1rem 1.25rem", marginLeft: "-1.25rem", marginRight: "-1.25rem", background: active ? color : "transparent", color: fg, WebkitMask: active ? NOTCH_MASK : undefined, mask: active ? NOTCH_MASK : undefined }}
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={toggle}
+        style={{ display: "flex", alignItems: "center", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}
+      >
+        <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>{q}</span>
+        {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
+        <span aria-hidden="true" style={{ flexShrink: 0, fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
+      </button>
+      <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
+        <div style={{ overflow: "hidden" }}>
+          {children ?? a.split("\n\n").map((para, j) => (
+            <p key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+              {para}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="flex-1 flex flex-col px-10" style={{ paddingTop: "5.5rem", paddingBottom: "1rem", maxWidth: "52rem" }}>
-        {FAQ_ITEMS.map(({ q, a }, i) => (
-          <div key={i} style={{ marginBottom: "2.8rem" }}>
-            <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", color: "#000", margin: "0 0 0.7rem", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>
-              {q}
-            </p>
-            {a.split("\n\n").map((para, j) => (
-              <p key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "#000", lineHeight: 1.65, margin: j === 0 ? 0 : "0.7rem 0 0" }}>
-                {para}
-              </p>
-            ))}
-          </div>
-        ))}
+        {FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />)}
 
         {/* Contact block */}
-        <div>
-          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", color: "#000", margin: "0 0 0.9rem", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>
-            Contact
-          </p>
-          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "#000", lineHeight: 1.65, margin: 0 }}>
+        <FaqItem q="Contact" color={PALETTE[FAQ_ITEMS.length % PALETTE.length]}>
+          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
             For licensing questions, large organisation inquiries, or anything else:{" "}
             <a href="mailto:otflicense@gmail.com" style={{ color: "inherit" }}>otflicense@gmail.com</a>
           </p>
-        </div>
+        </FaqItem>
       </div>
       <SiteFooter />
     </div>
@@ -2511,12 +2571,12 @@ export default function App() {
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
-      <div className="shop-stage" style={{ flex: 1, minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+      <div className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
         <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
             {shopTypefaces.slice(0, 6).map((face, i) => (
@@ -2535,7 +2595,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div className="shop-bottom-marquee" style={{ flexShrink: 0 }}>
+      <div className="shop-bottom-marquee" style={{ flexShrink: 0, position: "relative", zIndex: 2 }}>
         <MarqueeBand direction="reverse" onNavigate={navigate} />
       </div>
     </div>

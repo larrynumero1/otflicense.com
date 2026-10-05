@@ -379,6 +379,12 @@ html {
   color-scheme: light;
 }
 
+/* Hamburger menu: mobile only. */
+.nav-burger,
+.nav-menu {
+  display: none;
+}
+
 .gumroad-checkout-status {
   margin: 0;
   padding: 2rem;
@@ -516,7 +522,7 @@ html {
     /* Width follows the desktop scale so relative sizes survive; the layout box
        is the real sticker size (no scale transform), padded vertically by the
        15° tilt overhang plus a gap so neighbouring stickers never touch. */
-    --w: min(38vw, calc(24vw * var(--s)));
+    --w: 38vw;
     width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
@@ -527,22 +533,11 @@ html {
   }
   .shop-grid .cell[data-side="right"] {
     align-self: flex-start;
-    margin-top: 9vw;
+    margin-top: 4vw;
     transform: translateX(calc(var(--zz-x) * 0.5 - 1vw)) !important;
   }
   .shop-grid .cell[data-first] {
     margin-top: 0;
-  }
-  /* Hand-placed mobile nudges; visual only, rotation untouched. */
-  .shop-grid .cell[data-name="Ella"] {
-    transform: translate(-11vw, 12vw) !important;
-  }
-  .shop-grid .cell[data-name="LCD Über"],
-  .shop-grid .cell[data-name="Mormor"] {
-    transform: translate(calc(var(--zz-x) * 0.5 + 1vw), -5vw) !important;
-  }
-  .shop-grid .cell[data-name="Sonja"] {
-    transform: translateX(-9vw) !important;
   }
   .shop-grid .cell-inner {
     width: 100% !important;
@@ -607,14 +602,6 @@ html {
     right: 2rem;
     justify-content: center;
     z-index: 2;
-  }
-  /* About paragraph in normal flow so it can never be clipped. */
-  .tf-info .tf-about-text[aria-hidden="true"] {
-    display: none;
-  }
-  .tf-info .tf-about-text {
-    position: static !important;
-    overflow: visible !important;
   }
   .tf-info-row {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -777,5 +764,52 @@ html {
   .about-designer-links {
     gap: 0.9rem !important;
     width: auto !important;
+  }
+}
+
+/* Mobile header: centred logo + eyes, hamburger on the right. */
+@media (max-width: 768px) {
+  .tf-nav {
+    position: relative !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    padding-bottom: 1rem !important;
+  }
+  .tf-nav .nav-left,
+  .tf-nav > .nav-bundle {
+    display: none !important;
+  }
+  .tf-nav .nav-logo {
+    grid-column: 2 !important;
+  }
+  .tf-nav .nav-burger {
+    display: flex;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .tf-nav .nav-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    padding: 0.5rem max(1rem, env(safe-area-inset-right)) 1rem max(1rem, env(safe-area-inset-left));
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  }
+  .tf-nav .nav-menu .nav-text-btn {
+    height: 48px !important;
+    font-size: 1.1rem !important;
+    padding: 0 0.75rem !important;
   }
 }
