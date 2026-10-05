@@ -262,12 +262,35 @@ type VFPreset = { name: string; values?: Record<string, number> };
 const ELLA_WEIGHTS: [string, number][] = [["Thin", 100], ["ExtraLight", 200], ["Light", 300], ["Regular", 400], ["Medium", 500], ["SemiBold", 600], ["Bold", 700]];
 const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
   "Ella": ELLA_WEIGHTS.flatMap(([n, w]) => [{ name: n, values: { wght: w, SRIF: 0 } }, { name: `${n} Serif`, values: { wght: w, SRIF: 100 } }]),
-  "Brus": ["Light", "Regular", "Medium", "Bold", "Bold Black", "Narrow Light Italic", "Italic", "Medium Italic", "Bold Italic", "Black Italic"].map((name) => ({ name })),
-  "Last Call": ["Thin", "ExtraLight", "Light", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"].map((name) => ({ name })),
-  "Cheiron": ["Regular", "RegularStencil", "bold"].map((name) => ({ name })),
+  "Brus": [
+    { name: "Light", values: { wght: 60, slnt: 0 } },
+    { name: "Regular", values: { wght: 118, slnt: 0 } },
+    { name: "Medium", values: { wght: 147, slnt: 0 } },
+    { name: "Bold", values: { wght: 162, slnt: 0 } },
+    { name: "Bold Black", values: { wght: 177, slnt: 0 } },
+    { name: "Narrow Light Italic", values: { wght: 60, slnt: 60 } },
+    { name: "Italic", values: { wght: 118, slnt: 60 } },
+    { name: "Medium Italic", values: { wght: 147, slnt: 60 } },
+    { name: "Bold Italic", values: { wght: 162, slnt: 60 } },
+    { name: "Black Italic", values: { wght: 177, slnt: 60 } },
+  ],
+  "Last Call": [
+    { name: "Thin", values: { wght: 0 } },
+    { name: "ExtraLight", values: { wght: 200 } },
+    { name: "Light", values: { wght: 300 } },
+    { name: "Medium", values: { wght: 500 } },
+    { name: "SemiBold", values: { wght: 600 } },
+    { name: "Bold", values: { wght: 700 } },
+    { name: "ExtraBold", values: { wght: 800 } },
+    { name: "Black", values: { wght: 900 } },
+  ],
+  "Cheiron": [
+    { name: "Regular", values: { wght: 0, wdth: 0 } },
+    { name: "RegularStencil", values: { wght: 0, wdth: 100 } },
+    { name: "bold", values: { wght: 100, wdth: 0 } },
+  ],
   "BIP": [{ name: "Regular", values: { wght: 0 } }, { name: "Medium", values: { wght: 50 } }, { name: "Bold", values: { wght: 100 } }],
 };
-const presetKey = (n: string) => n.toLowerCase().replace(/[\s_-]/g, "");
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
 const NATIVE_VF: Record<string, VFAxis[]> = {
   "Ella": [
@@ -1705,17 +1728,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             const fk = (fontkit as any).create(new Uint8Array(buffer));
             const cps: number[] = fk?.characterSet ?? [];
             setCoverage(new Set(cps));
-            if (presetDefs.length && !staticPresets.length) {
-              const named: Record<string, Record<string, number>> = fk?.namedVariations ?? {};
-              const byKey = new Map(Object.entries(named).map(([k, v]) => [presetKey(k), v]));
-              const resolved = presetDefs
-                .map((p) => ({ name: p.name, values: byKey.get(presetKey(p.name)) }))
-                .filter((p): p is { name: string; values: Record<string, number> } => !!p.values)
-                .map((p) => ({ name: p.name, values: Object.fromEntries(nativeAxes.filter((a) => a.tag in p.values).map((a) => [a.tag, p.values[a.tag]])) }));
-              setResolvedPresets(resolved);
-              const regular = resolved.find((p) => p.name === "Regular");
-              if (regular) setAxisValues((prev) => ({ ...prev, ...regular.values }));
-            }
           })
           .catch(() => {
             if (!cancelled) setCoverage(null);
