@@ -245,7 +245,7 @@ const typefaces = [
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 14, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 10, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
@@ -286,8 +286,8 @@ const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
   ],
   "Cheiron": [
     { name: "Regular", values: { wght: 0, wdth: 0 } },
-    { name: "RegularStencil", values: { wght: 0, wdth: 100 } },
-    { name: "bold", values: { wght: 100, wdth: 0 } },
+    { name: "Stencil", values: { wght: 0, wdth: 100 } },
+    { name: "Bold", values: { wght: 100, wdth: 0 } },
   ],
   "BIP": [{ name: "Regular", values: { wght: 0 } }, { name: "Medium", values: { wght: 50 } }, { name: "Bold", values: { wght: 100 } }],
 };
@@ -693,7 +693,6 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
         // Same size and weight as the homepage marquee text.
         fontSize: "1.5rem",
         fontWeight: "bold",
-        textTransform: "uppercase",
         whiteSpace: "nowrap",
         // Same text colour rule as the marquee: black on light colours, white otherwise.
         // Idle: the nav's text colour (white on the black page mode).
@@ -748,9 +747,9 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
     else goBrand();
   };
   const menuItems: { label: string; to: Page }[] = [
-    { label: "ABOUT US", to: { id: "about" } },
-    { label: "LICENSING STUFF", to: { id: "contact" } },
-    onBundlePage ? { label: "BUY A SINGLE TYPEFACE", to: { id: "foundry" } } : { label: "BUY THE MEGA BUNDLE!", to: { id: "bundle" } },
+    { label: "About Us", to: { id: "about" } },
+    { label: "Licensing", to: { id: "contact" } },
+    onBundlePage ? { label: "Buy a Single Typeface", to: { id: "foundry" } } : { label: "Buy the Mega Bundle", to: { id: "bundle" } },
   ];
   return (
     <nav
@@ -767,8 +766,8 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       }}
     >
       <div className="nav-left" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="ABOUT US" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
-        <NavTextButton label="LICENSING STUFF" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
+        <NavTextButton label="About Us" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="Licensing" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
         className="nav-logo"
@@ -787,13 +786,16 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           src={headerEyesSvg}
           alt=""
           aria-hidden="true"
-          onMouseEnter={showEyes ? (e) => { e.stopPropagation(); onEyesHover?.(); } : undefined}
+          onMouseEnter={showEyes ? (e) => {
+            // Mobile: eyes are purely decorative — no easter egg.
+            if (window.matchMedia("(max-width: 768px)").matches) return;
+            e.stopPropagation(); onEyesHover?.();
+          } : undefined}
           onClick={(e) => {
-            // Mobile homepage: tapping the eyes never replays/reloads the homepage.
-            if (onBrand && window.matchMedia("(max-width: 768px)").matches) {
+            // Mobile: tapping the eyes does nothing (no navigation or reload).
+            if (window.matchMedia("(max-width: 768px)").matches) {
               e.stopPropagation();
               e.preventDefault();
-              setMenuOpen(false);
             }
           }}
           style={{
@@ -811,7 +813,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       {/* On the bundle page this becomes the way back to single typefaces. */}
       <NavTextButton
         className="nav-bundle"
-        label={onBundlePage ? "BUY A SINGLE TYPEFACE" : "BUY THE MEGA BUNDLE!"}
+        label={onBundlePage ? "Buy a Single Typeface" : "Buy the Mega Bundle"}
         width={344}
         color={fg}
         onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
@@ -1113,6 +1115,7 @@ const ABOUT_VIDEO_SRC = "";
 
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("");
+  const [klassOpen, setKlassOpen] = useState(false);
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
   if (title === "ABOUT") {
@@ -1143,16 +1146,35 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
         {/* Designers heading + filter — below the whole text/video row */}
         <div className="about-designers-head" style={{ padding: "2.5rem 4rem 0", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
           <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
-          <select
-            value={klassFilter}
-            onChange={(e) => setKlassFilter(e.target.value)}
-            style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", padding: "0.4rem 0.75rem", border: "1.5px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
-          >
-            <option value="" disabled hidden>Class of...</option>
-            {DESIGNER_CLASSES.map((c) => (
-              <option key={c} value={c}>{c === "All" ? "All" : klassYear(c)}</option>
-            ))}
-          </select>
+          {/* Same dropdown language as the Glyphs presets: arrow first, custom menu. */}
+          <div style={{ position: "relative" }}>
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={klassOpen}
+              onClick={() => setKlassOpen((o) => !o)}
+              style={{ display: "flex", alignItems: "center", gap: 6, border: "none", background: "transparent", color: "#000", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "1rem", whiteSpace: "nowrap" }}
+            >
+              <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.2rem", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+              <span>{klassFilter === "" ? "Class of..." : klassFilter === "All" ? "All" : klassLabel(klassFilter)}</span>
+            </button>
+            {klassOpen && (
+              <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, background: "#fff", color: "#000", border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+                {DESIGNER_CLASSES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={c === klassFilter}
+                    onClick={() => { setKlassFilter(c); setKlassOpen(false); }}
+                    style={{ display: "block", width: "100%", padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: c === klassFilter ? "#000" : "transparent", color: c === klassFilter ? "#fff" : "#000", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", whiteSpace: "nowrap", cursor: "pointer" }}
+                  >
+                    {c === "All" ? "All" : klassYear(c)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Designer grid — full content width, as many columns as fit */}
@@ -1334,7 +1356,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
                 style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: open ? "0.4rem" : 0, textAlign: "left" }}
               >
                 <span>{group.label}</span>
-                <span aria-hidden="true">{open ? "−" : "+"}</span>
+                <span aria-hidden="true" style={{ display: "inline-block", fontSize: "1rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
               </button>
             ) : (
             <div style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
@@ -1865,7 +1887,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 width: 34,
                 height: 20,
                 borderRadius: 10,
-                border: "1.5px solid rgba(128,128,128,0.6)",
+                // Glyphs: shell outline uses the same colour as the dot.
+                border: toggleFirst ? `1.5px solid ${(axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText}` : "1.5px solid rgba(128,128,128,0.6)",
                 background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
                 cursor: "pointer",
                 padding: 0,
@@ -1979,7 +2002,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
       {where !== "glyphs" && optionsButton}
       {controlMenu === where && (
-        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", ...(where === "glyphs" ? { left: 0 } : { right: 0 }), zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
           {options.map((o) => (
             <button
               key={o.key}
@@ -2007,10 +2030,17 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         aria-haspopup="menu"
         aria-expanded={controlMenu === "preset"}
         onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
-        style={{ display: "flex", alignItems: "center", gap: 6, maxWidth: "100%", border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap" }}
+        style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 6, maxWidth: "100%", minHeight: isMobile ? 44 : undefined, margin: isMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
       >
-        {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
-        <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        {isMobile ? (
+          /* Mobile: same circled arrow as the axis control below, sharing its left edge. */
+          <span aria-hidden="true" style={{ flexShrink: 0, width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === "preset" ? panelText : "transparent", color: controlMenu === "preset" ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+          </span>
+        ) : (
+          /* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */
+          <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        )}
         <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Custom"}</span>
       </button>
       {controlMenu === "preset" && (
@@ -2077,8 +2107,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
-              {/* TEMPORARY: live Size readout for choosing Crypto Mono's preview size. */}
-              {face.name === "Crypto" && <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: "2.2rem" }}>{size}</span>}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -2448,7 +2476,7 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
         onClick={toggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}
       >
-        <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>{q}</span>
+        <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold" }}>{q}</span>
         {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
         <span aria-hidden="true" style={{ flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
       </button>

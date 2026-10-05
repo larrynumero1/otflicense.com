@@ -539,6 +539,10 @@ html {
   .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
     --w: min(44vw, calc(35vw * sqrt(var(--ar, 1))));
   }
+  /* Three of them ~10% larger again. */
+  .shop-grid .cell:is([data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
+    --w: min(47vw, calc(38.5vw * sqrt(var(--ar, 1))));
+  }
   .shop-grid .cell[data-side="right"] {
     align-self: flex-start;
     margin-top: 4vw;
@@ -789,6 +793,9 @@ html {
   .tf-nav .nav-logo {
     grid-column: 2 !important;
   }
+  .tf-nav .nav-eyes {
+    cursor: default !important;
+  }
   .tf-nav .nav-burger {
     display: flex;
     grid-column: 3;
@@ -845,7 +852,6 @@ html {
     font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     white-space: nowrap;
   }
   /* Homepage gets the same fixed bottom marquee as the other mobile pages. */
