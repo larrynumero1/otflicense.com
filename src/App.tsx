@@ -735,6 +735,18 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
     });
     setMenuOpen((o) => !o);
   };
+  // Close the menu on browser back/forward so it never stays open across pages.
+  useEffect(() => {
+    const close = () => setMenuOpen(false);
+    window.addEventListener("popstate", close);
+    return () => window.removeEventListener("popstate", close);
+  }, []);
+  const goBrand = onBrand ?? (() => onNavigate({ id: "foundry" }));
+  // If the menu is open, slide it shut first, then navigate.
+  const handleBrand = () => {
+    if (menuOpen) { setMenuOpen(false); window.setTimeout(goBrand, 300); }
+    else goBrand();
+  };
   const menuItems: { label: string; to: Page }[] = [
     { label: "ABOUT US", to: { id: "about" } },
     { label: "LICENSING STUFF", to: { id: "contact" } },
@@ -760,7 +772,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       </div>
       <button
         className="nav-logo"
-        onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
+        onClick={handleBrand}
         style={{ position: "absolute", left: "50%", top: logoTop, transform: "translateX(-50%)", display: "flex", alignItems: "flex-start", gap: "1.1rem", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
       >
         <img
@@ -776,6 +788,14 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           alt=""
           aria-hidden="true"
           onMouseEnter={showEyes ? (e) => { e.stopPropagation(); onEyesHover?.(); } : undefined}
+          onClick={(e) => {
+            // Mobile homepage: tapping the eyes never replays/reloads the homepage.
+            if (onBrand && window.matchMedia("(max-width: 768px)").matches) {
+              e.stopPropagation();
+              e.preventDefault();
+              setMenuOpen(false);
+            }
+          }}
           style={{
             marginTop: "0.5rem",
             height: "1.75rem",
@@ -1826,14 +1846,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Variable-font controls shared between the Preview panel and the Glyphs
   // panel so both interfaces read and write the exact same axis state. Null for
   // non-variable typefaces (Preview falls back to a "Regular" label).
-  const renderAxis = (axis: VFAxis) =>
+  const renderAxis = (axis: VFAxis, toggleFirst = false) =>
         axis.onOff ? (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+            {!toggleFirst && (<span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
               {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
               <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
               <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
-            </span>
+            </span>)}
             <button
               onClick={() =>
                 setAxisValues((prev) => ({
@@ -1866,6 +1886,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 }}
               />
             </button>
+            {toggleFirst && (<span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+              {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
+              <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
+              <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
+            </span>)}
           </div>
         ) : (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -1895,7 +1920,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       />
     </div>
   ) : null;
-  const variableControls = isNative ? <>{nativeAxes!.map(renderAxis)}</> : weightControl;
+  const variableControls = isNative ? <>{nativeAxes!.map((a) => renderAxis(a))}</> : weightControl;
 
   const sizeControl = (
     <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -1932,20 +1957,27 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     setActiveKey: (k: string) => void = setActiveControl,
   ) => {
     const activeOption = options.find((o) => o.key === activeKey) ?? options[0];
-    return (
-    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
-      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+    const optionsButton = (
       <button
         type="button"
         aria-label="Choose control"
         aria-haspopup="menu"
         aria-expanded={controlMenu === where}
         onClick={() => setControlMenu((m) => (m === where ? null : where))}
-        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+        style={{ flexShrink: 0, width: 44, height: 44, margin: -7, border: "none", background: "transparent", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center", touchAction: "manipulation", position: "relative", zIndex: 1 }}
       >
-        {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
-        <span aria-hidden="true" style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        {/* 44px invisible hit area around the unchanged 30px visible circle. */}
+        <span aria-hidden="true" style={{ width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+          {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
+          <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        </span>
       </button>
+    );
+    return (
+    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
+      {where === "glyphs" && optionsButton}
+      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+      {where !== "glyphs" && optionsButton}
       {controlMenu === where && (
         <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
           {options.map((o) => (
@@ -1975,10 +2007,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         aria-haspopup="menu"
         aria-expanded={controlMenu === "preset"}
         onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
-        style={{ display: "flex", alignItems: "center", gap: 6, maxWidth: "42vw", border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap" }}
+        style={{ display: "flex", alignItems: "center", gap: 6, maxWidth: "100%", border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap" }}
       >
+        {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
+        <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
         <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Custom"}</span>
-        <span aria-hidden="true">↓</span>
       </button>
       {controlMenu === "preset" && (
         <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, maxWidth: "70vw", maxHeight: 280, overflowY: "auto", background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
@@ -2044,6 +2077,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
+              {/* TEMPORARY: live Size readout for choosing Crypto Mono's preview size. */}
+              {face.name === "Crypto" && <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: "2.2rem" }}>{size}</span>}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -2203,7 +2238,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={presetControl ? <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", minWidth: 0 }}>{presetControl}<div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 12 }}>{isMobile ? (
+            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{isMobile ? (
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
@@ -2211,13 +2246,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 : regularLabel
             ) : variableControls}</div></div> : isMobile ? (
               glyphToggleAxes.length > 0
-                ? <>{glyphToggleAxes.map(renderAxis)}</>
+                ? <>{glyphToggleAxes.map((a) => renderAxis(a, true))}</>
                 : glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
                 ? glyphOptions[0].node
                 : regularLabel
-            ) : variableControls ?? regularLabel}
+            ) : (nativeAxes?.some((a) => a.onOff) ? <>{nativeAxes.map((a) => renderAxis(a, true))}</> : variableControls ?? regularLabel)}
             mobileGlyphSize={`${GLYPH_SHOWCASE_MOBILE}rem`}
             desktopGlyphSize={`${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
           />
@@ -2402,12 +2437,13 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
   return (
     <div
       className="faq-item"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") setHover(true); }}
+      onPointerLeave={(e) => { if (e.pointerType === "mouse") setHover(false); }}
       style={{ marginBottom: "1.4rem", padding: "1.1rem 1.25rem", marginLeft: "-1.25rem", marginRight: "-1.25rem", background: active ? color : "transparent", color: fg, WebkitMask: active ? NOTCH_MASK : undefined, mask: active ? NOTCH_MASK : undefined }}
     >
       <button
         type="button"
+        className="faq-header"
         aria-expanded={open}
         onClick={toggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}

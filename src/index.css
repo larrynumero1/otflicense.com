@@ -250,7 +250,8 @@ html {
 }
 
 .landing-enter .nav-text-btn,
-.landing-enter .nav-logo > img {
+.landing-enter .nav-logo > img,
+.landing-enter .nav-burger {
   animation: landingPop 0.75s cubic-bezier(0.65, 0, 0.35, 1) both;
   animation-delay: 2.7s;
 }
@@ -270,6 +271,7 @@ html {
   .intro-band,
   .landing-enter .nav-text-btn,
   .landing-enter .nav-logo > img,
+  .landing-enter .nav-burger,
   .landing-enter .cell-pop,
   .landing-enter .shop-bottom-marquee {
     animation: none;
@@ -532,6 +534,10 @@ html {
     margin-top: 0;
     padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 1.25vw) 0;
     transform: translateX(calc(var(--zz-x) * 0.5 + 1vw)) !important;
+  }
+  /* Four stickers read small on mobile: ~13% larger, same equal-area formula. */
+  .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
+    --w: min(44vw, calc(35vw * sqrt(var(--ar, 1))));
   }
   .shop-grid .cell[data-side="right"] {
     align-self: flex-start;
@@ -863,6 +869,15 @@ html {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 0 !important;
+  }
+  /* Whole heading row is the tap target, at least 44px tall. */
+  .faq-header {
+    min-height: 44px;
+    box-sizing: content-box;
+    width: calc(100% + 2.5rem) !important;
+    margin: -1.1rem -1.25rem 0 !important;
+    padding: 1.1rem 1.25rem 0 !important;
+    touch-action: manipulation;
   }
   .faq-stack {
     display: contents !important;
