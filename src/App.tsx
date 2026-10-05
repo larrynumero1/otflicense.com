@@ -231,16 +231,16 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/OTF_Lastcall.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
   { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 8.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/OTF_Ella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 8.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
   { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 11, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/OTF_Cheiron.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
   { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/OTF_Bip.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
@@ -249,13 +249,25 @@ const typefaces = [
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/OTF_Brus.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
 // Native variable-font typefaces — rendered directly by the browser (not the
 // SVG/opentype.js overlay) so variable-font metrics/kerning stay correct. Each
 // axis maps to a CSS font-variation-settings tag. These known ranges act as
 // fallback axis data even when opentype.js cannot parse the WOFF2 file.
+// Glyphs-panel presets. Explicit coordinates where known; otherwise the
+// coordinates come from the font's own named instances (fvar) at runtime.
+type VFPreset = { name: string; values?: Record<string, number> };
+const ELLA_WEIGHTS: [string, number][] = [["Thin", 100], ["ExtraLight", 200], ["Light", 300], ["Regular", 400], ["Medium", 500], ["SemiBold", 600], ["Bold", 700]];
+const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
+  "Ella": ELLA_WEIGHTS.flatMap(([n, w]) => [{ name: n, values: { wght: w, SRIF: 0 } }, { name: `${n} Serif`, values: { wght: w, SRIF: 100 } }]),
+  "Brus": ["Light", "Regular", "Medium", "Bold", "Bold Black", "Narrow Light Italic", "Italic", "Medium Italic", "Bold Italic", "Black Italic"].map((name) => ({ name })),
+  "Last Call": ["Thin", "ExtraLight", "Light", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"].map((name) => ({ name })),
+  "Cheiron": ["Regular", "RegularStencil", "bold"].map((name) => ({ name })),
+  "BIP": [{ name: "Regular", values: { wght: 0 } }, { name: "Medium", values: { wght: 50 } }, { name: "Bold", values: { wght: 100 } }],
+};
+const presetKey = (n: string) => n.toLowerCase().replace(/[\s_-]/g, "");
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
 const NATIVE_VF: Record<string, VFAxis[]> = {
   "Ella": [
@@ -687,10 +699,8 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
 }
 
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
-  // menuMounted keeps the panel in the DOM; menuOpen drives its slide transform.
-  const [menuMounted, setMenuMounted] = useState(false);
+  // The panel is always mounted; menuOpen only toggles its slide state.
   const [menuOpen, setMenuOpen] = useState(false);
-  const closeTimer = useRef<number | undefined>(undefined);
   // Band + text colours, picked once each time the menu opens.
   const [menuColors, setMenuColors] = useState<string[]>(PALETTE.slice(0, 3));
   const toggleMenu = () => {
@@ -700,23 +710,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       if (shuffled[0] === prev[0]) shuffled.push(shuffled.shift()!);
       return shuffled.slice(0, 3);
     });
-    if (menuOpen) closeMenu();
-    else {
-      window.clearTimeout(closeTimer.current);
-      // Mount off-screen first, then flip to open on the next frames so the
-      // transform transition actually runs.
-      setMenuMounted(true);
-      requestAnimationFrame(() => requestAnimationFrame(() => setMenuOpen(true)));
-    }
-  };
-  // Slide out, and unmount only after the 300ms transition has finished.
-  const closeMenu = (after?: () => void) => {
-    setMenuOpen(false);
-    window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => {
-      setMenuMounted(false);
-      after?.();
-    }, 320);
+    setMenuOpen((o) => !o);
   };
   const menuItems: { label: string; to: Page }[] = [
     { label: "ABOUT US", to: { id: "about" } },
@@ -792,9 +786,8 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           {menuOpen ? <path d="M5 5l16 16M21 5L5 21" /> : <path d="M3 6h20M3 13h20M3 20h20" />}
         </svg>
       </button>
-      {menuMounted && (
-        <div className="nav-menu-clip">
-        <div className={`nav-menu${menuOpen ? " is-open" : ""}`}>
+      <div className="nav-menu-clip">
+        <div className={`nav-menu${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
           {/* One moving band per destination, same language as the marquee. */}
           {menuItems.map(({ label, to }, row) => (
             <button
@@ -802,7 +795,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
               type="button"
               className="nav-menu-row"
               aria-label={label}
-              onClick={() => closeMenu(() => onNavigate(to))}
+              onClick={() => { setMenuOpen(false); window.setTimeout(() => onNavigate(to), 300); }}
               style={{ background: menuColors[row], color: LIGHT_BAND_COLORS.has(menuColors[row]) ? "#000" : "#fff" }}
             >
               <span className="nav-menu-track" aria-hidden="true" style={{ animationDuration: `${14 + row * 3}s` }}>
@@ -811,8 +804,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
             </button>
           ))}
         </div>
-        </div>
-      )}
+      </div>
     </nav>
   );
 }
@@ -1663,7 +1655,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     return () => mq.removeEventListener("change", onChange);
   }, []);
   const [activeControl, setActiveControl] = useState("size");
-  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | null>(null);
+  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | "preset" | null>(null);
+  const [resolvedPresets, setResolvedPresets] = useState<{ name: string; values: Record<string, number> }[]>([]);
   // Mobile Glyphs has its own control picker (axes only — no Size/Space).
   const [glyphControl, setGlyphControl] = useState("wght");
   const boxRef = useRef<HTMLDivElement | null>(null);
@@ -1699,7 +1692,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     if (nativeAxes) {
       const init: Record<string, number> = {};
       for (const a of nativeAxes) init[a.tag] = a.default;
-      setAxisValues(init);
+      const presetDefs = VARIABLE_FONT_PRESETS[name] ?? [];
+      const staticPresets = presetDefs.every((p) => p.values) ? presetDefs.map((p) => ({ name: p.name, values: p.values! })) : [];
+      setResolvedPresets(staticPresets);
+      const staticRegular = staticPresets.find((p) => p.name === "Regular");
+      setAxisValues(staticRegular ? { ...init, ...staticRegular.values } : init);
       if (face?.file) {
         fetch(face.file)
           .then((res) => res.arrayBuffer())
@@ -1708,6 +1705,17 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             const fk = (fontkit as any).create(new Uint8Array(buffer));
             const cps: number[] = fk?.characterSet ?? [];
             setCoverage(new Set(cps));
+            if (presetDefs.length && !staticPresets.length) {
+              const named: Record<string, Record<string, number>> = fk?.namedVariations ?? {};
+              const byKey = new Map(Object.entries(named).map(([k, v]) => [presetKey(k), v]));
+              const resolved = presetDefs
+                .map((p) => ({ name: p.name, values: byKey.get(presetKey(p.name)) }))
+                .filter((p): p is { name: string; values: Record<string, number> } => !!p.values)
+                .map((p) => ({ name: p.name, values: Object.fromEntries(nativeAxes.filter((a) => a.tag in p.values).map((a) => [a.tag, p.values[a.tag]])) }));
+              setResolvedPresets(resolved);
+              const regular = resolved.find((p) => p.name === "Regular");
+              if (regular) setAxisValues((prev) => ({ ...prev, ...regular.values }));
+            }
           })
           .catch(() => {
             if (!cancelled) setCoverage(null);
@@ -1946,6 +1954,39 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     );
   };
 
+  // Glyphs preset dropdown — writes into axisValues; the label is derived by exact match.
+  const activePreset = resolvedPresets.find((p) => Object.entries(p.values).every(([t, v]) => axisValues[t] === v));
+  const presetControl = resolvedPresets.length > 0 ? (
+    <div style={{ position: "relative", flexShrink: 0, color: panelText }}>
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={controlMenu === "preset"}
+        onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
+        style={{ display: "flex", alignItems: "center", gap: 6, maxWidth: "42vw", border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap" }}
+      >
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Custom"}</span>
+        <span aria-hidden="true">↓</span>
+      </button>
+      {controlMenu === "preset" && (
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, maxWidth: "70vw", maxHeight: 280, overflowY: "auto", background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+          {resolvedPresets.map((p) => (
+            <button
+              key={p.name}
+              type="button"
+              role="menuitemradio"
+              aria-checked={p === activePreset}
+              onClick={() => { setAxisValues((prev) => ({ ...prev, ...p.values })); setControlMenu(null); }}
+              style={{ display: "block", width: "100%", padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: p === activePreset ? panelText : "transparent", color: p === activePreset ? panelBg : panelText, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", whiteSpace: "nowrap", cursor: "pointer" }}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  ) : null;
+
   // Static-typeface fallback label, shared by Preview and Glyphs so both show
   // "Regular" in the same control-area position.
   const regularLabel = (
@@ -2150,7 +2191,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={isMobile ? (
+            controls={presetControl ? <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", minWidth: 0 }}>{presetControl}<div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 12 }}>{isMobile ? (
+              glyphOptions.length > 1
+                ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
+                : glyphOptions.length === 1
+                ? glyphOptions[0].node
+                : regularLabel
+            ) : variableControls}</div></div> : isMobile ? (
               glyphToggleAxes.length > 0
                 ? <>{glyphToggleAxes.map(renderAxis)}</>
                 : glyphOptions.length > 1
