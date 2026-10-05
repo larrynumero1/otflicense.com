@@ -796,13 +796,24 @@ html {
     border: none;
     cursor: pointer;
   }
-  .tf-nav .nav-menu {
-    display: block;
+  /* Clip box so the off-screen panel never widens the page. */
+  .tf-nav .nav-menu-clip {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     z-index: 60;
+    overflow: hidden;
+  }
+  .tf-nav .nav-menu {
+    display: block;
+    transform: translateX(100%);
+    transition: transform 300ms ease-in-out;
+    pointer-events: none;
+  }
+  .tf-nav .nav-menu.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
   }
   .tf-nav .nav-menu-row {
     display: block;
@@ -844,6 +855,23 @@ html {
     padding: 1.25rem 1.25rem 0 !important;
   }
   .faq-grid {
+    display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+  .faq-stack {
+    display: contents !important;
+  }
+}
+
+/* Desktop: homepage and typeface-page bottom marquees share one fixed height. */
+@media (min-width: 769px) {
+  .shop-bottom-marquee .marquee-band,
+  .tf-buy-marquee .marquee-band {
+    height: 3.5rem;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center;
+    line-height: 1.2;
   }
 }

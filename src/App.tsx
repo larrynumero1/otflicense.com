@@ -245,7 +245,7 @@ const typefaces = [
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 14, mobilePreviewSize: 2, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 14, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
@@ -687,7 +687,10 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
 }
 
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
+  // menuMounted keeps the panel in the DOM; menuOpen drives its slide transform.
+  const [menuMounted, setMenuMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeTimer = useRef<number | undefined>(undefined);
   // Band + text colours, picked once each time the menu opens.
   const [menuColors, setMenuColors] = useState<string[]>(PALETTE.slice(0, 3));
   const toggleMenu = () => {
@@ -697,7 +700,23 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       if (shuffled[0] === prev[0]) shuffled.push(shuffled.shift()!);
       return shuffled.slice(0, 3);
     });
-    setMenuOpen((o) => !o);
+    if (menuOpen) closeMenu();
+    else {
+      window.clearTimeout(closeTimer.current);
+      // Mount off-screen first, then flip to open on the next frames so the
+      // transform transition actually runs.
+      setMenuMounted(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => setMenuOpen(true)));
+    }
+  };
+  // Slide out, and unmount only after the 300ms transition has finished.
+  const closeMenu = (after?: () => void) => {
+    setMenuOpen(false);
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => {
+      setMenuMounted(false);
+      after?.();
+    }, 320);
   };
   const menuItems: { label: string; to: Page }[] = [
     { label: "ABOUT US", to: { id: "about" } },
@@ -773,8 +792,9 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           {menuOpen ? <path d="M5 5l16 16M21 5L5 21" /> : <path d="M3 6h20M3 13h20M3 20h20" />}
         </svg>
       </button>
-      {menuOpen && (
-        <div className="nav-menu">
+      {menuMounted && (
+        <div className="nav-menu-clip">
+        <div className={`nav-menu${menuOpen ? " is-open" : ""}`}>
           {/* One moving band per destination, same language as the marquee. */}
           {menuItems.map(({ label, to }, row) => (
             <button
@@ -782,7 +802,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
               type="button"
               className="nav-menu-row"
               aria-label={label}
-              onClick={() => { setMenuOpen(false); onNavigate(to); }}
+              onClick={() => closeMenu(() => onNavigate(to))}
               style={{ background: menuColors[row], color: LIGHT_BAND_COLORS.has(menuColors[row]) ? "#000" : "#fff" }}
             >
               <span className="nav-menu-track" aria-hidden="true" style={{ animationDuration: `${14 + row * 3}s` }}>
@@ -790,6 +810,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
               </span>
             </button>
           ))}
+        </div>
         </div>
       )}
     </nav>
@@ -2214,6 +2235,7 @@ function MarqueeBand({ direction = "forward", onNavigate, interactive = true }: 
       }}
       tabIndex={interactive ? 0 : -1}
       aria-hidden={interactive ? undefined : true}
+      className="marquee-band"
       style={{ display: "block", width: "100%", overflow: "hidden", background: bg, padding: "0.85rem 0", border: "none", cursor: interactive ? "pointer" : "default", transition: "background 0.3s ease" }}
     >
       <div
@@ -2349,19 +2371,30 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
 }
 
 function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
+  const faqSections = [
+    ...FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />),
+    // Contact block
+    <FaqItem key="contact" q="Contact" color={PALETTE[FAQ_ITEMS.length % PALETTE.length]}>
+      <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+        For licensing questions, large organisation inquiries, or anything else:{" "}
+        <a href="mailto:otflicense@gmail.com" style={{ color: "inherit" }}>otflicense@gmail.com</a>
+      </p>
+    </FaqItem>,
+  ].map((node, i) => ({ i, node }));
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div className="faq-grid flex-1 px-10" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: "4rem", alignItems: "start", alignContent: "start", paddingTop: "5.5rem", paddingBottom: "1rem", maxWidth: "80rem" }}>
-        {FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />)}
-
-        {/* Contact block */}
-        <FaqItem q="Contact" color={PALETTE[FAQ_ITEMS.length % PALETTE.length]}>
-          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
-            For licensing questions, large organisation inquiries, or anything else:{" "}
-            <a href="mailto:otflicense@gmail.com" style={{ color: "inherit" }}>otflicense@gmail.com</a>
-          </p>
-        </FaqItem>
+      <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "5.5rem", paddingBottom: "1rem" }}>
+        {/* Two independent stacks (even items left, odd right) so an open section
+            only pushes down its own column. On mobile the stacks dissolve and
+            `order` restores the original sequence. */}
+        {[0, 1].map((col) => (
+          <div key={col} className="faq-stack" style={{ flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column" }}>
+            {faqSections.filter((_, i) => i % 2 === col).map(({ i, node }) => (
+              <div key={i} style={{ order: i }}>{node}</div>
+            ))}
+          </div>
+        ))}
       </div>
       <SiteFooter />
     </div>
