@@ -522,13 +522,14 @@ html {
     /* Width follows the desktop scale so relative sizes survive; the layout box
        is the real sticker size (no scale transform), padded vertically by the
        15° tilt overhang plus a gap so neighbouring stickers never touch. */
-    --w: 38vw;
+    /* Equal-area sizing: wide stickers get wider, tall ones narrower. */
+    --w: min(42vw, calc(31vw * sqrt(var(--ar, 1))));
     width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
     align-items: center !important;
     margin-top: 0;
-    padding: calc(var(--w) * 0.11 + 1.25vw) 0;
+    padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 1.25vw) 0;
     transform: translateX(calc(var(--zz-x) * 0.5 + 1vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
@@ -796,20 +797,44 @@ html {
     cursor: pointer;
   }
   .tf-nav .nav-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    display: block;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     z-index: 60;
-    padding: 0.5rem max(1rem, env(safe-area-inset-right)) 1rem max(1rem, env(safe-area-inset-left));
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 0.85rem 0;
   }
-  .tf-nav .nav-menu .nav-text-btn {
-    height: 48px !important;
-    font-size: 1.1rem !important;
-    padding: 0 0.75rem !important;
+  .tf-nav .nav-menu-track {
+    display: inline-flex;
+    animation: marquee 24s linear infinite;
+  }
+  /* Homepage gets the same fixed bottom marquee as the other mobile pages. */
+  .shop-bottom-marquee {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200 !important;
+  }
+  .shop-stage {
+    padding-bottom: 6.5rem !important;
+  }
+  /* About: text → video → Designers heading → grid. */
+  .about-intro-col {
+    display: contents;
+  }
+  .about-intro-text {
+    order: 1;
+    padding: 0 1.25rem;
+  }
+  .about-video {
+    order: 2;
+    padding: 0 1.25rem 1.75rem !important;
+  }
+  .about-designers-head {
+    order: 3;
+    padding: 0 1.25rem;
   }
 }

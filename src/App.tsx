@@ -566,6 +566,11 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
           <img
             src={face.img}
             alt={face.name}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              // Mobile layout normalises sticker size by area using this ratio.
+              if (img.naturalHeight) img.closest<HTMLElement>(".cell")?.style.setProperty("--ar", String(img.naturalWidth / img.naturalHeight));
+            }}
             style={{ width: "100%", height: "auto", display: "block" }}
           />
           {VARIABLE_FONT_STICKERS.has(face.name) && (
@@ -683,6 +688,21 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
 
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  // Band + text colours, picked once each time the menu opens.
+  const [menuBg, setMenuBg] = useState(PALETTE[0]);
+  const toggleMenu = () => {
+    if (!menuOpen) setMenuBg((prev) => {
+      const options = PALETTE.filter((c) => c !== prev);
+      return options[Math.floor(Math.random() * options.length)];
+    });
+    setMenuOpen((o) => !o);
+  };
+  const menuFg = LIGHT_BAND_COLORS.has(menuBg) ? "#000" : "#fff";
+  const menuItems: { label: string; to: Page }[] = [
+    { label: "ABOUT US", to: { id: "about" } },
+    { label: "LICENSING STUFF", to: { id: "contact" } },
+    onBundlePage ? { label: "BUY A SINGLE TYPEFACE", to: { id: "foundry" } } : { label: "BUY THE MEGA BUNDLE!", to: { id: "bundle" } },
+  ];
   return (
     <nav
       className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
@@ -745,7 +765,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
         className="nav-burger"
         aria-label={menuOpen ? "Close menu" : "Open menu"}
         aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((o) => !o)}
+        onClick={toggleMenu}
         style={{ color: fg }}
       >
         <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
@@ -753,14 +773,21 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
         </svg>
       </button>
       {menuOpen && (
-        <div className="nav-menu" style={{ background: bg }}>
-          {[
-            { label: "ABOUT US", to: { id: "about" } as Page },
-            { label: "LICENSING STUFF", to: { id: "contact" } as Page },
-            onBundlePage ? { label: "BUY A SINGLE TYPEFACE", to: { id: "foundry" } as Page } : { label: "BUY THE MEGA BUNDLE!", to: { id: "bundle" } as Page },
-          ].map(({ label, to }) => (
-            <NavTextButton key={label} label={label} width={0} color={fg} onClick={() => { setMenuOpen(false); onNavigate(to); }} />
-          ))}
+        <div className="nav-menu" style={{ background: menuBg }}>
+          {/* Moving band of the three links, same language as the marquee. */}
+          <div className="nav-menu-track">
+            {Array.from({ length: 8 }).flatMap((_, r) => menuItems.map(({ label, to }) => (
+              <button
+                key={`${r}-${label}`}
+                type="button"
+                tabIndex={r === 0 ? 0 : -1}
+                onClick={() => { setMenuOpen(false); onNavigate(to); }}
+                style={{ flexShrink: 0, background: "none", border: "none", padding: "0 1.5rem", fontFamily: "Arial, sans-serif", fontSize: "1.5rem", fontWeight: "bold", letterSpacing: "0.04em", textTransform: "uppercase", whiteSpace: "nowrap", color: menuFg, cursor: "pointer" }}
+              >
+                {label}
+              </button>
+            )))}
+          </div>
         </div>
       )}
     </nav>
@@ -984,9 +1011,6 @@ function GumroadInlineCheckout({ url, productId, minHeight = 640 }: { url: strin
   );
 }
 
-// EULA link shown on every typeface page; set `eula` on a typeface to override.
-const DEFAULT_EULA_URL = "https://otflicense.gumroad.com";
-
 // Final About paragraph sizes (rem) per typeface.
 const ABOUT_SIZE: Record<string, { desktop: number; mobile: number }> = {
   BIP: { desktop: 0.95, mobile: 1.0 },
@@ -1026,6 +1050,9 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
   );
 }
 
+// About-page video; drop an imported asset or URL here to enable playback.
+const ABOUT_VIDEO_SRC = "";
+
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("");
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
@@ -1056,6 +1083,14 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
               </select>
             </div>
 
+          </div>
+          {/* Right column — About video. Set ABOUT_VIDEO_SRC to connect the asset. */}
+          <div className="about-video" style={{ padding: "0 4rem 0 1rem" }}>
+            {ABOUT_VIDEO_SRC ? (
+              <video src={ABOUT_VIDEO_SRC} controls playsInline preload="metadata" style={{ display: "block", width: "100%", height: "auto", background: "#000" }} />
+            ) : (
+              <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
+            )}
           </div>
         </div>
 
@@ -1089,9 +1124,9 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
 // Characters shown in the glyph list, grouped in the order the categories appear.
 const CHAR_GROUPS: { label: string; chars: string[] }[] = [
-  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".split("") },
-  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyzåäö".split("") },
-  { label: "Accents", chars: "ÀÁÂÃÆÇÈÉÊËÌÍÎÏÑÒÓÔÕØÙÚÛÜÝàáâãæçèéêëìíîïñòóôõøùúûüýÿ".split("") },
+  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØ".split("") },
+  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyzåäöæø".split("") },
+  { label: "Accents", chars: "ÀÁÂÃÇÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛÜÝàáâãçèéêëìíîïñòóôõùúûüýÿ".split("") },
   { label: "Numbers", chars: "0123456789".split("") },
   {
     label: "Punctuations",
@@ -1860,7 +1895,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         aria-haspopup="menu"
         aria-expanded={controlMenu === where}
         onClick={() => setControlMenu((m) => (m === where ? null : where))}
-        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: "1.5px solid rgba(128,128,128,0.6)", background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
         <span aria-hidden="true" style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
@@ -1959,10 +1994,10 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                     height: 20,
                     borderRadius: "50%",
                     background: c,
-                    border: "1.5px solid rgba(128,128,128,0.6)",
+                    border: `1.5px solid ${panelText}`,
                     cursor: "pointer",
                     padding: 0,
-                    outline: mode === m ? "2px solid rgba(128,128,128,0.9)" : "none",
+                    outline: mode === m ? `2px solid ${panelText}` : "none",
                     outlineOffset: 2,
                   }}
                 />
@@ -2052,7 +2087,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               {/* Listed bottom-up: the container is column-reverse, so this
                   renders First sketched → Format from top to bottom. */}
               {[
-                ["EULA", ""],
+                ["EULA:", ""],
                 ["Format:", "ttf, otf, woff"],
                 ["Range:", name === "Ella"
                   ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
@@ -2067,12 +2102,12 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 ["First sketched:", "October 2025"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
-                  {label === "EULA" ? (
-                    <a href={(face as { eula?: string }).eula ?? DEFAULT_EULA_URL} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "bold", color: "inherit" }}>EULA</a>
-                  ) : <>
-                    <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
+                  <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
+                  {label === "EULA:" ? (
+                    <a href="/faq" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
+                  ) : (
                     <span style={{ flex: 1 }}>{value}</span>
-                  </>}
+                  )}
                 </div>
               ))}
             </div>
@@ -2289,11 +2324,11 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
         type="button"
         aria-expanded={open}
         onClick={toggle}
-        style={{ display: "flex", alignItems: "center", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}
       >
         <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>{q}</span>
         {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
-        <span aria-hidden="true" style={{ flexShrink: 0, fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
+        <span aria-hidden="true" style={{ flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
       </button>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
         <div style={{ overflow: "hidden" }}>
