@@ -245,7 +245,7 @@ const typefaces = [
   { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 16, mobilePreviewSize: 4, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 14, mobilePreviewSize: 2, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
@@ -689,15 +689,16 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   // Band + text colours, picked once each time the menu opens.
-  const [menuBg, setMenuBg] = useState(PALETTE[0]);
+  const [menuColors, setMenuColors] = useState<string[]>(PALETTE.slice(0, 3));
   const toggleMenu = () => {
-    if (!menuOpen) setMenuBg((prev) => {
-      const options = PALETTE.filter((c) => c !== prev);
-      return options[Math.floor(Math.random() * options.length)];
+    if (!menuOpen) setMenuColors((prev) => {
+      // Three distinct palette colours, starting on a different one than last time.
+      const shuffled = [...PALETTE].sort(() => Math.random() - 0.5);
+      if (shuffled[0] === prev[0]) shuffled.push(shuffled.shift()!);
+      return shuffled.slice(0, 3);
     });
     setMenuOpen((o) => !o);
   };
-  const menuFg = LIGHT_BAND_COLORS.has(menuBg) ? "#000" : "#fff";
   const menuItems: { label: string; to: Page }[] = [
     { label: "ABOUT US", to: { id: "about" } },
     { label: "LICENSING STUFF", to: { id: "contact" } },
@@ -773,21 +774,22 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
         </svg>
       </button>
       {menuOpen && (
-        <div className="nav-menu" style={{ background: menuBg }}>
-          {/* Moving band of the three links, same language as the marquee. */}
-          <div className="nav-menu-track">
-            {Array.from({ length: 8 }).flatMap((_, r) => menuItems.map(({ label, to }) => (
-              <button
-                key={`${r}-${label}`}
-                type="button"
-                tabIndex={r === 0 ? 0 : -1}
-                onClick={() => { setMenuOpen(false); onNavigate(to); }}
-                style={{ flexShrink: 0, background: "none", border: "none", padding: "0 1.5rem", fontFamily: "Arial, sans-serif", fontSize: "1.5rem", fontWeight: "bold", letterSpacing: "0.04em", textTransform: "uppercase", whiteSpace: "nowrap", color: menuFg, cursor: "pointer" }}
-              >
-                {label}
-              </button>
-            )))}
-          </div>
+        <div className="nav-menu">
+          {/* One moving band per destination, same language as the marquee. */}
+          {menuItems.map(({ label, to }, row) => (
+            <button
+              key={label}
+              type="button"
+              className="nav-menu-row"
+              aria-label={label}
+              onClick={() => { setMenuOpen(false); onNavigate(to); }}
+              style={{ background: menuColors[row], color: LIGHT_BAND_COLORS.has(menuColors[row]) ? "#000" : "#fff" }}
+            >
+              <span className="nav-menu-track" aria-hidden="true" style={{ animationDuration: `${14 + row * 3}s` }}>
+                {Array.from({ length: 12 }).map((_, i) => <span key={i} className="nav-menu-word">{label}</span>)}
+              </span>
+            </button>
+          ))}
         </div>
       )}
     </nav>
@@ -1062,26 +1064,13 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
       <div className="min-h-screen bg-white flex flex-col">
         <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
-        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", paddingTop: "5.5rem" }}>
+        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "5.5rem" }}>
           {/* Left column */}
           <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
             <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
               {PAGE_TEXT["ABOUT"]}
             </p>
 
-            <div className="about-designers-head" style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-              <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
-              <select
-                value={klassFilter}
-                onChange={(e) => setKlassFilter(e.target.value)}
-                style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", padding: "0.4rem 0.75rem", border: "1.5px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
-              >
-                <option value="" disabled hidden>Class of...</option>
-                {DESIGNER_CLASSES.map((c) => (
-                  <option key={c} value={c}>{c === "All" ? "All" : klassYear(c)}</option>
-                ))}
-              </select>
-            </div>
 
           </div>
           {/* Right column — About video. Set ABOUT_VIDEO_SRC to connect the asset. */}
@@ -1091,7 +1080,23 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
             ) : (
               <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
             )}
+            <p className="about-video-credit" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: "#000", opacity: 0.7, margin: "0.4rem 0 0" }}>Promo video by Jesper Smeding</p>
           </div>
+        </div>
+
+        {/* Designers heading + filter — below the whole text/video row */}
+        <div className="about-designers-head" style={{ padding: "2.5rem 4rem 0", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+          <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
+          <select
+            value={klassFilter}
+            onChange={(e) => setKlassFilter(e.target.value)}
+            style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", padding: "0.4rem 0.75rem", border: "1.5px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
+          >
+            <option value="" disabled hidden>Class of...</option>
+            {DESIGNER_CLASSES.map((c) => (
+              <option key={c} value={c}>{c === "All" ? "All" : klassYear(c)}</option>
+            ))}
+          </select>
         </div>
 
         {/* Designer grid — full content width, as many columns as fit */}
@@ -1124,8 +1129,8 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
 // Characters shown in the glyph list, grouped in the order the categories appear.
 const CHAR_GROUPS: { label: string; chars: string[] }[] = [
-  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØ".split("") },
-  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyzåäöæø".split("") },
+  { label: "Uppercase", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÆÖØ".split("") },
+  { label: "Lowercase", chars: "abcdefghijklmnopqrstuvwxyzåäæöø".split("") },
   { label: "Accents", chars: "ÀÁÂÃÇÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛÜÝàáâãçèéêëìíîïñòóôõùúûüýÿ".split("") },
   { label: "Numbers", chars: "0123456789".split("") },
   {
@@ -1994,7 +1999,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                     height: 20,
                     borderRadius: "50%",
                     background: c,
-                    border: `1.5px solid ${panelText}`,
+                    border: `1.5px solid ${mode === m ? "transparent" : panelText}`,
                     cursor: "pointer",
                     padding: 0,
                     outline: mode === m ? `2px solid ${panelText}` : "none",
@@ -2347,7 +2352,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div className="flex-1 flex flex-col px-10" style={{ paddingTop: "5.5rem", paddingBottom: "1rem", maxWidth: "52rem" }}>
+      <div className="faq-grid flex-1 px-10" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: "4rem", alignItems: "start", alignContent: "start", paddingTop: "5.5rem", paddingBottom: "1rem", maxWidth: "80rem" }}>
         {FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />)}
 
         {/* Contact block */}

@@ -803,12 +803,28 @@ html {
     left: 0;
     right: 0;
     z-index: 60;
+  }
+  .tf-nav .nav-menu-row {
+    display: block;
+    width: 100%;
     overflow: hidden;
+    border: none;
     padding: 0.85rem 0;
+    cursor: pointer;
   }
   .tf-nav .nav-menu-track {
     display: inline-flex;
-    animation: marquee 24s linear infinite;
+    animation: marquee 14s linear infinite;
+  }
+  .tf-nav .nav-menu-word {
+    flex-shrink: 0;
+    padding-right: 2.5rem;
+    font-family: Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
   /* Homepage gets the same fixed bottom marquee as the other mobile pages. */
   .shop-bottom-marquee {
@@ -821,20 +837,13 @@ html {
   .shop-stage {
     padding-bottom: 6.5rem !important;
   }
-  /* About: text → video → Designers heading → grid. */
-  .about-intro-col {
-    display: contents;
-  }
-  .about-intro-text {
-    order: 1;
-    padding: 0 1.25rem;
-  }
   .about-video {
-    order: 2;
-    padding: 0 1.25rem 1.75rem !important;
+    padding: 0 1.25rem 0.5rem !important;
   }
   .about-designers-head {
-    order: 3;
-    padding: 0 1.25rem;
+    padding: 1.25rem 1.25rem 0 !important;
+  }
+  .faq-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
