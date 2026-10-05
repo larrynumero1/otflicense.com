@@ -749,7 +749,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
   const menuItems: { label: string; to: Page }[] = [
     { label: "About Us", to: { id: "about" } },
     { label: "Licensing", to: { id: "contact" } },
-    onBundlePage ? { label: "Buy a Single Typeface", to: { id: "foundry" } } : { label: "Buy the Mega Bundle", to: { id: "bundle" } },
+    onBundlePage ? { label: "View All Fonts", to: { id: "foundry" } } : { label: "Buy the Mega Bundle", to: { id: "bundle" } },
   ];
   return (
     <nav
@@ -813,7 +813,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       {/* On the bundle page this becomes the way back to single typefaces. */}
       <NavTextButton
         className="nav-bundle"
-        label={onBundlePage ? "Buy a Single Typeface" : "Buy the Mega Bundle"}
+        label={onBundlePage ? "View All Fonts" : "Buy the Mega Bundle"}
         width={344}
         color={fg}
         onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
@@ -1114,7 +1114,7 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
 const ABOUT_VIDEO_SRC = "";
 
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
-  const [klassFilter, setKlassFilter] = useState<string>("");
+  const [klassFilter, setKlassFilter] = useState<string>("All");
   const [klassOpen, setKlassOpen] = useState(false);
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
@@ -1145,7 +1145,6 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
         {/* Designers heading + filter — below the whole text/video row */}
         <div className="about-designers-head" style={{ padding: "2.5rem 4rem 0", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-          <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
           {/* Same dropdown language as the Glyphs presets: arrow first, custom menu. */}
           <div style={{ position: "relative" }}>
             <button
@@ -1153,10 +1152,10 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
               aria-haspopup="menu"
               aria-expanded={klassOpen}
               onClick={() => setKlassOpen((o) => !o)}
-              style={{ display: "flex", alignItems: "center", gap: 6, border: "none", background: "transparent", color: "#000", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "1rem", whiteSpace: "nowrap" }}
+              style={{ display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", color: "#000", padding: 0, minHeight: 44, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", whiteSpace: "nowrap", touchAction: "manipulation" }}
             >
-              <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.2rem", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
-              <span>{klassFilter === "" ? "Class of..." : klassFilter === "All" ? "All" : klassLabel(klassFilter)}</span>
+              <span>{klassFilter === "All" ? "All Designers" : klassLabel(klassFilter)}</span>
+              <span aria-hidden="true" style={{ display: "inline-block", width: "1.4rem", textAlign: "center", fontSize: "1.8rem", fontWeight: "normal", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
             </button>
             {klassOpen && (
               <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, background: "#fff", color: "#000", border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
@@ -1169,7 +1168,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
                     onClick={() => { setKlassFilter(c); setKlassOpen(false); }}
                     style={{ display: "block", width: "100%", padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: c === klassFilter ? "#000" : "transparent", color: c === klassFilter ? "#fff" : "#000", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", whiteSpace: "nowrap", cursor: "pointer" }}
                   >
-                    {c === "All" ? "All" : klassYear(c)}
+                    {c === "All" ? "All Designers" : klassLabel(c)}
                   </button>
                 ))}
               </div>
@@ -1267,7 +1266,7 @@ const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
+function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug, glyphListSize }: { glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1379,7 +1378,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1rem",
+                    fontSize: glyphListSize ?? "1rem",
                     cursor: "default",
                     borderRadius: 2,
                     transition: "background 0.15s ease, color 0.15s ease",
@@ -2230,7 +2229,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   renders First sketched → Format from top to bottom. */}
               {[
                 ["EULA:", ""],
-                ["Format:", "ttf, otf, woff"],
+                // Preset fonts: Format is derived from the Glyphs presets (single source of truth).
+                ["Format:", VARIABLE_FONT_PRESETS[name] ? [...VARIABLE_FONT_PRESETS[name].map((p) => p.name), "Variable"].join(", ") : "ttf, otf, woff"],
                 ["Range:", name === "Ella"
                   ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
                   : name === "Svek"
@@ -2281,6 +2281,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 ? glyphOptions[0].node
                 : regularLabel
             ) : (nativeAxes?.some((a) => a.onOff) ? <>{nativeAxes.map((a) => renderAxis(a, true))}</> : variableControls ?? regularLabel)}
+            glyphListSize={name === "Svek" ? `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem` : undefined}
             mobileGlyphSize={`${GLYPH_SHOWCASE_MOBILE}rem`}
             desktopGlyphSize={`${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
           />
@@ -2478,7 +2479,7 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
       >
         <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold" }}>{q}</span>
         {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
-        <span aria-hidden="true" style={{ flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
+        <span aria-hidden="true" className="faq-arrow" style={{ display: "inline-block", flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", marginRight: "0.75rem", fontSize: "1.6rem", lineHeight: 1, pointerEvents: "none", transform: `rotate(${open ? -90 : 90}deg)`, WebkitTransform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
       </button>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
         <div style={{ overflow: "hidden" }}>
