@@ -192,6 +192,19 @@ html {
   to { transform: translateY(0); }
 }
 
+@keyframes designerMarqueeEnter {
+  from { transform: translateX(105%); }
+  to { transform: translateX(0); }
+}
+
+.tf-designer-marquee-enter {
+  animation: designerMarqueeEnter 1.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tf-designer-marquee-track {
+  animation: marquee 24s linear 1.45s infinite;
+}
+
 .intro-sequence {
   position: fixed;
   inset: 0;
@@ -206,7 +219,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: introExitLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s both;
+  animation: introExitLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.93s both;
 }
 
 .intro-sticker {
@@ -214,7 +227,7 @@ html {
   width: 90%;
   height: 90%;
   object-fit: contain;
-  animation: introStickerIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+  animation: introStickerIn 1.05s cubic-bezier(0.65, 0, 0.35, 1) 0.17s both;
 }
 
 .intro-band {
@@ -227,32 +240,28 @@ html {
 .intro-band-top {
   top: 0;
   animation:
-    introBandFromRight 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both,
-    introExitUp 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.68s forwards;
+    introBandFromRight 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0s both,
+    introExitUp 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.93s forwards;
 }
 
 .intro-band-bottom {
   bottom: 0;
-  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+  animation: introBandFromLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0s both;
 }
 
 .landing-enter .nav-text-btn,
 .landing-enter .nav-logo > img {
-  animation: landingPop 0.65s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: landingPop 0.75s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: 2.7s;
 }
 
-.landing-enter .nav-text-btn:nth-child(1) { animation-delay: 1.05s; }
-.landing-enter .nav-text-btn:nth-child(2) { animation-delay: 1.15s; }
-.landing-enter .nav-logo > img:first-child { animation-delay: 1.25s; }
-.landing-enter .nav-logo > .nav-eyes { animation-delay: 1.35s; }
-
 .landing-enter .cell-pop {
-  animation: landingPop 0.52s cubic-bezier(0.65, 0, 0.35, 1) both;
-  animation-delay: calc(1.05s + var(--sticker-index) * 0.05s);
+  animation: landingPop 0.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: calc(1.21s + var(--sticker-index) * 0.06s);
 }
 
 .landing-enter .shop-bottom-marquee {
-  animation: introBandFromLeft 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+  animation: introBandFromLeft 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.21s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -264,6 +273,14 @@ html {
   .landing-enter .cell-pop,
   .landing-enter .shop-bottom-marquee {
     animation: none;
+  }
+
+  .tf-designer-marquee-enter {
+    animation: none;
+  }
+
+  .tf-designer-marquee-track {
+    animation-delay: 0s;
   }
 }
 
@@ -362,6 +379,12 @@ html {
   color-scheme: light;
 }
 
+/* Hamburger menu: mobile only. */
+.nav-burger,
+.nav-menu {
+  display: none;
+}
+
 .gumroad-checkout-status {
   margin: 0;
   padding: 2rem;
@@ -383,6 +406,7 @@ html {
   gap: 0.6rem;
   width: 100%;
   padding: 1.5rem 1rem 2rem;
+  margin-bottom: var(--fixed-marquee-h, 0px);
   box-sizing: border-box;
   font-family: Arial, sans-serif;
   text-align: center;
@@ -481,10 +505,14 @@ html {
     flex: none !important;
     padding: 2.5rem max(1.25rem, env(safe-area-inset-right)) 3.5rem max(1.25rem, env(safe-area-inset-left)) !important;
   }
+  /* Loose two-across composition: rows wrap in shop order, right-hand
+     stickers sit lower so it never reads as a rigid grid. */
   .shop-grid {
     display: flex !important;
-    flex-direction: column;
-    align-items: stretch !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start !important;
     row-gap: 0 !important;
   }
   .shop-row {
@@ -494,18 +522,20 @@ html {
     /* Width follows the desktop scale so relative sizes survive; the layout box
        is the real sticker size (no scale transform), padded vertically by the
        15° tilt overhang plus a gap so neighbouring stickers never touch. */
-    --w: min(80vw, calc(49vw * var(--s)));
+    /* Equal-area sizing: wide stickers get wider, tall ones narrower. */
+    --w: min(42vw, calc(31vw * sqrt(var(--ar, 1))));
     width: var(--w) !important;
     align-self: flex-start;
     justify-content: center;
     align-items: center !important;
     margin-top: 0;
-    padding: calc(var(--w) * 0.1 + 1.5vw) 0;
-    transform: translateX(calc(var(--zz-x) + 4vw)) !important;
+    padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 1.25vw) 0;
+    transform: translateX(calc(var(--zz-x) * 0.5 + 1vw)) !important;
   }
   .shop-grid .cell[data-side="right"] {
-    align-self: flex-end;
-    transform: translateX(calc(var(--zz-x) - 4vw)) !important;
+    align-self: flex-start;
+    margin-top: 4vw;
+    transform: translateX(calc(var(--zz-x) * 0.5 - 1vw)) !important;
   }
   .shop-grid .cell[data-first] {
     margin-top: 0;
@@ -537,6 +567,42 @@ html {
   }
   .tf-preview .size-slider {
     width: 96px;
+  }
+  /* Larger finger-friendly thumbs; the input gets a taller hit area while the
+     visible track stays a 2px line drawn as a centred background. */
+  .size-slider,
+  .cols-slider {
+    height: 28px;
+    background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
+  }
+  .size-slider::-webkit-slider-thumb,
+  .cols-slider::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  .size-slider::-moz-range-thumb,
+  .cols-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  .size-slider::-moz-range-track,
+  .cols-slider::-moz-range-track {
+    background: transparent;
+  }
+  /* Colour dots: narrow column on the right, under the options button,
+     stacked bottom → top; absolutely placed so the slider keeps its width. */
+  /* Colour dots: horizontal row pinned to the panel bottom, spanning the same
+     width as the control row at the top. */
+  .tf-preview {
+    padding-bottom: calc(2.5rem + 22px) !important;
+  }
+  .tf-preview .tf-color-dots {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 2rem;
+    right: 2rem;
+    justify-content: center;
+    z-index: 2;
   }
   .tf-info-row {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -656,4 +722,156 @@ html {
 .size-readout {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* About page — mobile only */
+@media (max-width: 768px) {
+  .about-intro {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding-top: 4.5rem !important;
+  }
+  .about-intro-col {
+    padding: 0 1.25rem !important;
+    max-width: none;
+  }
+  .about-intro-text {
+    max-width: none;
+    margin-bottom: 1.75rem !important;
+  }
+  .about-designers-head {
+    gap: 0.75rem !important;
+    margin-bottom: 0 !important;
+  }
+  .about-designers-head h2 {
+    font-size: 1.3rem !important;
+  }
+  .about-designers-head select {
+    font-size: 0.9rem !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+  .about-designer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.6rem !important;
+    padding: 0.9rem 1.25rem 1.5rem !important;
+  }
+  .about-designer-cell {
+    padding: 0 0.6rem !important;
+  }
+  .about-designer-name {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.4rem !important;
+    overflow-wrap: anywhere;
+  }
+  .about-designer-links {
+    gap: 0.9rem !important;
+    width: auto !important;
+  }
+}
+
+/* Mobile header: centred logo + eyes, hamburger on the right. */
+@media (max-width: 768px) {
+  .tf-nav {
+    position: relative !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    padding-bottom: 1rem !important;
+  }
+  .tf-nav .nav-left,
+  .tf-nav > .nav-bundle {
+    display: none !important;
+  }
+  .tf-nav .nav-logo {
+    grid-column: 2 !important;
+  }
+  .tf-nav .nav-burger {
+    display: flex;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  /* Clip box so the off-screen panel never widens the page. */
+  .tf-nav .nav-menu-clip {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    overflow: hidden;
+  }
+  .tf-nav .nav-menu {
+    display: block;
+    transform: translateX(100%);
+    transition: transform 300ms ease-in-out;
+    pointer-events: none;
+  }
+  .tf-nav .nav-menu.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .tf-nav .nav-menu-row {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border: none;
+    padding: 0.85rem 0;
+    cursor: pointer;
+  }
+  .tf-nav .nav-menu-track {
+    display: inline-flex;
+    animation: marquee 14s linear infinite;
+  }
+  .tf-nav .nav-menu-word {
+    flex-shrink: 0;
+    padding-right: 2.5rem;
+    font-family: Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  /* Homepage gets the same fixed bottom marquee as the other mobile pages. */
+  .shop-bottom-marquee {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200 !important;
+  }
+  .shop-stage {
+    padding-bottom: 6.5rem !important;
+  }
+  .about-video {
+    padding: 0 1.25rem 0.5rem !important;
+  }
+  .about-designers-head {
+    padding: 1.25rem 1.25rem 0 !important;
+  }
+  .faq-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+  .faq-stack {
+    display: contents !important;
+  }
+}
+
+/* Desktop: homepage and typeface-page bottom marquees share one fixed height. */
+@media (min-width: 769px) {
+  .shop-bottom-marquee .marquee-band,
+  .tf-buy-marquee .marquee-band {
+    height: 3.5rem;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center;
+    line-height: 1.2;
+  }
 }
