@@ -843,7 +843,12 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
               onClick={() => { setMenuOpen(false); window.setTimeout(() => onNavigate(to), 300); }}
               style={{ background: menuColors[row], color: LIGHT_BAND_COLORS.has(menuColors[row]) ? "#000" : "#fff" }}
             >
-              <span className="nav-menu-track" aria-hidden="true" style={{ animationDuration: `${14 + row * 3}s` }}>
+              <span
+                className="nav-menu-track"
+                aria-hidden="true"
+                // Same px/s as the main marquee, re-measured on each render (incl. opening).
+                ref={(el) => { if (el && el.scrollWidth) el.style.animationDuration = `${el.scrollWidth / 2 / bandSpeedPxPerSec}s`; }}
+              >
                 {Array.from({ length: 12 }).map((_, i) => <span key={i} className="nav-menu-word">{label}</span>)}
               </span>
             </button>
@@ -1123,7 +1128,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
       <div className="min-h-screen bg-white flex flex-col">
         <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
-        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "5.5rem" }}>
+        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "2.5rem" }}>
           {/* Left column */}
           <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
             <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
@@ -2040,7 +2045,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           /* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */
           <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
         )}
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Custom"}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Variable"}</span>
       </button>
       {controlMenu === "preset" && (
         <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, maxWidth: "70vw", maxHeight: 280, overflowY: "auto", background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
@@ -2229,10 +2234,10 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   renders First sketched → Format from top to bottom. */}
               {[
                 ["EULA:", ""],
-                // Preset fonts: Format is derived from the Glyphs presets (single source of truth).
-                ["Format:", VARIABLE_FONT_PRESETS[name] ? [...VARIABLE_FONT_PRESETS[name].map((p) => p.name), "Variable"].join(", ") : "ttf, otf, woff"],
-                ["Range:", name === "Ella"
-                  ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
+                ["Format:", "TTF, OTF, WOFF2"],
+                // Preset fonts: Range is derived from the Glyphs presets (single source of truth).
+                ["Range:", VARIABLE_FONT_PRESETS[name]
+                  ? VARIABLE_FONT_PRESETS[name].map((p) => p.name).join(", ")
                   : name === "Svek"
                     ? "Regular, Italic"
                     : variableControls
@@ -2479,7 +2484,7 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
       >
         <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold" }}>{q}</span>
         {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
-        <span aria-hidden="true" className="faq-arrow" style={{ display: "inline-block", flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", marginRight: "0.75rem", fontSize: "1.6rem", lineHeight: 1, pointerEvents: "none", transform: `rotate(${open ? -90 : 90}deg)`, WebkitTransform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
+        <span aria-hidden="true" className="faq-arrow" style={{ display: "inline-block", flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", marginRight: "-0.4rem" /* ink edge sits 1.25rem in, mirroring the text */, fontSize: "1.6rem", lineHeight: 1, pointerEvents: "none", transform: `rotate(${open ? -90 : 90}deg)`, WebkitTransform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
       </button>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
         <div style={{ overflow: "hidden" }}>
@@ -2508,7 +2513,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "5.5rem", paddingBottom: "1rem" }}>
+      <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "2.5rem", paddingBottom: "1rem" }}>
         {/* Two independent stacks (even items left, odd right) so an open section
             only pushes down its own column. On mobile the stacks dissolve and
             `order` restores the original sequence. */}
