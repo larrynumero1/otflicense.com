@@ -1168,3 +1168,16 @@ html {
     transform: translateX(-0.9rem) !important;
   }
 }
+
+/* Touch-only stand-in caret for the Preview (desktop uses the native caret). */
+.tf-touch-caret {
+  display: inline-block;
+  width: 0.04em;
+  min-width: 1.5px;
+  height: 1em;
+  margin-left: 0.02em;
+  vertical-align: -0.12em;
+  background: currentColor;
+  animation: tf-caret-blink 1.06s steps(1) infinite;
+}
+@keyframes tf-caret-blink { 50% { opacity: 0; } }

@@ -168,7 +168,7 @@ import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 import eyesSvg from "./imports/eyes.svg";
 import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import variableFontSticker from "./imports/bild_variablesticker.png";
+import variableFontSticker from "./imports/Variable_Font_Sticker.png";
 
 type Page =
   | { id: "home" }
@@ -251,7 +251,7 @@ const typefaces = [
   { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/OTF_Dukat.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
   { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/OTF_Cryptomono.woff2", casing: "lower", scale: 1.27, previewSize: 10, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/OTF_Facit.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/OTF_Facit.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/OTF_Sonja.woff2", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/OTF_Brus.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
@@ -1393,12 +1393,38 @@ const GLYPH_NAMES: Record<string, string> = {
 // an explicit per-face display exception (the glyphs are not removed from the font).
 const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 
+// Named glyphs appended to a face's "Other" category, looked up by glyph name in
+// the loaded font (they may have no Unicode mapping). Panel entries for these use
+// a "\u0000name" key so they never collide with real characters.
+const NAMED_OTHER_GLYPHS: Record<string, string[]> = {
+  Galanite: ["icon.airplane", "icon.bus", "icon.car", "icon.dog", "icon.horse", "icon.other", "icon.smiley", "icon.telephone", "icon.train"],
+  Kuriren: ["logo"],
+};
+const NAMED_PREFIX = "\u0000";
+function findGlyphByName(fk: any, name: string): any | null {
+  if (!fk) return null;
+  for (let i = 0; i < fk.numGlyphs; i++) {
+    try { const g = fk.getGlyph(i); if (g?.name === name) return g; } catch {}
+  }
+  return null;
+}
+// Draws a named glyph's real outline from the font (used when it has no Unicode).
+function NamedGlyph({ fk, glyph }: { fk: any; glyph: any }) {
+  const asc = fk.ascent, desc = fk.descent, adv = glyph.advanceWidth || fk.unitsPerEm;
+  const d = glyph.path?.toSVG?.() ?? "";
+  return (
+    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={{ height: "1.15em", width: "auto", overflow: "visible", display: "block" }} aria-hidden>
+      <path d={d} transform="scale(1,-1)" fill="currentColor" />
+    </svg>
+  );
+}
+
 // Full-width panel: large showcase on the left, categorised character list on the right.
 // Coverage is read from the selected font's own cmap: opentype.js for the parseable
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug, glyphListSize }: { glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
+function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug, glyphListSize }: { fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1412,7 +1438,22 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
       const name = otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(c))?.name : undefined;
       return !(name && DUKAT_HIDDEN_GLYPHS.has(name));
     }),
-  })).filter((group) => group.chars.length > 0);
+  }));
+  // Named non-Unicode-safe glyphs (e.g. Galanite icons, Kuriren logo) from the font itself.
+  const namedGlyphs = new Map<string, any>();
+  for (const n of NAMED_OTHER_GLYPHS[faceName] ?? []) {
+    const g = findGlyphByName(fk, n);
+    if (g) namedGlyphs.set(NAMED_PREFIX + n, g);
+  }
+  const other = groups.find((g) => g.label === "Other");
+  if (other) other.chars = [...other.chars, ...namedGlyphs.keys()];
+  const renderEntry = (g: string) => {
+    const ng = namedGlyphs.get(g);
+    if (!ng) return g;
+    const cp = ng.codePoints?.[0];
+    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} />;
+  };
+  const visibleGroups = groups.filter((group) => group.chars.length > 0);
 
   // Mobile only: categories act as independent accordions, all collapsed on load.
   // Phone landscape uses the desktop Glyphs layout, so only portrait counts here.
@@ -1431,7 +1472,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
       return next;
     });
 
-  const firstChar = groups[0]?.chars[0] ?? "A";
+  const firstChar = visibleGroups[0]?.chars[0] ?? "A";
   const [hovered, setHovered] = useState(firstChar);
   useEffect(() => {
     setHovered(firstChar);
@@ -1441,9 +1482,10 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
   // Metadata for the currently highlighted glyph. The Unicode value comes from
   // the character itself; the glyph name is read from the parsed font when
   // available, falling back to the character.
-  const codePoint = hovered.codePointAt(0) ?? 0;
-  const glyphUnicode = "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0");
-  const glyphName =
+  const hoveredNamed = namedGlyphs.get(hovered);
+  const codePoint = hoveredNamed ? hoveredNamed.codePoints?.[0] : hovered.codePointAt(0) ?? 0;
+  const glyphUnicode = codePoint != null ? "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0") : null;
+  const glyphName = hoveredNamed ? hovered.slice(1) :
     GLYPH_NAMES[hovered] ??
     (otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(hovered))?.name : undefined) ??
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
@@ -1470,11 +1512,11 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
               and rebuilt, so no stale ink (which can overhang the text box and
               escape repaint invalidation, esp. in mobile WebKit) can survive. */}
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
-                      <span className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
+                      <span className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
           </div>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
-            <div>Unicode: {glyphUnicode}</div>
+            {glyphUnicode && <div>Unicode: {glyphUnicode}</div>}
           </div>
           {sizeDebug}
         </div>
@@ -1482,7 +1524,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
 
       {/* Character list — right, grouped by category */}
       <div className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {groups.map((group) => {
+        {visibleGroups.map((group) => {
           const open = !isMobile || openGroups.has(group.label);
           return (
           <div key={group.label}>
@@ -1523,7 +1565,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
                     transition: "background 0.15s ease, color 0.15s ease",
                   }}
                 >
-                  {g}
+                  {renderEntry(g)}
                 </div>
               ))}
             </div>
@@ -2030,13 +2072,30 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? shown.toUpperCase() : shown;
     let i = 0;
     setTop("");
+    setIntroDone(false);
     const id = setInterval(() => {
       i++;
       setTop(seed.slice(0, i));
-      if (i >= seed.length) clearInterval(id);
+      if (i >= seed.length) {
+        clearInterval(id);
+        setIntroDone(true);
+        // Desktop: hand the real caret to the Preview at the end of the text,
+        // once only and only if nothing else has focus. Touch devices skip this
+        // so the keyboard never opens on load (they get a visual caret instead).
+        const el = textareaRef.current;
+        const touch = window.matchMedia("(pointer: coarse)").matches;
+        if (el && !touch && (document.activeElement === document.body || !document.activeElement)) {
+          el.focus({ preventScroll: true });
+          el.setSelectionRange(el.value.length, el.value.length);
+        }
+      }
     }, 100);
     return () => clearInterval(id);
   }, [name]);
+
+  const [introDone, setIntroDone] = useState(false);
+  const [previewFocused, setPreviewFocused] = useState(false);
+  const showTouchCaret = introDone && !previewFocused && typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
   // Missing-glyph handling: unsupported code points in the Preview render as
   // this font's own .notdef via a generated companion face (see buildNotdefFace).
@@ -2438,6 +2497,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
                 rows={1}
+                onFocus={() => setPreviewFocused(true)}
+                onBlur={() => setPreviewFocused(false)}
                 style={{
                   ...fieldBase,
                   display: "block",
@@ -2475,6 +2536,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 }}
               >
                 {previewText.endsWith("\n") ? previewText + "\u200b" : previewText}
+                {/* Touch only, while unfocused: stand-in for the native caret (which
+                    would require opening the keyboard). Hidden once the field is focused. */}
+                {showTouchCaret && <span className="tf-touch-caret" />}
               </div>
             </div>
           </div>
@@ -2544,7 +2608,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
+          <GlyphSection fk={fk} font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
             controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{isMobile ? (
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
