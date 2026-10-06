@@ -913,8 +913,13 @@ html {
 }
 
 /* Phone landscape — the mobile interface adapted to a wide, short viewport.
-   Narrowly targeted (landscape + short + touch) so short desktop windows are unaffected. */
+   Narrowly targeted (landscape + short + touch) so short desktop windows are unaffected.
+   --li is the one shared content line: where names inside the designer cells begin. */
 @media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  :root {
+    --li: max(3rem, calc(env(safe-area-inset-left) + 1.5rem));
+    --ri: max(3rem, calc(env(safe-area-inset-right) + 1.5rem));
+  }
   .tf-nav {
     padding-top: max(0.6rem, env(safe-area-inset-top)) !important;
     padding-bottom: 0.4rem !important;
@@ -926,40 +931,95 @@ html {
   .about-intro {
     padding-top: 1rem !important;
   }
+  /* Licensing: one column on the shared content line (item text sits at the
+     container edge thanks to the item's negative side margins). */
   .faq-grid {
     padding-top: 1rem !important;
-    padding-left: max(2.5rem, env(safe-area-inset-left)) !important;
-    padding-right: max(2.5rem, env(safe-area-inset-right)) !important;
+    padding-left: var(--li) !important;
+    padding-right: var(--ri) !important;
   }
+  /* About: text, video, filter all on the shared line. */
   .about-intro-col,
   .about-video,
-  .about-designers-head,
-  .about-designer-grid {
-    padding-left: max(1.25rem, env(safe-area-inset-left)) !important;
-    padding-right: max(1.25rem, env(safe-area-inset-right)) !important;
+  .about-designers-head {
+    padding-left: var(--li) !important;
+    padding-right: var(--ri) !important;
   }
-  /* Video keeps 16:9 but never taller than ~3/4 of the short screen. */
   .about-video {
-    max-width: calc(75vh * 16 / 9 + 2.5rem);
+    max-width: calc(75vh * 16 / 9 + var(--li) + var(--ri));
   }
+  /* Designer cells have 0.6rem inner padding; offset so names land on --li. */
   .about-designer-grid {
+    padding-left: calc(var(--li) - 0.6rem) !important;
+    padding-right: calc(var(--ri) - 0.6rem) !important;
     grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)) !important;
   }
-  /* Three across instead of two; same equal-area formula, scaled to the width. */
-  .shop-grid .cell {
-    --w: min(28vw, calc(20.5vw * sqrt(var(--ar, 1))));
+  /* Bundle checkout: natural scale, narrowed to the shared line. */
+  .bundle-body {
+    padding-left: var(--li) !important;
+    padding-right: var(--ri) !important;
   }
-  .shop-grid .cell:is([data-name="Facit"]) {
-    --w: min(29vw, calc(23vw * sqrt(var(--ar, 1))));
+  /* Typeface pages: coloured blocks keep their width; inner content moves to the line.
+     .tf-page already insets 1rem, so the inner padding makes up the rest. */
+  .tf-info,
+  .tf-glyphs {
+    padding-left: calc(var(--li) - 1rem) !important;
+    padding-right: calc(var(--ri) - 1rem) !important;
   }
-  .shop-grid .cell:is([data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
-    --w: min(31vw, calc(25.5vw * sqrt(var(--ar, 1))));
+  .tf-preview-controls {
+    padding-left: calc(var(--li) - 1rem) !important;
+    padding-right: calc(var(--ri) - 1rem) !important;
   }
-  .shop-grid .cell[data-side="right"] {
-    margin-top: 2vw;
+  .tf-buy {
+    padding-left: calc(var(--li) - 1rem) !important;
+    padding-right: calc(var(--ri) - 1rem) !important;
+    box-sizing: border-box;
+  }
+  /* Gallery: a wide strip with roughly portrait's height, still cover-cropped. */
+  .tf-gallery::before {
+    padding-top: 34%;
+  }
+  /* Glyphs: desktop two-column structure (showcase left, categories right). */
+  .tf-glyphs {
+    flex-direction: row !important;
+  }
+  .tf-glyph-showcase {
+    flex: 0 0 38% !important;
+    min-height: 0;
+  }
+  .tf-glyph-controls {
+    flex-wrap: wrap !important;
+  }
+  .tf-glyph-controls > * {
+    flex: initial !important;
+  }
+  .tf-glyph-preset-stack button {
+    min-height: 44px;
   }
   .tf-glyph-big {
     font-size: min(var(--glyph-mobile-size, 9rem), 45vh) !important;
+  }
+  /* Shop: structured four-column rows; stickers keep their tilt. */
+  .shop-stage {
+    padding-left: var(--li) !important;
+    padding-right: var(--ri) !important;
+  }
+  .shop-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center !important;
+    column-gap: 1.5rem;
+    row-gap: 1rem !important;
+  }
+  .shop-grid .cell,
+  .shop-grid .cell[data-side="right"],
+  .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
+    --w: min(85%, calc(11vw * sqrt(var(--ar, 1))));
+    margin-top: 0 !important;
+    align-self: center;
+    padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 0.75vw) 0;
+    transform: none !important;
   }
   .shop-bottom-marquee,
   .tf-buy-marquee {
