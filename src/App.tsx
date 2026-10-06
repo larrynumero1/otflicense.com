@@ -392,6 +392,7 @@ const GUMROAD_PRODUCT_IDS: Record<string, string> = {
 };
 
 const VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Cheiron", "Ella", "Last Call"]);
+const CORNER_VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Ella"]);
 
 const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
   BIP: { x: -65, y: 14, rotation: -6 },
@@ -632,9 +633,9 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
               aria-hidden="true"
               style={{
                 position: "absolute",
-                top: "-1%",
-                right: "-1%",
-                width: `${21.505 / s}%`,
+                top: CORNER_VARIABLE_FONT_STICKERS.has(face.name) ? "-6%" : "-1%",
+                right: CORNER_VARIABLE_FONT_STICKERS.has(face.name) ? "-6%" : "-1%",
+                width: `${25.5 / s}%`,
                 height: "auto",
                 display: "block",
                 pointerEvents: "none",
@@ -883,7 +884,11 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
 
 const PAGE_TEXT: Record<string, string> = {
   ABOUT:
-    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
+    "OTF License is an independent type foundry started by the Class of 2027 at the Visual Communication program, Beckmans College of Design in Stockholm, Sweden.\n\n" +
+    "What began as an idea during a Graphic Identity course, grew into an online platform for the students to put their own typefaces out into the world.\n\n" +
+    "Each font is different. Some have a complete set of glyphs, others have just enough to get a job done. Some are finished when you buy them, while others will keep growing with future updates available for free. But they all come with the same license. That’s what sets this foundry apart.\n\n" +
+    "Stop by, browse the shelves and pick up something new from the designers of tomorrow for less than the price of a beer in Stockholm. Or make a designer’s day and pay a little extra if you think it’s worth it. If one font isn’t enough, get the Mega Bundle Pack and take the whole lot for a lot less!\n\n" +
+    "Special thanks to Laslo Strong, Tor Weibull and Peter Ström.",
   Licensing:
     "Our fonts are available under desktop, web, app, and broadcast licenses, priced by the number of users and monthly page views. A single trial weight is free for testing. Custom and exclusive licenses are available for brands and publishers — get in touch and we will tailor an agreement to your needs.",
   FAQ:
@@ -1094,6 +1099,18 @@ function GumroadInlineCheckout({ url, productId, minHeight = 640 }: { url: strin
           </a>
         </p>
       )}
+      <div className="gumroad-checkout-help">
+        <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+          Open checkout on Gumroad
+        </a>
+        <span>
+          Already purchased?{" "}
+          <a href="https://gumroad.com/library" target="_blank" rel="noopener noreferrer">
+            Download from your Gumroad Library
+          </a>
+          . Gumroad also sends the download link to the email used at checkout.
+        </span>
+      </div>
     </div>
   );
 }
@@ -1153,8 +1170,9 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
         <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "2.5rem" }}>
           {/* Left column */}
           <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
-            <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
+            <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem", whiteSpace: "pre-line" }}>
               {PAGE_TEXT["ABOUT"]}
+              <span className="about-image-credit">Certain images courtesy of Kvartalsrapport</span>
             </p>
 
 
@@ -1220,7 +1238,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
           {PAGE_TEXT[title] ?? "Coming soon."}
         </p>
         {title === "Buy" && (
-          <a href="https://otflicenser.gumroad.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://otflicense.gumroad.com" target="_blank" rel="noopener noreferrer"
             style={{ alignSelf: "flex-start", marginTop: "2rem", fontFamily: "Arial, sans-serif", fontSize: "1.1rem", fontWeight: "bold", color: "#fff", background: "#000", padding: "0.9rem 2rem", textDecoration: "none", cursor: "pointer" }}>
             Buy on Gumroad →
           </a>
@@ -1360,7 +1378,13 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
               (offset by an equal negative margin) so the element's paint box
               covers ink beyond the line box — outlines outside it were leaving
               fragments behind on repaint. Layout size is unchanged. */}
-          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
+          {/* Ghosting fix: the glyph lives in its own compositing layer,
+              keyed by glyph + axis state. On any change the whole layer is dropped
+              and rebuilt, so no stale ink (which can overhang the text box and
+              escape repaint invalidation, esp. in mobile WebKit) can survive. */}
+          <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
+                      <span className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
+          </div>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
             <div>Unicode: {glyphUnicode}</div>
@@ -1370,7 +1394,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
       </div>
 
       {/* Character list — right, grouped by category */}
-      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
         {groups.map((group) => {
           const open = !isMobile || openGroups.has(group.label);
           return (
@@ -2303,13 +2327,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{glyphMobile ? (
+            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{isMobile ? (
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
                 ? <div className="tf-mobile-control-active" style={{ flex: 1, width: "100%", minWidth: 0, display: "flex" }}>{glyphOptions[0].node}</div>
                 : regularLabel
-            ) : variableControls}</div></div> : glyphMobile ? (
+            ) : variableControls}</div></div> : isMobile ? (
               glyphToggleAxes.length > 0
                 ? <>{glyphToggleAxes.map((a) => renderAxis(a, true))}</>
                 : glyphOptions.length > 1
@@ -2565,7 +2589,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
 // ——— Eyes easter egg ———
 // Phase 0: eyes shown in navbar
 // Phase 1–3: eyes floating at a random screen position (hop 1, 2, 3)
-// Phase 4: modal shown
+// Hovering phase 3 completes the sequence and opens the Mega Bundle page.
 function getRandomEyesPos() {
   const margin = 80;
   return {
@@ -2601,70 +2625,6 @@ function FloatingEyes({ pos, onHover, filter }: { pos: { x: number; y: number };
   );
 }
 
-function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNavigate?: (p: Page) => void }) {
-  const [entered, setEntered] = useState(false);
-  const [colorIdx, setColorIdx] = useState(0);
-
-  useEffect(() => {
-    requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setColorIdx((prev) => (prev + 1) % PALETTE.length);
-    }, 1200);
-    return () => clearInterval(id);
-  }, []);
-
-  const modalBg = PALETTE[colorIdx];
-  const modalText = LIGHT_BAND_COLORS.has(modalBg) ? "#000" : "#fff";
-
-  return (
-    <div
-      style={{
-        position: "fixed", inset: 0, zIndex: 9000,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: "rgba(0,0,0,0.35)",
-        opacity: entered ? 1 : 0,
-        transition: "opacity 0.4s ease",
-      }}
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          onClose();
-          if (onNavigate) onNavigate({ id: "bundle" });
-          else window.location.assign("/megabundle");
-        }}
-        style={{
-          width: "min(80vw, 420px)",
-          aspectRatio: "1",
-          boxSizing: "border-box",
-          background: modalBg,
-          border: "none",
-          padding: "3rem",
-          textAlign: "center",
-          cursor: "pointer",
-          transform: entered ? "translateY(0)" : "translateY(24px)",
-          transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <p style={{ fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "2rem", color: modalText, margin: "0 0 0.75rem", transition: "color 0.3s ease" }}>
-          Good job!
-        </p>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", color: modalText, margin: 0, transition: "color 0.3s ease" }}>
-          Click to redeem your offer.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [page, setPage] = useState<Page>(() => {
     const initialPage = pageFromPath(window.location.pathname);
@@ -2690,7 +2650,7 @@ export default function App() {
       setEyesPhase((p) => p + 1);
       setEyesPos(getRandomEyesPos());
     } else {
-      setEyesPhase(4);
+      navigate({ id: "bundle" });
     }
   }
 
@@ -2909,11 +2869,6 @@ export default function App() {
       {/* Eyes easter egg — floating hops (phases 1-3), foundry page only */}
       {page.id === "foundry" && eyesPhase >= 1 && eyesPhase <= 3 && (
         <FloatingEyes key={eyesPhase} pos={eyesPos} onHover={handleEyesHover} />
-      )}
-
-      {/* Eyes easter egg — reward modal (phase 4), foundry page only */}
-      {page.id === "foundry" && eyesPhase === 4 && (
-        <EasterEggModal onClose={() => setEyesPhase(0)} onNavigate={navigate} />
       )}
 
       {/* Global fixed marquee — visible on every page, sits above content */}

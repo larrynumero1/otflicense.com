@@ -423,6 +423,39 @@ html {
   text-underline-offset: 0.2em;
 }
 
+.gumroad-checkout-help {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid #000;
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.gumroad-checkout-help > a {
+  flex: 0 0 auto;
+  padding: 0.7rem 1rem;
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.gumroad-checkout-help span {
+  flex: 1 1 24rem;
+}
+
+.gumroad-checkout-help span a {
+  color: inherit;
+  font-weight: bold;
+  text-underline-offset: 0.2em;
+}
+
 .site-footer {
   display: flex;
   flex-direction: column;
@@ -757,6 +790,12 @@ html {
 }
 
 /* About page — mobile only */
+.about-image-credit {
+  display: block;
+  font-size: 0.5em;
+  font-style: italic;
+}
+
 @media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
   .about-intro {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -768,6 +807,7 @@ html {
     max-width: none;
   }
   .about-intro-text {
+    font-size: 0.85rem !important;
     max-width: none;
     margin-bottom: 1.75rem !important;
   }
