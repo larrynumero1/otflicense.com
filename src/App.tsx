@@ -446,6 +446,7 @@ const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?
   "Jesper Smeding": { site: "jespersmeding.com", email: "jespersmeding@gmail.com", social: "jespersmeding" },
   "Caspar Broms": { email: "casparbroms9@gmail.com" },
   "Lawrence Ponsonby": { email: "lawrenceponsonby1@gmail.com", social: "1arri" },
+  "Ve Örnehed": { social: "vemodiga" },
 };
 
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
@@ -1258,7 +1259,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
           <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
             <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem", whiteSpace: "pre-line" }}>
               {PAGE_TEXT["ABOUT"]}
-              <span className="about-image-credit">Certain images courtesy of Kvartalsrapport</span>
+              <span className="about-image-credit">Certain images courtesy of Kvartalsrapport &amp; Frida Vega Salomonsson</span>
             </p>
 
 
@@ -1677,6 +1678,66 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
+// ── .notdef handling for the editable Preview ──────────────────────────────
+// Each font file is fetched + parsed by fontkit once and cached. Code points the
+// font's cmap maps to glyph 0 are unsupported; for those we build a tiny runtime
+// font holding ONLY the current font's own .notdef outline (at the live axis
+// values) and append it right after the face in the font stack, so the browser
+// draws the real .notdef natively — never a system fallback.
+const fontkitCache = new Map<string, Promise<any>>();
+function loadFontkit(file: string): Promise<any> {
+  let p = fontkitCache.get(file);
+  if (!p) {
+    p = fetch(file)
+      .then((r) => r.arrayBuffer())
+      .then((b) => (fontkit as any).create(new Uint8Array(b)));
+    p.catch(() => fontkitCache.delete(file));
+    fontkitCache.set(file, p);
+  }
+  return p;
+}
+function fontkitSupports(fk: any, cp: number): boolean {
+  try {
+    const id = fk.glyphForCodePoint(cp)?.id ?? 0;
+    return id !== 0;
+  } catch {
+    return false;
+  }
+}
+// Whitespace, controls, and the mirror's zero-width space never show .notdef.
+const isLayoutChar = (cp: number) => cp < 0x20 || cp === 0x7f || cp === 0x200b || /\s/u.test(String.fromCodePoint(cp));
+let notdefSeq = 0;
+function buildNotdefFace(fk: any, codePoints: number[], axes: Record<string, number> | null): ArrayBuffer {
+  let src = fk;
+  if (axes && fk.variationAxes && Object.keys(fk.variationAxes).length) {
+    try { src = fk.getVariation(axes); } catch { src = fk; }
+  }
+  const g = src.getGlyph(0);
+  const upm = fk.unitsPerEm;
+  const path = new opentype.Path();
+  for (const c of g.path.commands as { command: string; args: number[] }[]) {
+    const a = c.args;
+    if (c.command === "moveTo") path.moveTo(a[0], a[1]);
+    else if (c.command === "lineTo") path.lineTo(a[0], a[1]);
+    else if (c.command === "quadraticCurveTo") path.quadraticCurveTo(a[0], a[1], a[2], a[3]);
+    else if (c.command === "bezierCurveTo") path.curveTo(a[0], a[1], a[2], a[3], a[4], a[5]);
+    else if (c.command === "closePath") path.close();
+  }
+  const adv = g.advanceWidth;
+  const glyphs = [new opentype.Glyph({ name: ".notdef", unicode: 0, advanceWidth: adv, path })];
+  // Every unsupported code point maps to a copy of that same .notdef design.
+  codePoints.forEach((cp, i) => glyphs.push(new opentype.Glyph({ name: `nd${i}`, unicode: cp, advanceWidth: adv, path })));
+  const out = new opentype.Font({
+    familyName: "OTFNotdef",
+    styleName: "Regular",
+    unitsPerEm: upm,
+    ascender: fk.ascent ?? upm * 0.8,
+    descender: fk.descent ?? -upm * 0.2,
+    glyphs,
+  });
+  return out.toArrayBuffer();
+}
+
 function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
   const paragraphs = text.split("\n");
   const result: string[] = [];
@@ -1977,6 +2038,57 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     return () => clearInterval(id);
   }, [name]);
 
+  // Missing-glyph handling: unsupported code points in the Preview render as
+  // this font's own .notdef via a generated companion face (see buildNotdefFace).
+  const [fk, setFk] = useState<any>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setFk(null);
+    if (face?.file) loadFontkit(face.file).then((f) => { if (!cancelled) setFk(f); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [name]);
+  const missingKey = (() => {
+    if (!fk || !face) return "";
+    const src = face.casing === "upper" ? top.toUpperCase() : face.casing === "lower" ? top.toLowerCase() : top;
+    const set = new Set<number>();
+    for (const ch of src) {
+      const cp = ch.codePointAt(0)!;
+      if (!isLayoutChar(cp) && !fontkitSupports(fk, cp)) set.add(cp);
+    }
+    return [...set].sort((a, b) => a - b).join(",");
+  })();
+  const axisKey = nativeAxes
+    ? nativeAxes.map((a) => `${a.tag}:${axisValues[a.tag] ?? a.default}`).join(",")
+    : weightAxis ? `wght:${weightValue}` : "";
+  const [notdefFamily, setNotdefFamily] = useState<string | null>(null);
+  useEffect(() => {
+    if (!fk || !missingKey) { setNotdefFamily(null); return; }
+    let cancelled = false;
+    let added: FontFace | null = null;
+    const id = setTimeout(() => {
+      try {
+        const cps = missingKey.split(",").map(Number);
+        const axes: Record<string, number> = {};
+        axisKey.split(",").filter(Boolean).forEach((kv) => { const [k, v] = kv.split(":"); axes[k] = Number(v); });
+        const fam = `OTFNotdef${++notdefSeq}`;
+        const ff = new FontFace(fam, buildNotdefFace(fk, cps, axisKey ? axes : null));
+        ff.load().then((loaded) => {
+          if (cancelled) return;
+          document.fonts.add(loaded);
+          added = loaded;
+          setNotdefFamily(fam);
+        }).catch(() => {});
+      } catch {}
+    }, 0);
+    // Old generated faces are removed so nothing accumulates between edits.
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+      const prev = added;
+      if (prev) setTimeout(() => document.fonts.delete(prev), 500);
+    };
+  }, [fk, missingKey, axisKey]);
+
   if (!face) return null;
 
   // Some faces are uppercase- or lowercase-only; force typed/preview text to match.
@@ -2224,8 +2336,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     </div>
   );
 
+  // Insert the generated .notdef face directly after the typeface so unsupported
+  // characters never reach a system font.
+  const previewFamily = notdefFamily && missingKey ? face.font.replace(/^([^,]+)/, `$1, '${notdefFamily}'`) : face.font;
   const fieldBase: React.CSSProperties = {
-    fontFamily: face.font,
+    fontFamily: previewFamily,
     fontVariationSettings,
     letterSpacing: `${spacing}em`,
     background: panelBg,
@@ -2238,7 +2353,15 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     overflow: "hidden",
   };
 
-  const aboutText = `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
+  const aboutText = name === "Ella"
+    ? "Originally developed for a speculative revival of Swedish electronics company RIFA as a contemporary tech conglomerate, this typeface draws on the visual language of modern technology brands. It is a variable font with seven weights, available both with and without serifs. It was later used as the primary typeface for a newspaper created during the Editorial Design course."
+    : name === "Cheiron"
+      ? "Designed for a new take on the identity of Cheiron Studios, the former Stockholm studio behind some of the biggest pop hits of the late 1990s. The typeface takes its cues from practical stencil lettering and the fast pace of music production. Open counters allow the letters to be cut out and used as physical stencils."
+      : name === "BIP"
+        ? "BIP is based on the original logo of Botnia Internet Provider, a Swedish internet provider active between 1997 and 1999. BIP draws inspiration from Eurostile, Microgramma and the optimism of early internet culture."
+        : name === "Facit"
+          ? "FACIT AB was a typemachine and countingmachine manufacturer located in Åtvidaberg, Sweden. FACIT by is inspired, redrawn and digitalized from existing logos and typefaces on the products. This typeface works perfect for bold, big and attention seeking sentences, with its low height and heavy weight."
+          : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
