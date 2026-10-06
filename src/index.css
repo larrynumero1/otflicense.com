@@ -947,6 +947,8 @@ html {
   }
   .about-video {
     max-width: calc(75vh * 16 / 9 + var(--li) + var(--ri));
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
   /* Designer cells have 0.6rem inner padding; offset so names land on --li. */
   .about-designer-grid {
@@ -996,6 +998,16 @@ html {
   .tf-glyph-preset-stack button {
     min-height: 44px;
   }
+  /* Preset first, then axis sliders stacked, then the big glyph (desktop order). */
+  .tf-glyph-preset-stack > div:last-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  .tf-glyph-stage {
+    min-height: 14rem;
+    padding-bottom: 2.5rem;
+  }
   .tf-glyph-big {
     font-size: min(var(--glyph-mobile-size, 9rem), 45vh) !important;
   }
@@ -1015,7 +1027,7 @@ html {
   .shop-grid .cell,
   .shop-grid .cell[data-side="right"],
   .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
-    --w: min(85%, calc(11vw * sqrt(var(--ar, 1))));
+    --w: min(95%, calc(12.5vw * sqrt(var(--ar, 1))));
     margin-top: 0 !important;
     align-self: center;
     padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 0.75vw) 0;

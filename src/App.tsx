@@ -180,16 +180,21 @@ type Page =
   | { id: "typeface"; name: string };
 
 function typefaceSlug(name: string) {
+  const face = typefaces.find((item) => item.name === name);
+  return (face?.displayName ?? name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// Legacy slug format (/shop/<slug>) used before clean URLs.
+function legacySlug(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
 function pageToPath(page: Page) {
-  if (page.id === "home") return "/intro";
-  if (page.id === "foundry") return "/shop";
+  if (page.id === "home" || page.id === "foundry") return "/";
   if (page.id === "about") return "/about";
-  if (page.id === "contact") return "/faq";
-  if (page.id === "bundle") return "/bundle";
-  if (page.id === "typeface") return `/shop/${typefaceSlug(page.name)}`;
+  if (page.id === "contact") return "/licensing";
+  if (page.id === "bundle") return "/megabundle";
+  if (page.id === "typeface") return `/${typefaceSlug(page.name)}`;
   return `/${page.id}`;
 }
 
@@ -294,6 +299,9 @@ const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
 // Mobile UI: portrait phones/narrow windows, plus phone landscape (short + touch).
 const MOBILE_MQ = "(max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
+// Phone landscape only — Glyphs switches to the desktop two-column layout here.
+const LANDSCAPE_MQ = "(orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
+const isPortraitMobile = () => window.matchMedia(MOBILE_MQ).matches && !window.matchMedia(LANDSCAPE_MQ).matches;
 const NATIVE_VF: Record<string, VFAxis[]> = {
   "Ella": [
     { label: "Weight", tag: "wght", min: 100, max: 700, default: 100 },
@@ -406,16 +414,18 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
 };
 
 function pageFromPath(pathname: string): Page {
-  const path = pathname.replace(/\/+$/, "") || "/";
-  if (path === "/intro" || path === "/") return { id: "home" };
+  let path = pathname.replace(/\/+$/, "") || "/";
+  try { path = decodeURIComponent(path); } catch { /* keep raw */ }
+  if (path === "/" || path === "/intro") return { id: "home" };
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
-  if (path === "/faq") return { id: "contact" };
-  if (path === "/bundle") return { id: "bundle" };
+  if (path === "/licensing" || path === "/faq") return { id: "contact" };
+  if (path === "/megabundle" || path === "/bundle") return { id: "bundle" };
 
-  const shopMatch = path.match(/^\/shop\/([^/]+)$/);
-  if (shopMatch) {
-    const face = typefaces.find((item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase());
+  const slugMatch = path.match(/^\/(?:shop\/)?([^/]+)$/);
+  if (slugMatch) {
+    const slug = slugMatch[1].toLowerCase();
+    const face = typefaces.find((item) => typefaceSlug(item.name) === slug || legacySlug(item.name) === slug);
     if (face) return { id: "typeface", name: face.name };
   }
 
@@ -745,11 +755,13 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
   const goBrand = onBrand ?? (() => onNavigate({ id: "foundry" }));
   // If the menu is open, slide it shut first, then navigate.
   const handleBrand = () => {
-    if (menuOpen) { setMenuOpen(false); window.setTimeout(goBrand, 300); }
+    // Menu open: navigate immediately like a sticker tap; the band covers the
+    // menu, which is closed once fully hidden (520ms band slide-in).
+    if (menuOpen) { onNavigate({ id: "foundry" }); window.setTimeout(() => setMenuOpen(false), 520); }
     else goBrand();
   };
   const menuItems: { label: string; to: Page }[] = [
-    { label: "About Us", to: { id: "about" } },
+    { label: "About", to: { id: "about" } },
     { label: "Licensing", to: { id: "contact" } },
     onBundlePage ? { label: "View All Fonts", to: { id: "foundry" } } : { label: "Buy the Mega Bundle", to: { id: "bundle" } },
   ];
@@ -768,7 +780,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       }}
     >
       <div className="nav-left" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="About Us" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="About" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
         <NavTextButton label="Licensing" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
@@ -938,7 +950,7 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/megabundle")}
       onMouseEnter={() => {
         setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -1290,12 +1302,13 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
   })).filter((group) => group.chars.length > 0);
 
   // Mobile only: categories act as independent accordions, all collapsed on load.
-  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_MQ).matches);
+  // Phone landscape uses the desktop Glyphs layout, so only portrait counts here.
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && isPortraitMobile());
   useEffect(() => {
-    const mq = window.matchMedia(MOBILE_MQ);
-    const onChange = () => setIsMobile(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const mqs = [window.matchMedia(MOBILE_MQ), window.matchMedia(LANDSCAPE_MQ)];
+    const onChange = () => setIsMobile(isPortraitMobile());
+    mqs.forEach((mq) => mq.addEventListener("change", onChange));
+    return () => mqs.forEach((mq) => mq.removeEventListener("change", onChange));
   }, []);
   const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set());
   const toggleGroup = (label: string) =>
@@ -1719,6 +1732,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Mobile only: ONE active control shared by Preview and Glyphs. It only picks
   // which control is visible — values live in the states above and never reset.
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_MQ).matches);
+  // Glyphs controls follow the portrait-only mobile layout (landscape uses desktop Glyphs).
+  const [glyphMobile, setGlyphMobile] = useState(() => isPortraitMobile());
+  useEffect(() => {
+    const mqs = [window.matchMedia(MOBILE_MQ), window.matchMedia(LANDSCAPE_MQ)];
+    const onChange = () => setGlyphMobile(isPortraitMobile());
+    mqs.forEach((mq) => mq.addEventListener("change", onChange));
+    return () => mqs.forEach((mq) => mq.removeEventListener("change", onChange));
+  }, []);
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_MQ);
     const onChange = () => setIsMobile(mq.matches);
@@ -2036,9 +2057,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         aria-haspopup="menu"
         aria-expanded={controlMenu === "preset"}
         onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
-        style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 6, maxWidth: "100%", minHeight: isMobile ? 44 : undefined, margin: isMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
+        style={{ display: "flex", alignItems: "center", gap: glyphMobile ? 12 : 6, maxWidth: "100%", minHeight: glyphMobile ? 44 : undefined, margin: glyphMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
       >
-        {isMobile ? (
+        {glyphMobile ? (
           /* Mobile: same circled arrow as the axis control below, sharing its left edge. */
           <span aria-hidden="true" style={{ flexShrink: 0, width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === "preset" ? panelText : "transparent", color: controlMenu === "preset" ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
@@ -2114,7 +2135,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 className="size-slider"
               />
               {/* TEMPORARY: live Size readout for choosing BIP's preview size. */}
-              {face.name === "BIP" && <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: "2.2rem" }}>{size}</span>}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -2230,7 +2250,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
+            <p className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
               {applyCase(aboutText)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
@@ -2255,7 +2275,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
                   <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
                   {label === "EULA:" ? (
-                    <a href="/faq" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
+                    <a href="/licensing" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
                   ) : (
                     <span style={{ flex: 1 }}>{value}</span>
                   )}
@@ -2275,13 +2295,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{isMobile ? (
+            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{glyphMobile ? (
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
                 ? <div className="tf-mobile-control-active" style={{ flex: 1, width: "100%", minWidth: 0, display: "flex" }}>{glyphOptions[0].node}</div>
                 : regularLabel
-            ) : variableControls}</div></div> : isMobile ? (
+            ) : variableControls}</div></div> : glyphMobile ? (
               glyphToggleAxes.length > 0
                 ? <>{glyphToggleAxes.map((a) => renderAxis(a, true))}</>
                 : glyphOptions.length > 1
@@ -2363,7 +2383,7 @@ function MarqueeBand({ direction = "forward", onNavigate, interactive = true }: 
     <button
       onClick={() => {
         if (!interactive) return;
-        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle");
+        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/megabundle");
       }}
       tabIndex={interactive ? 0 : -1}
       aria-hidden={interactive ? undefined : true}
@@ -2385,11 +2405,11 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
       <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+      <div className="bundle-body" style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
         <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} minHeight={2600} />
         <SiteFooter />
       </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+      <div className="tf-buy-marquee" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
         <MarqueeBand direction="reverse" onNavigate={onNavigate} />
       </div>
     </div>
@@ -2607,7 +2627,7 @@ function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNaviga
           e.stopPropagation();
           onClose();
           if (onNavigate) onNavigate({ id: "bundle" });
-          else window.location.assign("/bundle");
+          else window.location.assign("/megabundle");
         }}
         style={{
           width: "min(80vw, 420px)",
@@ -2717,7 +2737,7 @@ export default function App() {
   }
 
   function completeIntro() {
-    window.history.replaceState(null, "", "/shop");
+    window.history.replaceState(null, "", "/");
     setShowIntro(false);
     // Keep the entrance class until the synchronized nav reveal has finished.
     window.setTimeout(() => setLandingEntrance(false), 860);
@@ -2732,13 +2752,8 @@ export default function App() {
 
     const handlePopState = () => {
       const nextPage = pageFromPath(window.location.pathname);
-      if (nextPage.id === "home") {
-        setPage({ id: "foundry" });
-        setLandingEntrance(true);
-        setShowIntro(true);
-      } else {
-        transitionTo(nextPage);
-      }
+      // "/" is both intro and sticker page; history moves go straight to stickers.
+      transitionTo(nextPage.id === "home" ? { id: "foundry" } : nextPage);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -2824,7 +2839,7 @@ export default function App() {
 
       {/* Global fixed marquee — visible on every page, sits above content */}
       {page.id !== "home" && page.id !== "foundry" && page.id !== "bundle" && (
-        <div ref={fixedMarqueeRef} className={page.id === "typeface" ? "tf-buy-marquee" : undefined} style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+        <div ref={fixedMarqueeRef} className="tf-buy-marquee" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
           <MarqueeBand direction="reverse" onNavigate={navigate} />
         </div>
       )}
