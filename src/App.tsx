@@ -583,6 +583,10 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
       data-side={index % 2 === 0 ? "left" : "right"}
       data-first={index === 0 ? "" : undefined}
       data-name={face.name}
+      data-s={s}
+      data-rot={rotation}
+      data-nx={nudgeX}
+      data-ny={nudgeY}
       style={{ "--zz-rot": `${[-6, 9, 2, -11, -1, 4, 12, -4, 7, -9, 0, 11, -3, -12, 5, 8][index % 16]}deg`, "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
@@ -753,12 +757,15 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
     return () => window.removeEventListener("popstate", close);
   }, []);
   const goBrand = onBrand ?? (() => onNavigate({ id: "foundry" }));
-  // If the menu is open, slide it shut first, then navigate.
-  const handleBrand = () => {
-    // Menu open: navigate immediately like a sticker tap; the band covers the
-    // menu, which is closed once fully hidden (520ms band slide-in).
-    if (menuOpen) { onNavigate({ id: "foundry" }); window.setTimeout(() => setMenuOpen(false), 520); }
-    else goBrand();
+  const handleBrand = () => goBrand();
+  // Menu open: the whole header (logo, eyes, X, background) is one close control.
+  // Captured before any child handler so nothing navigates; menu rows are exempt.
+  const handleHeaderCapture = (e: React.MouseEvent) => {
+    if (!menuOpen) return;
+    if ((e.target as HTMLElement).closest(".nav-menu-clip")) return;
+    e.stopPropagation();
+    e.preventDefault();
+    setMenuOpen(false);
   };
   const menuItems: { label: string; to: Page }[] = [
     { label: "About", to: { id: "about" } },
@@ -768,6 +775,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
   return (
     <nav
       className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
+      onClickCapture={handleHeaderCapture}
       style={{
         position: "sticky",
         background: bg,
@@ -2057,9 +2065,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         aria-haspopup="menu"
         aria-expanded={controlMenu === "preset"}
         onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
-        style={{ display: "flex", alignItems: "center", gap: glyphMobile ? 12 : 6, maxWidth: "100%", minHeight: glyphMobile ? 44 : undefined, margin: glyphMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
+        style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 6, maxWidth: "100%", minHeight: isMobile ? 44 : undefined, margin: isMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
       >
-        {glyphMobile ? (
+        {isMobile ? (
           /* Mobile: same circled arrow as the axis control below, sharing its left edge. */
           <span aria-hidden="true" style={{ flexShrink: 0, width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === "preset" ? panelText : "transparent", color: controlMenu === "preset" ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
@@ -2760,6 +2768,77 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // Document title + description/Open Graph metadata per page.
+  useEffect(() => {
+    const homeDesc = "OTF License is an independent type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
+    let title = "OTF License — Independent Type Foundry";
+    let desc = homeDesc;
+    if (page.id === "about") title = "About — OTF License";
+    else if (page.id === "contact") title = "Licensing — OTF License";
+    else if (page.id === "bundle") title = "Mega Bundle — OTF License";
+    else if (page.id === "typeface") {
+      const face = typefaces.find((t) => t.name === page.name) as { name: string; displayName?: string; klass: string; designer: string } | undefined;
+      const label = face?.displayName?.includes(" ") ? face.displayName : page.name;
+      title = `${label} — OTF License`;
+      if (face) desc = `${label} is a ${face.klass} typeface designed by ${face.designer} at OTF License.`;
+    }
+    document.title = title;
+    const setMeta = (attr: "name" | "property", key: string, value: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.content = value;
+    };
+    setMeta("name", "description", desc);
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", desc);
+    setMeta("property", "og:site_name", "OTF License");
+  }, [page]);
+
+  // Desktop sticker composition: measure the real (rotated + scaled) artwork
+  // bounds and uniformly fit/centre the whole field inside the stage with white
+  // margins, so nothing is clipped by the viewport, nav or marquee.
+  const shopStageRef = useRef<HTMLDivElement | null>(null);
+  const shopGridRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const stage = shopStageRef.current;
+    const grid = shopGridRef.current;
+    if (!stage || !grid) return;
+    const fit = () => {
+      grid.style.transform = "";
+      grid.style.transformOrigin = "";
+      if (window.matchMedia(MOBILE_MQ).matches) return;
+      // Computed from layout boxes + known rotation/scale (not getBoundingClientRect),
+      // so the intro pop-in animation can't skew the measurement. Stage coordinates.
+      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+      grid.querySelectorAll<HTMLElement>(".cell").forEach((cell) => {
+        const inner = cell.querySelector<HTMLElement>(".cell-inner");
+        if (!inner || !inner.offsetWidth || !inner.offsetHeight) return;
+        const sc = Number(cell.dataset.s) || 1;
+        const rad = ((Number(cell.dataset.rot) || 0) * Math.PI) / 180;
+        const w = inner.offsetWidth * sc, h = inner.offsetHeight * sc;
+        const bw = w * Math.abs(Math.cos(rad)) + h * Math.abs(Math.sin(rad));
+        const bh = w * Math.abs(Math.sin(rad)) + h * Math.abs(Math.cos(rad));
+        const cx = cell.offsetLeft + (Number(cell.dataset.nx) || 0) + inner.offsetLeft + inner.offsetWidth / 2;
+        const cy = cell.offsetTop + (Number(cell.dataset.ny) || 0) + inner.offsetTop + inner.offsetHeight / 2;
+        l = Math.min(l, cx - bw / 2); r = Math.max(r, cx + bw / 2);
+        t = Math.min(t, cy - bh / 2); b = Math.max(b, cy + bh / 2);
+      });
+      if (!isFinite(l)) return;
+      const sw = stage.clientWidth, sh = stage.clientHeight;
+      const marginX = Math.max(40, sw * 0.04);
+      const marginY = 28;
+      const k = Math.min(1, (sw - marginX * 2) / (r - l), (sh - marginY * 2) / (b - t));
+      const cx = (l + r) / 2, cy = (t + b) / 2;
+      grid.style.transformOrigin = `${cx - grid.offsetLeft}px ${cy - grid.offsetTop}px`;
+      grid.style.transform = `translate(${sw / 2 - cx}px, ${sh / 2 - cy}px) scale(${k})`;
+    };
+    fit();
+    const imgs = Array.from(grid.querySelectorAll("img"));
+    imgs.forEach((img) => img.addEventListener("load", fit));
+    window.addEventListener("resize", fit);
+    return () => { imgs.forEach((img) => img.removeEventListener("load", fit)); window.removeEventListener("resize", fit); };
+  }, [page.id]);
+
   const cols = 4;
   const colGap = 48;
   const rowGap = 24;
@@ -2792,13 +2871,13 @@ export default function App() {
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ overflowX: "clip", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
-      <div className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
-        <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
+      <div ref={shopStageRef} className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+        <div ref={shopGridRef} className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
             {shopTypefaces.slice(0, 6).map((face, i) => (
               <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />

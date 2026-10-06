@@ -946,7 +946,10 @@ html {
     padding-right: var(--ri) !important;
   }
   .about-video {
-    max-width: calc(75vh * 16 / 9 + var(--li) + var(--ri));
+    /* Same physical width as in portrait (≈ phone's short side minus margins). */
+    max-width: calc(100vh - 2.5rem + var(--li) + var(--ri));
+    width: 100% !important;
+    box-sizing: border-box;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -984,6 +987,8 @@ html {
   /* Glyphs: desktop two-column structure (showcase left, categories right). */
   .tf-glyphs {
     flex-direction: row !important;
+    /* Left column anchored near the panel edge (still clear of the notch). */
+    padding-left: max(1.25rem, calc(env(safe-area-inset-left) - 0.5rem)) !important;
   }
   .tf-glyph-showcase {
     flex: 0 0 38% !important;
@@ -1033,9 +1038,28 @@ html {
     padding: calc(var(--w) / min(var(--ar, 1), 1) * 0.1 + 0.75vw) 0;
     transform: none !important;
   }
+  /* Six stickers read small: ~12% larger within their own cell (capped at the column). */
+  .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="Kuriren"], [data-name="Last Call"], [data-name="Mormor"], [data-name="LCD Über"]) {
+    --w: min(100%, calc(14vw * sqrt(var(--ar, 1))));
+  }
   .shop-bottom-marquee,
   .tf-buy-marquee {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Mobile portrait only. */
+@media (max-width: 768px) and (orientation: portrait) {
+  /* Three stickers ~12% larger than their current portrait size. */
+  .shop-grid .cell[data-name="Last Call"] {
+    --w: min(47vw, calc(34.7vw * sqrt(var(--ar, 1))));
+  }
+  .shop-grid .cell:is([data-name="LCD Über"], [data-name="Mormor"]) {
+    --w: min(52vw, calc(43vw * sqrt(var(--ar, 1))));
+  }
+  /* Logo + eyes shift left as one unit for a clearer gap to the hamburger. */
+  .tf-nav .nav-logo {
+    transform: translateX(-0.9rem) !important;
   }
 }
