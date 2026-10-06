@@ -2111,6 +2111,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
+              {/* TEMPORARY: live Size readout for choosing BIP's preview size. */}
+              {face.name === "BIP" && <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, minWidth: "2.2rem" }}>{size}</span>}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -2275,7 +2277,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
-                ? glyphOptions[0].node
+                ? <div className="tf-mobile-control-active" style={{ flex: 1, width: "100%", minWidth: 0, display: "flex" }}>{glyphOptions[0].node}</div>
                 : regularLabel
             ) : variableControls}</div></div> : isMobile ? (
               glyphToggleAxes.length > 0

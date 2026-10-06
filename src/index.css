@@ -820,6 +820,9 @@ html {
     right: 0;
     z-index: 60;
     overflow: hidden;
+    /* The clip box is as tall as the (hidden) menu and sat invisibly over the top
+       of the page, swallowing taps. Only the open menu itself takes pointer events. */
+    pointer-events: none;
   }
   .tf-nav .nav-menu {
     display: block;
@@ -883,7 +886,9 @@ html {
   /* Whole heading row is the tap target, at least 44px tall. */
   .faq-header {
     min-height: 44px;
-    box-sizing: content-box;
+    /* border-box: the row spans exactly the cell, so the right-anchored arrow
+       stays inside it (content-box made it 2.5rem too wide and clipped the arrow). */
+    box-sizing: border-box;
     width: calc(100% + 2.5rem) !important;
     margin: -1.1rem -1.25rem 0 !important;
     padding: 1.1rem 1.25rem 0 !important;
