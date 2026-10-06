@@ -1459,7 +1459,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
             {controls}
           </div>
         )}
-        <div className="tf-glyph-stage" style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+        <div className="tf-glyph-stage" style={{ position: "relative", flex: 1, minHeight: 0, minWidth: 0, contain: "inline-size", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
           {/* Keyed so each glyph gets a fresh node (no stale paint), and padded
               (offset by an equal negative margin) so the element's paint box
               covers ink beyond the line box — outlines outside it were leaving
@@ -1942,10 +1942,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           }
         })
         .catch(() => {
-          if (!cancelled) {
-            setFont(null);
-            setWeightAxis(null);
-          }
+          if (cancelled) return;
+          setFont(null);
+          setWeightAxis(null);
+          // Static faces served as WOFF2 can't be parsed by opentype.js; read their
+          // cmap coverage via fontkit so the Glyphs list (right column) still fills.
+          fetch(face.file!)
+            .then((res) => res.arrayBuffer())
+            .then((buffer) => {
+              if (cancelled) return;
+              const fk = (fontkit as any).create(new Uint8Array(buffer));
+              setCoverage(new Set<number>(fk?.characterSet ?? []));
+            })
+            .catch(() => {});
         });
     }
     return () => {
