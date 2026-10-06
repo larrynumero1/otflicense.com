@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: 'Dukat';
-  src: url('/fonts/alvadukat.otf') format('opentype');
+  src: url('/fonts/OTF_Dukat.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -30,28 +30,28 @@
 }
 @font-face {
   font-family: 'Liljan';
-  src: url('/fonts/enyaliljan.otf') format('opentype');
+  src: url('/fonts/OTF_Liljan.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Kurir';
-  src: url('/fonts/fahedkurir.otf') format('opentype');
+  src: url('/fonts/OTF_Kuriren.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Galanite';
-  src: url('/fonts/hannahgalanite.ttf') format('truetype');
+  src: url('/fonts/OTF_Galanite.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Facit';
-  src: url('/fonts/jesperfacit.otf') format('opentype');
+  src: url('/fonts/OTF_Facit.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -72,14 +72,14 @@
 }
 @font-face {
   font-family: 'Crypto';
-  src: url('/fonts/lovisacrypto.otf') format('opentype');
+  src: url('/fonts/OTF_Cryptomono.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Uber';
-  src: url('/fonts/siljeuber.otf') format('opentype');
+  src: url('/fonts/OTF_Lcduber.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -93,14 +93,14 @@
 }
 @font-face {
   font-family: 'Svek';
-  src: url('/fonts/SVEKVF.woff2') format('woff2');
+  src: url('/fonts/OTF_Svek.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Sonja';
-  src: url('/fonts/vesonja.otf') format('opentype');
+  src: url('/fonts/OTF_Sonja.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
