@@ -329,6 +329,27 @@ html {
   background: currentColor;
 }
 
+/* Cross-browser range normalisation (Tailwind preflight already handles
+   box-sizing, margins, img/svg display and form-control fonts). */
+.cols-slider,
+.size-slider {
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.cols-slider::-moz-range-thumb,
+.size-slider::-moz-range-thumb {
+  box-sizing: border-box;
+}
+.cols-slider::-moz-range-progress,
+.size-slider::-moz-range-progress {
+  background: transparent;
+}
+.cols-slider::-moz-focus-outer,
+.size-slider::-moz-focus-outer {
+  border: 0;
+}
+
 /* Minimal size slider — a thin line with a single dot */
 .size-slider {
   -webkit-appearance: none;
@@ -1009,12 +1030,44 @@ html {
     align-items: stretch !important;
     gap: 1rem !important;
   }
+  /* Panel fits the short viewport: left column stays put, right list scrolls. */
+  .tf-glyphs {
+    height: calc(100vh - 2rem);
+    height: calc(100svh - 2rem);
+    min-height: 15rem;
+    align-items: stretch !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    box-sizing: border-box;
+  }
+  .tf-glyph-showcase {
+    gap: 0.4rem !important;
+  }
+  .tf-glyph-preset-stack {
+    gap: 0.25rem !important;
+  }
   .tf-glyph-stage {
-    min-height: 14rem;
-    padding-bottom: 2.5rem;
+    min-height: 0;
+    padding-bottom: 2.4rem;
   }
   .tf-glyph-big {
-    font-size: min(var(--glyph-mobile-size, 9rem), 45vh) !important;
+    font-size: min(var(--glyph-mobile-size, 9rem), 38svh) !important;
+  }
+  .tf-glyph-list {
+    max-height: 100%;
+    align-self: stretch;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    min-height: 0;
+  }
+  /* Shorter bottom marquee in the short viewport. */
+  .shop-bottom-marquee .marquee-band,
+  .tf-buy-marquee .marquee-band {
+    padding-top: 0.55rem !important;
+    padding-bottom: 0.55rem !important;
   }
   /* Shop: structured four-column rows; stickers keep their tilt. */
   .shop-stage {
@@ -1042,6 +1095,10 @@ html {
   .shop-grid .cell:is([data-name="Facit"], [data-name="Galanite"], [data-name="Kuriren"], [data-name="Last Call"], [data-name="Mormor"], [data-name="LCD Über"]) {
     --w: min(100%, calc(14vw * sqrt(var(--ar, 1))));
   }
+  /* Three of them ~12% larger again. */
+  .shop-grid .cell:is([data-name="Facit"], [data-name="Mormor"], [data-name="LCD Über"]) {
+    --w: min(112%, calc(15.7vw * sqrt(var(--ar, 1))));
+  }
   .shop-bottom-marquee,
   .tf-buy-marquee {
     padding-left: env(safe-area-inset-left);
@@ -1057,6 +1114,13 @@ html {
   }
   .shop-grid .cell:is([data-name="LCD Über"], [data-name="Mormor"]) {
     --w: min(52vw, calc(43vw * sqrt(var(--ar, 1))));
+  }
+  /* Mormor ~5% smaller than LCD Über's size. */
+  .shop-grid .cell[data-name="Mormor"] {
+    --w: min(49.4vw, calc(40.85vw * sqrt(var(--ar, 1))));
+  }
+  .shop-grid .cell[data-name="Sonja"] {
+    --zz-rot: 0deg !important;
   }
   /* Logo + eyes shift left as one unit for a clearer gap to the hamburger. */
   .tf-nav .nav-logo {
