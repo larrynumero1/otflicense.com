@@ -792,7 +792,8 @@ html {
 /* About page — mobile only */
 .about-image-credit {
   display: block;
-  font-size: 0.5em;
+  margin-top: 1rem;
+  font-size: 0.625em;
   font-style: italic;
 }
 

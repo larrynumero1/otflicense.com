@@ -168,7 +168,7 @@ import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 import eyesSvg from "./imports/eyes.svg";
 import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import variableFontSticker from "./imports/ChatGPT_Image_Sep_30__2026__08_16_47_PM__1_.png";
+import variableFontSticker from "./imports/bild_variablesticker.png";
 
 type Page =
   | { id: "home" }
@@ -1184,7 +1184,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
             ) : (
               <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
             )}
-            <p className="about-video-credit" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: "#000", opacity: 0.7, margin: "0.4rem 0 0" }}>Promo video by Jesper Smeding</p>
+            <p className="about-video-credit" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.625rem", fontStyle: "italic", color: "#000", opacity: 0.7, margin: "0.4rem 0 0" }}>Promo video by Jesper Smeding</p>
           </div>
         </div>
 
