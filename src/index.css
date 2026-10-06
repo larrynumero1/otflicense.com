@@ -428,7 +428,7 @@ html {
 }
 
 /* ── Typeface pages: mobile only (≤768px). Desktop styles are untouched. ── */
-@media (max-width: 768px) {
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
   /* Page root spans the full viewport; content gets equal safe-area-aware insets. */
   html,
   body,
@@ -736,7 +736,7 @@ html {
 }
 
 /* About page — mobile only */
-@media (max-width: 768px) {
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
   .about-intro {
     grid-template-columns: minmax(0, 1fr) !important;
     /* Same content start as the mobile typeface Preview (.tf-page). */
@@ -781,7 +781,7 @@ html {
 }
 
 /* Mobile header: centred logo + eyes, hamburger on the right. */
-@media (max-width: 768px) {
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
   .tf-nav {
     position: relative !important;
     grid-template-columns: 1fr auto 1fr !important;
@@ -900,7 +900,8 @@ html {
 }
 
 /* Desktop: homepage and typeface-page bottom marquees share one fixed height. */
-@media (min-width: 769px) {
+/* Excludes phone landscape (short + touch), which uses the mobile rules. */
+@media (min-width: 769px) and (min-height: 501px), (min-width: 769px) and (pointer: fine) {
   .shop-bottom-marquee .marquee-band,
   .tf-buy-marquee .marquee-band {
     height: 3.5rem;
@@ -908,5 +909,61 @@ html {
     display: flex !important;
     align-items: center;
     line-height: 1.2;
+  }
+}
+
+/* Phone landscape — the mobile interface adapted to a wide, short viewport.
+   Narrowly targeted (landscape + short + touch) so short desktop windows are unaffected. */
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .tf-nav {
+    padding-top: max(0.6rem, env(safe-area-inset-top)) !important;
+    padding-bottom: 0.4rem !important;
+  }
+  .tf-nav .nav-menu-row {
+    padding: 0.3rem max(0px, env(safe-area-inset-left)) !important;
+  }
+  .tf-page,
+  .about-intro {
+    padding-top: 1rem !important;
+  }
+  .faq-grid {
+    padding-top: 1rem !important;
+    padding-left: max(2.5rem, env(safe-area-inset-left)) !important;
+    padding-right: max(2.5rem, env(safe-area-inset-right)) !important;
+  }
+  .about-intro-col,
+  .about-video,
+  .about-designers-head,
+  .about-designer-grid {
+    padding-left: max(1.25rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1.25rem, env(safe-area-inset-right)) !important;
+  }
+  /* Video keeps 16:9 but never taller than ~3/4 of the short screen. */
+  .about-video {
+    max-width: calc(75vh * 16 / 9 + 2.5rem);
+  }
+  .about-designer-grid {
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)) !important;
+  }
+  /* Three across instead of two; same equal-area formula, scaled to the width. */
+  .shop-grid .cell {
+    --w: min(28vw, calc(20.5vw * sqrt(var(--ar, 1))));
+  }
+  .shop-grid .cell:is([data-name="Facit"]) {
+    --w: min(29vw, calc(23vw * sqrt(var(--ar, 1))));
+  }
+  .shop-grid .cell:is([data-name="Galanite"], [data-name="LCD Über"], [data-name="Mormor"]) {
+    --w: min(31vw, calc(25.5vw * sqrt(var(--ar, 1))));
+  }
+  .shop-grid .cell[data-side="right"] {
+    margin-top: 2vw;
+  }
+  .tf-glyph-big {
+    font-size: min(var(--glyph-mobile-size, 9rem), 45vh) !important;
+  }
+  .shop-bottom-marquee,
+  .tf-buy-marquee {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }

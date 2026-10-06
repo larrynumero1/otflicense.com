@@ -292,6 +292,8 @@ const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
   "BIP": [{ name: "Regular", values: { wght: 0 } }, { name: "Medium", values: { wght: 50 } }, { name: "Bold", values: { wght: 100 } }],
 };
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
+// Mobile UI: portrait phones/narrow windows, plus phone landscape (short + touch).
+const MOBILE_MQ = "(max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
 const NATIVE_VF: Record<string, VFAxis[]> = {
   "Ella": [
     { label: "Weight", tag: "wght", min: 100, max: 700, default: 100 },
@@ -788,12 +790,12 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           aria-hidden="true"
           onMouseEnter={showEyes ? (e) => {
             // Mobile: eyes are purely decorative — no easter egg.
-            if (window.matchMedia("(max-width: 768px)").matches) return;
+            if (window.matchMedia(MOBILE_MQ).matches) return;
             e.stopPropagation(); onEyesHover?.();
           } : undefined}
           onClick={(e) => {
             // Mobile: tapping the eyes does nothing (no navigation or reload).
-            if (window.matchMedia("(max-width: 768px)").matches) {
+            if (window.matchMedia(MOBILE_MQ).matches) {
               e.stopPropagation();
               e.preventDefault();
             }
@@ -1288,9 +1290,9 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
   })).filter((group) => group.chars.length > 0);
 
   // Mobile only: categories act as independent accordions, all collapsed on load.
-  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_MQ).matches);
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
+    const mq = window.matchMedia(MOBILE_MQ);
     const onChange = () => setIsMobile(mq.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -1695,7 +1697,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // rem — initial size per typeface: desktop uses previewSize, ≤768px uses
   // mobilePreviewSize. Chosen once on open; the Size slider owns it afterwards.
   const [size, setSize] = useState(() =>
-    window.matchMedia("(max-width: 768px)").matches
+    window.matchMedia(MOBILE_MQ).matches
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
@@ -1716,9 +1718,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
   // Mobile only: ONE active control shared by Preview and Glyphs. It only picks
   // which control is visible — values live in the states above and never reset.
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_MQ).matches);
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
+    const mq = window.matchMedia(MOBILE_MQ);
     const onChange = () => setIsMobile(mq.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -2842,7 +2844,7 @@ export default function App() {
             dangerouslySetInnerHTML={{
               __html: transitionSvgRaw
                 .replace(/#00ab53/gi, transColor)
-                .replace("<svg ", `<svg preserveAspectRatio="${window.innerWidth <= 768 ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
+                .replace("<svg ", `<svg preserveAspectRatio="${window.matchMedia(MOBILE_MQ).matches ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
             }}
           />
         </div>
