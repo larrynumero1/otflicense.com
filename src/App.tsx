@@ -459,7 +459,8 @@ function SizeBadge({ label, target, style }: { label: string; target: React.RefO
 
 // TEMPORARY (design only): floating size-tuning panel. Overrides are applied
 // through data attributes + CSS variables on <html> (see "TEMPORARY design size
-// controls" in index.css), so no component reads them. Remove this component,
+// controls" in index.css), so no component reads them. Phone landscape keeps
+// its own independent set of values. Remove this component,
 // its one usage in TypefacePage and that CSS block to strip it entirely.
 const DESIGN_SIZE_CONTROLS = [
   { key: "about", label: "About Size", selector: ".tf-about-text", min: 8, max: 40, step: 0.5 },
@@ -469,7 +470,18 @@ const DESIGN_SIZE_CONTROLS = [
 ] as const;
 function DesignSizePanel() {
   const [open, setOpen] = useState(true);
-  const [values, setValues] = useState<Record<string, number>>({});
+  // Two independent value sets: phone landscape vs. everything else (desktop +
+  // portrait). Only the set for the current orientation is written to <html>.
+  const [mode, setMode] = useState<"base" | "landscape">(() => (window.matchMedia(LANDSCAPE_MQ).matches ? "landscape" : "base"));
+  useEffect(() => {
+    const mq = window.matchMedia(LANDSCAPE_MQ);
+    const onChange = () => setMode(mq.matches ? "landscape" : "base");
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [allValues, setAllValues] = useState<Record<"base" | "landscape", Record<string, number>>>({ base: {}, landscape: {} });
+  const values = allValues[mode];
+  const setValues = (fn: (v: Record<string, number>) => Record<string, number>) => setAllValues((all) => ({ ...all, [mode]: fn(all[mode]) }));
   const [actual, setActual] = useState<Record<string, number>>({});
   // Glyph UI scales via CSS zoom (text + cells together) relative to the site value.
   const glyphUiBase = useRef<number | null>(null);
@@ -499,8 +511,10 @@ function DesignSizePanel() {
       if (v != null) {
         root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`);
         if (c.key === "glyph-ui" && glyphUiBase.current) root.style.setProperty("--dbg-glyph-ui-zoom", String(v / glyphUiBase.current));
-      } else if (c.key === "glyph-ui") root.style.removeProperty("--dbg-glyph-ui-zoom");
-      else { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
+      } else {
+        root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`);
+        if (c.key === "glyph-ui") root.style.removeProperty("--dbg-glyph-ui-zoom");
+      }
     }
   }, [values]);
   useEffect(() => () => {
@@ -511,12 +525,12 @@ function DesignSizePanel() {
   return (
     <div className="dbg-size-panel" style={{ position: "fixed", left: 8, bottom: "calc(var(--fixed-marquee-h, 0px) + 8px)", zIndex: 400, background: "rgba(20,20,20,0.88)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, borderRadius: 6, padding: open ? "6px 8px" : 0, boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
       <button type="button" onClick={() => setOpen((o) => !o)} style={{ all: "unset", cursor: "pointer", display: "block", padding: open ? "0 0 4px" : "6px 8px", opacity: 0.7 }}>
-        {open ? "▾ design sizes (temp)" : "▸ sizes"}
+        {open ? `▾ design sizes (temp) — ${mode === "landscape" ? "PHONE LANDSCAPE" : "desktop / portrait"}` : `▸ sizes${mode === "landscape" ? " (landscape)" : ""}`}
       </button>
       {open && DESIGN_SIZE_CONTROLS.map((c) => (
         <div key={c.key} style={{ display: "grid", gridTemplateColumns: "8.5rem 7rem 3.6rem 1rem", alignItems: "center", gap: 6, padding: "2px 0" }}>
           <span>{c.label}</span>
-          <input type="range" min={c.min} max={c.max} step={c.step} value={values[c.key] ?? actual[c.key] ?? c.min} onChange={(e) => setValues((v) => ({ ...v, [c.key]: Number(e.target.value) }))} style={{ width: "100%", accentColor: "#fff" }} />
+          <input type="range" min={c.min} max={c.max} step={c.step} value={values[c.key] ?? actual[c.key] ?? c.min} onChange={(e) => { const n = Number(e.target.value); setValues((v) => ({ ...v, [c.key]: n })); }} style={{ width: "100%", accentColor: "#fff" }} />
           <span style={{ textAlign: "right" }}>{actual[c.key] != null ? `${actual[c.key]}px` : "—"}</span>
           <button type="button" title="Reset to site value" onClick={() => setValues((v) => { const n = { ...v }; delete n[c.key]; return n; })} style={{ all: "unset", cursor: "pointer", opacity: values[c.key] != null ? 0.8 : 0.25 }}>↺</button>
         </div>
@@ -1504,11 +1518,15 @@ function findGlyphByName(fk: any, name: string): any | null {
   return null;
 }
 // Draws a named glyph's real outline from the font (used when it has no Unicode).
-function NamedGlyph({ fk, glyph }: { fk: any; glyph: any }) {
+function NamedGlyph({ fk, glyph, fit = false }: { fk: any; glyph: any; fit?: boolean }) {
   const asc = fk.ascent, desc = fk.descent, adv = glyph.advanceWidth || fk.unitsPerEm;
   const d = glyph.path?.toSVG?.() ?? "";
   return (
-    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={{ height: "1.15em", width: "auto", overflow: "visible", display: "block" }} aria-hidden>
+    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={fit
+      // Showcase: drawn inside the same 1em-tall, full-width box as a text glyph
+      // (viewBox "meet" keeps proportions), so it can never resize the layout.
+      ? { height: "1em", width: "100%", overflow: "visible", display: "block" }
+      : { height: "1.15em", width: "auto", maxWidth: "100%", overflow: "visible", display: "block" }} aria-hidden>
       <path d={d} transform="scale(1,-1)" fill="currentColor" />
     </svg>
   );
@@ -1542,11 +1560,11 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
   }
   const other = groups.find((g) => g.label === "Other");
   if (other) other.chars = [...other.chars, ...namedGlyphs.keys()];
-  const renderEntry = (g: string) => {
+  const renderEntry = (g: string, fit = false) => {
     const ng = namedGlyphs.get(g);
     if (!ng) return g;
     const cp = ng.codePoints?.[0];
-    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} />;
+    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} fit={fit} />;
   };
   const visibleGroups = groups.filter((group) => group.chars.length > 0);
 
@@ -1631,7 +1649,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
               and rebuilt, so no stale ink (which can overhang the text box and
               escape repaint invalidation, esp. in mobile WebKit) can survive. */}
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
-                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
+                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, height: "1em", whiteSpace: "nowrap", padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
           </div>
           <div className="tf-glyph-meta" style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
@@ -2920,7 +2938,7 @@ function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
 const FAQ_ITEMS = [
   {
     q: "Price",
-    a: "Each typeface costs 72 SEK. Or make a designer’s day and pay a little extra if you think it’s worth it. The price you choose does not change the license or what you are allowed to do with the font.",
+    a: "Each typeface costs 72 SEK (approximately $8 USD). Or make a designer’s day and pay a little extra if you think it’s worth it. The price you choose does not change the license or what you are allowed to do with the font.",
   },
   {
     q: "Discount code",
@@ -3033,7 +3051,7 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
         ))}
         {q === "EULA" && (
           <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
-            <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ color: "inherit", fontWeight: "bold" }}>Read the full EULA →</a>
+            <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ color: "inherit", fontWeight: "bold", textDecoration: "underline" }}>Read the full EULA</a>
           </p>
         )}
       </FaqItem>
