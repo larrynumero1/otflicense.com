@@ -235,7 +235,7 @@ html {
   position: absolute;
   width: 3px;
   border-radius: 2px;
-  opacity: 0.35;
+  opacity: 0.6;
   pointer-events: none;
   z-index: 3;
 }
@@ -1211,6 +1211,10 @@ html {
 :root[data-dbg-about] .tf-about-text { font-size: var(--dbg-about) !important; }
 :root[data-dbg-glyph-big] .tf-glyphs .tf-glyph-big { font-size: var(--dbg-glyph-big) !important; }
 :root[data-dbg-grid] .tf-glyphs .tf-glyph-cell { font-size: var(--dbg-grid) !important; }
+/* Square cell follows the glyph (site ratio 34px cell : 16px glyph); grid reflows. */
+:root[data-dbg-grid] .tf-glyphs .tf-glyph-grid {
+  grid-template-columns: repeat(auto-fill, calc(var(--dbg-grid) * 2.125)) !important;
+}
 :root[data-dbg-glyph-ui] .tf-glyphs :is(.tf-glyph-controls, .tf-glyph-meta, .tf-glyph-cat-head) {
   zoom: var(--dbg-glyph-ui-zoom, 1);
 }

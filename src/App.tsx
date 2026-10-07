@@ -1367,7 +1367,6 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
             ) : (
               <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
             )}
-            <p className="about-video-credit" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.625rem", fontStyle: "italic", color: "#000", opacity: 0.7, margin: "0.4rem 0 0" }}>Promo video by Jesper Smeding</p>
           </div>
         </div>
 
@@ -1666,7 +1665,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
             </div>
             )}
             {open && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
+            <div className="tf-glyph-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
               {group.chars.map((g, i) => (
                 <div
                   key={i}
@@ -2567,6 +2566,10 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         ? "BIP is based on the original logo of Botnia Internet Provider, a Swedish internet provider active between 1997 and 1999. BIP draws inspiration from Eurostile, Microgramma and the optimism of early internet culture."
         : name === "Facit"
           ? "FACIT AB was a typemachine and countingmachine manufacturer located in Åtvidaberg, Sweden. FACIT by is inspired, redrawn and digitalized from existing logos and typefaces on the products. This typeface works perfect for bold, big and attention seeking sentences, with its low height and heavy weight."
+          : name === "Last Call"
+            ? "LASTCALL was developed for Aerotransport Snowflake, a speculative airline merging two moments in Swedish aviation history: ABA Aerotransport and SAS Snowflake. Inspired by airport departure boards, the variable typeface shifts between different forms and widths, bridging early aviation optimism with the visual language of early 2000s budget air travel."
+          : name === "Brus"
+            ? "Brus was developed for Fram, a Swedish bicycle and motorcycle manufacturer founded in Uppsala in 1897. Inspired by the visual culture of competitive racing, the variable typeface moves through a wide range of weights and slants, from narrow and lightweight to heavy and expressive forms."
           : name === "Svek"
             ? "SVEK, a Swedish record label rooted in house and electronic music culture, active during the 1990s to early 2000s. The typeface extends the letters of the original logo into uppercase letters and selected glyphs, reactivating SVEK’s visual legacy while maintaining a connection to its historical context."
           : name === "Mormor"
@@ -2747,7 +2750,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   {label === "Contact:" ? (
                     <a href={`mailto:${value}`} style={{ flex: 1, minWidth: 0, color: "inherit", textDecoration: "underline", overflowWrap: "anywhere" }}>{value}</a>
                   ) : label === "EULA:" ? (
-                    <a href="/licensing" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
+                    <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
                   ) : (
                     <span style={{ flex: 1 }}>{value}</span>
                   )}
@@ -2916,28 +2919,32 @@ function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
 
 const FAQ_ITEMS = [
   {
-    q: "Redeem your code",
-    a: "If you received a redeem code with an OTF License keychain, enter the code through the redemption link provided with it to access your typeface. The same license terms apply as when purchasing a font directly.",
+    q: "Price",
+    a: "Each typeface costs 72 SEK. Or make a designer’s day and pay a little extra if you think it’s worth it. The price you choose does not change the license or what you are allowed to do with the font.",
+  },
+  {
+    q: "Discount code",
+    a: "If you received a discount code with an OTF License keychain, enter the code at checkout. Each code can only be used once and applies to individual typefaces only, not the Mega Bundle Pack. The same license terms apply as with any other purchase.",
   },
   {
     q: "The License",
-    a: "All fonts on OTF License share the same license. The Mega Bundle Pack does not have any special terms — it simply gives you multiple fonts for a lower price.\n\nFor 72 SEK, you get the Standard License for one person or a small team of up to 5 people. It covers personal and commercial use, including identities, logos, print, books, magazines, packaging, merchandise, social media, advertising, websites, film and video.\n\nYour purchase includes OTF, TTF and WOFF2 files — all covered by the same license, with no separate desktop or web license.",
+    a: "All fonts on OTF License share the same license. The Mega Bundle Pack does not have any special terms, it simply gives you multiple fonts for a lower price.\n\nThe license covers one person or a small team of up to 5 people. It covers personal and commercial use, including identities, logos, print, books, magazines, packaging, merchandise, social media, advertising, websites, film and video.\n\nYour purchase includes OTF, TTF and WOFF2 files, all covered by the same license, with no separate desktop or web license.",
   },
   {
-    q: "Extended license",
-    a: "The Standard License is made for individuals and small teams. If your team has more than 5 people, or the font will be used enterprise-wide or for other large-scale commercial use, contact the designer directly. The scope, terms and price can then be agreed on a case-by-case basis.",
+    q: "Outside the License",
+    a: "If your team has more than 5 people, or the font will be used enterprise-wide or for other large-scale commercial use, contact the designer directly. Uses outside the license can be agreed on a case-by-case basis with the designer, including the scope, terms and price.",
   },
   {
     q: "Client work",
-    a: "You can use a font while designing something for a client. If the client chooses to use the font for their identity, website, communications, products or similar, they need to buy their own 72 SEK license.",
+    a: "You can use a font while designing something for a client. If the client chooses to use the font for their identity, website, communications, products or similar, they need to buy their own license.",
   },
   {
     q: "App, game & software",
-    a: "If you want to use any of the fonts in an app, game, software product, design generator or anything else where the actual font software is embedded or distributed as part of the product, contact the designer directly before using it.",
+    a: "If you want to use any of the fonts in an app, game, software product, design generator or anything else where the actual font software is embedded or distributed as part of the product, please contact the designer first.",
   },
   {
     q: "Modification",
-    a: "You can mess with outlines, not the font file. Turning text into outlines and stretching, cutting or modifying it as part of a design or logo is fine. Opening the actual font in Glyphs or another font editor, changing glyphs, kerning, weights, names or other font data and exporting your own version is not.",
+    a: "Turning text into outlines and stretching, cutting or modifying it as part of a design or logo is fine. Opening the actual font file in Glyphs or another font editor, changing glyphs, kerning, weights, names or other font data and exporting your own version is not.",
   },
   {
     q: "Sharing",
@@ -2953,19 +2960,19 @@ const FAQ_ITEMS = [
   },
   {
     q: "License expiration",
-    a: "The license does not expire. As long as you follow the license, you do not need to buy the same license again just because time has passed.",
+    a: "The license does not expire.",
   },
   {
     q: "Restricted use",
-    a: "The fonts and their underlying data cannot be used to train or develop AI or machine-learning systems without prior permission from the designer.\n\nThe fonts cannot be used primarily to promote hatred, violence or discrimination. Political campaigns and organisations require approval, and uses involving areas such as religious organisations, weapons or military, gambling and tobacco or nicotine may also require approval from the designer.",
+    a: "Uses involving areas such as political campaigns and organisations, religious organisations, weapons or military, gambling and tobacco or nicotine require approval from the designer.\n\nThe fonts cannot be used primarily to promote hatred, violence or discrimination.\n\nThe fonts and their underlying data cannot be used to train or develop AI or machine-learning systems without prior permission from the designer.",
   },
   {
     q: "EULA",
-    a: "The points above are the short version. For the complete terms, read the full End User License Agreement (EULA).",
+    a: "For the complete terms, read the full End User License Agreement (EULA).",
   },
   {
     q: "Contact",
-    a: "Still have a question, need licensing outside the Standard License or want permission for a specific use? Contact the designer of the typeface directly. You can find their email on the relevant typeface page.",
+    a: "Still have a question? Feel free to contact the designer of the typeface directly. You can find their email on the relevant typeface page.",
   },
 ];
 
@@ -3036,12 +3043,12 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "2.5rem", paddingBottom: "1rem" }}>
-        {/* Two independent stacks (even items left, odd right) so an open section
+        {/* Two independent stacks (first half left, rest right, read top-down) so an open section
             only pushes down its own column. On mobile the stacks dissolve and
             `order` restores the original sequence. */}
         {[0, 1].map((col) => (
           <div key={col} className="faq-stack" style={{ flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column" }}>
-            {faqSections.filter((_, i) => i % 2 === col).map(({ i, node }) => (
+            {faqSections.filter((_, i) => (i < Math.ceil(faqSections.length / 2) ? 0 : 1) === col).map(({ i, node }) => (
               <div key={i} style={{ order: i }}>{node}</div>
             ))}
           </div>
@@ -3053,40 +3060,137 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
 }
 
 // Full End User License Agreement (/eula). Plain document page — no accordions.
-// Sections: { heading, paragraphs }. Paragraphs starting with "— " render as list items.
+// Body lines: "- " → list item (consecutive items grouped), "## " → subheading, else paragraph.
 const EULA_SECTIONS: { heading: string; body: string[] }[] = [
   {
-    heading: "Font files",
-    body: ["Fonts are supplied in OTF, TTF and WOFF2 formats. All supplied formats are covered by the same license. There is no separate desktop or web license."],
-  },
-  {
-    heading: "Embedding",
-    body: ["Use involving the embedding or distribution of the Font software in an application, game, software product, design generator, digital product, hardware or similar system requires prior written permission from the respective typeface designer and may require a separate licensing agreement."],
-  },
-  {
-    heading: "Artificial intelligence",
-    body: ["The Fonts, Font files, typeface designs and their underlying data may not be used to train, fine-tune, develop or improve artificial intelligence or machine-learning systems, models or datasets without prior written permission from the respective typeface designer."],
-  },
-  {
-    heading: "Updates",
-    body: ["If an updated version of a Font is released, existing license holders of that Font are entitled to the updated version at no additional license fee. The release of an update does not imply automatic notification or delivery."],
-  },
-  {
-    heading: "7. Extended licensing",
+    heading: "1. GENERAL",
     body: [
-      "The Standard License is intended for individuals and small teams.",
-      "Organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use fall outside the scope of the Standard License and require a separate agreement with the respective typeface designer.",
-      "A separate agreement may also be required for uses involving embedding or distribution of the Font software in applications, games, software products, digital products, hardware or similar systems.",
-      "The scope, price and conditions of such use are determined on a case-by-case basis in consultation with the respective typeface designer.",
-      "If you are unsure whether your organisation or intended use falls outside the Standard License, contact the respective typeface designer before use.",
+      "This End User License Agreement (“Agreement”) governs your use of the typefaces and font software (“Fonts”) distributed by OTF License.",
+      "By purchasing, downloading, installing or using the Fonts, you agree to the terms of this Agreement.",
+      "Upon receipt of full payment, OTF License grants you a limited, non-exclusive, non-transferable license to use the Fonts in accordance with this Agreement.",
+      "Purchasing a Font gives you the right to use it. It does not transfer ownership of the Font, its design or its underlying software to you. The intellectual property rights to each typeface remain with its respective designer and/or rights holder.",
+      "This Agreement applies equally to Fonts purchased individually, purchased as part of the Mega Bundle Pack, or obtained through a valid discount code. The price paid or method of purchase does not grant any additional licensing rights.",
+      "If you are unsure whether your intended use is covered by this Agreement, please contact the respective typeface designer before using the Font. Contact details are available on each typeface page.",
     ],
   },
   {
-    heading: "Technical problems",
-    body: ["If you encounter a technical problem with a Font, please contact the respective typeface designer."],
+    heading: "2. THE LICENSE",
+    body: [
+      "Unless otherwise agreed in writing, each Font is licensed under the terms of this Agreement.",
+      "The License permits use by one individual or a small team of up to five (5) users within the same organisation.",
+      "The License permits both personal and commercial use, including but not limited to:",
+      "- graphic design and visual identities",
+      "- logotypes and branding",
+      "- books, magazines and editorial design",
+      "- posters and printed matter",
+      "- packaging",
+      "- merchandise",
+      "- presentations",
+      "- social media",
+      "- advertising",
+      "- film, video and motion graphics",
+      "- websites",
+      "- other comparable static or visual design applications",
+      "The Fonts may be used worldwide and across an unlimited number of projects by the License Owner, subject to the terms and restrictions of this Agreement.",
+      "The License does not cover organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use. Such use requires a separate agreement with the respective typeface designer.",
+    ],
+  },
+  {
+    heading: "3. CLIENT WORK AND THIRD PARTIES",
+    body: [
+      "Designers, studios and agencies may use the Fonts while creating work for a client.",
+      "If a Font is selected for and used by a client in its own identity, communications, website, products or other ongoing activities, the client must purchase its own license.",
+      "A designer’s or agency’s license does not transfer to the client.",
+      "A License Owner may temporarily provide the necessary Font files to a printer, developer, production partner or other subcontractor working directly on its behalf, solely for the licensed project.",
+      "The third party may not use the Fonts for any other client, organisation or purpose and must delete all copies of the Font files when its work for the License Owner is complete.",
+    ],
+  },
+  {
+    heading: "4. FONT FILES, WEB USE AND MODIFICATION",
+    body: [
+      "Fonts are supplied in OTF, TTF and WOFF2 formats. All supplied formats are covered by the same License. There is no separate desktop or web license.",
+      "Only the Font files supplied by OTF License may be used. You may not convert the Fonts into other font formats without prior written permission from the respective typeface designer.",
+      "You may not modify, adapt, rename, reverse engineer, decompile, disassemble, reformat, alter or otherwise edit the Font software.",
+      "This includes, but is not limited to:",
+      "- adding, removing or modifying glyphs",
+      "- changing spacing or kerning",
+      "- creating additional weights or styles",
+      "- modifying variable-font data",
+      "- opening and modifying the Fonts in font-editing software",
+      "- creating and distributing a modified or derivative Font",
+      "You may convert text to outlines in graphic design software and modify those outlines as part of an artwork, logotype, illustration or other design. Such modifications do not create a new Font license or give you ownership of the original typeface design.",
+      "Use involving the embedding or distribution of the Font software in an application, game, software product, editable template, design generator, digital product, hardware or similar system requires prior written permission from the respective typeface designer and may require a separate licensing agreement.",
+    ],
+  },
+  {
+    heading: "5. REDISTRIBUTION AND RESTRICTIONS",
+    body: [
+      "You may not sell, resell, sublicense, rent, lend, gift, share, publicly upload or otherwise distribute the Font files to any unlicensed third party, except for the limited third-party use permitted under Article 3.",
+      "You may not claim the Font, Font software or original typeface design as your own.",
+      "You must take reasonable precautions to prevent unauthorised access to the Font files.",
+      "## AI and Machine Learning",
+      "The Fonts, Font files, typeface designs and their underlying data may not be used to train, fine-tune, develop or improve artificial intelligence or machine-learning systems, models or datasets without prior written permission from the respective typeface designer.",
+      "## Hateful or Discriminatory Use",
+      "The Fonts may not be used in material whose primary purpose is to promote hatred, violence or discrimination against a person or group based on characteristics such as race, ethnicity, nationality, religion, gender, gender identity, sexual orientation or disability.",
+      "## Sensitive Uses Requiring Prior Approval",
+      "Use of the Fonts in connection with political parties, political candidates, political campaigns, lobbying organisations or other explicitly political organisations requires prior written approval from the respective typeface designer.",
+      "Use in connection with religious organisations, military or weapons-related organisations, gambling, tobacco or nicotine products, or other comparably sensitive industries also requires prior written approval from the respective typeface designer.",
+      "Requests will be considered on a case-by-case basis. Permission is not guaranteed.",
+      "If you are unsure whether your intended use falls within this section, contact the respective typeface designer before use.",
+    ],
+  },
+  {
+    heading: "6. WORK IN PROGRESS AND UPDATES",
+    body: [
+      "OTF License distributes typefaces at different stages of development. Some Fonts are finished products, while others are works in progress.",
+      "The current state and available styles, weights and glyphs of each Font are presented on its respective typeface page at the time of purchase.",
+      "Fonts are licensed in their current state. A Font being described as a work in progress does not constitute a promise that additional glyphs, styles, weights, features or other improvements will be released.",
+      "If an updated version of a Font is released, existing license holders of that Font are entitled to the updated version at no additional license fee. The release of an update does not imply automatic notification or delivery.",
+      "The designer may discontinue development of a Font at any time. Discontinuation of development does not terminate an existing valid license.",
+      "Updates remain subject to this Agreement or, where clearly stated at the time an update is provided, an applicable updated version of the Agreement, subject always to applicable law.",
+    ],
+  },
+  {
+    heading: "7. USE OUTSIDE THE LICENSE",
+    body: [
+      "Organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use fall outside the scope of the License and require a separate agreement with the respective typeface designer.",
+      "A separate agreement may also be required for uses involving embedding or distribution of the Font software in applications, games, software products, digital products, hardware or similar systems.",
+      "The scope, price and conditions of such use are determined on a case-by-case basis with the respective typeface designer.",
+      "If you are unsure whether your organisation or intended use falls outside the License, contact the respective typeface designer before use.",
+    ],
+  },
+  {
+    heading: "8. TERM AND TERMINATION",
+    body: [
+      "A valid license does not expire solely because time has passed.",
+      "You may continue using the licensed Font in accordance with this Agreement for as long as you comply with its terms.",
+      "If you materially breach this Agreement, OTF License may terminate the License to the extent permitted by applicable law. Upon termination, you must cease using the Font and delete all copies of the Font files in your possession or control.",
+      "Termination does not limit any rights or remedies available under applicable law.",
+    ],
+  },
+  {
+    heading: "9. WARRANTY AND LIABILITY",
+    body: [
+      "Some Fonts distributed by OTF License are works in progress and may contain imperfections, incomplete character sets or other limitations. OTF License aims to communicate the current state of each Font on its respective typeface page.",
+      "If you encounter a technical problem with a Font, please contact the respective typeface designer. Contact details are available on each typeface page. Where required by applicable law, defects will be remedied in accordance with your statutory rights.",
+      "Except for rights and warranties that cannot legally be excluded or limited, the Fonts are provided in their current state without additional warranties regarding suitability for a particular project or purpose.",
+      "To the maximum extent permitted by applicable law, OTF License and the respective typeface designer shall not be liable for indirect or consequential losses resulting from the use or inability to use the Fonts.",
+      "Nothing in this Agreement limits any mandatory rights you may have under applicable consumer law.",
+    ],
+  },
+  {
+    heading: "10. LEGAL",
+    body: [
+      "This Agreement constitutes the license terms governing your use of the Fonts, together with any additional written terms expressly agreed between you and OTF License or the respective typeface designer, as applicable.",
+      "If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions will remain in effect to the extent permitted by law.",
+      "A failure by OTF License to enforce a provision of this Agreement on one occasion does not waive its right to enforce that provision in the future.",
+      "You may not transfer or assign your License to another person or organisation without prior written permission from OTF License.",
+      "This Agreement is governed by Swedish law, without limiting any mandatory consumer protections or other rights that apply under applicable law.",
+      "By purchasing, downloading, installing or using the Fonts, you acknowledge that you have read and agreed to this Agreement.",
+    ],
   },
 ];
-const EULA_CLOSING = "Questions about licensing, uses outside the Standard License or unusual uses should be directed to the respective typeface designer. Contact details are available on each typeface page.";
+const EULA_CLOSING = "Questions about licensing, uses outside the License or unusual uses should be directed to the respective typeface designer. Contact details are available on each typeface page.";
 
 function EulaPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const text: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0", overflowWrap: "break-word" };
@@ -3100,7 +3204,17 @@ function EulaPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page)
         {EULA_SECTIONS.map((sec) => (
           <section key={sec.heading} style={{ marginTop: "2.25rem" }}>
             <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", lineHeight: 1.2, margin: 0 }}>{sec.heading}</h2>
-            {sec.body.map((para, j) => <p key={j} style={text}>{para}</p>)}
+            {sec.body.reduce<React.ReactNode[]>((out, line, j, all) => {
+              if (line.startsWith("- ")) {
+                if (all[j - 1]?.startsWith("- ")) return out;
+                const items: string[] = [];
+                for (let k = j; k < all.length && all[k].startsWith("- "); k++) items.push(all[k].slice(2));
+                out.push(<ul key={j} style={{ ...text, paddingLeft: "1.25rem", listStyle: "disc" }}>{items.map((it) => <li key={it}>{it}</li>)}</ul>);
+              } else if (line.startsWith("## ")) {
+                out.push(<h3 key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", fontWeight: "bold", lineHeight: 1.3, margin: "1.5rem 0 0" }}>{line.slice(3)}</h3>);
+              } else out.push(<p key={j} style={text}>{line}</p>);
+              return out;
+            }, [])}
           </section>
         ))}
         <p style={{ ...text, marginTop: "2.5rem" }}>{EULA_CLOSING}</p>
