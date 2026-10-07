@@ -168,7 +168,7 @@ import specBip from "./imports/vivibip_spec.png";
 import introGif from "./imports/intro.gif";
 import eyesSvg from "./imports/eyes.svg";
 import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import variableFontSticker from "./imports/ChatGPT_Image_Sep_30__2026__08_16_47_PM__1_.png";
+import variableFontSticker from "./imports/Variable_Font_Sticker.png";
 
 type Page =
   | { id: "home" }
@@ -176,20 +176,26 @@ type Page =
   | { id: "about" }
   | { id: "licensing" }
   | { id: "contact" }
+  | { id: "eula" }
   | { id: "bundle" }
   | { id: "typeface"; name: string };
 
 function typefaceSlug(name: string) {
+  const face = typefaces.find((item) => item.name === name);
+  return (face?.displayName ?? name).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// Legacy slug format (/shop/<slug>) used before clean URLs.
+function legacySlug(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
 function pageToPath(page: Page) {
-  if (page.id === "home") return "/intro";
-  if (page.id === "foundry") return "/shop";
+  if (page.id === "home" || page.id === "foundry") return "/";
   if (page.id === "about") return "/about";
-  if (page.id === "contact") return "/faq";
-  if (page.id === "bundle") return "/bundle";
-  if (page.id === "typeface") return `/shop/${typefaceSlug(page.name)}`;
+  if (page.id === "contact") return "/licensing";
+  if (page.id === "bundle") return "/megabundle";
+  if (page.id === "typeface") return `/${typefaceSlug(page.name)}`;
   return `/${page.id}`;
 }
 
@@ -231,32 +237,72 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 
 const typefaces = [
   // — top row: stay —
-  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/LASTCALLVF.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
+  { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/OTF_Lastcall.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
   { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
-  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/enyaliljan.otf", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
-  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/fahedkurir.otf", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
+  { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/OTF_Liljan.woff2", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
+  { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/OTF_Kuriren.woff2", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
   // — middle —
-  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/casparella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 8.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
-  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/SVEKVF.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 11, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
-  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/CHEIRONRebrandVARIABLEVF.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
-  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/siljeuber.otf", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
-  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/BIPExtendedSans-serifVF.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
+  { name: "Ella",        designer: "Caspar Broms",   klass: "VK27", bg: "#00ab53", fg: W, img: specElla, gallery: [bildElla1, bildElla2, bildElla3, bildElla4, bildElla5], font: "'Ella', sans-serif", file: "/fonts/OTF_Ella.woff2", scale: 1.11, previewSize: 16, mobilePreviewSize: 8.5, gumroad: "https://otflicense.gumroad.com/l/ella?wanted=true" },
+  { name: "Svek",        designer: "Tindra Berglund",    klass: "VK27", bg: "#0074ff", fg: W, img: specSvek, gallery: [bildSvek1, bildSvek2, bildSvek3, bildSvek4, bildSvek5], font: "'Svek', sans-serif", file: "/fonts/OTF_Svek.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 11, gumroad: "https://otflicense.gumroad.com/l/svek?wanted=true" },
+  { name: "Cheiron",         designer: "Simon Grey",      klass: "VK27", bg: "#c3872f", fg: W, img: specCheiron, gallery: [bildCheiron1, bildCheiron2, bildCheiron3, bildCheiron4, bildCheiron5], font: "'Cheiron', sans-serif", file: "/fonts/OTF_Cheiron.woff2", casing: "upperInitial", scale: 1.27, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/cheiron?wanted=true" },
+  { name: "LCD Über",         designer: "Silje Nordback", klass: "VK27", bg: "#ff1d38", fg: W, img: specUber, gallery: [bildLcdUber1, bildLcdUber2, bildLcdUber3, bildLcdUber4, bildLcdUber5], font: "'Uber', sans-serif", file: "/fonts/OTF_Lcduber.woff2", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lcduber?wanted=true" },
+  { name: "BIP",         designer: "Vivi Tang",  klass: "VK27", bg: "#c3872f", fg: W, img: specBip, gallery: [bildBip1, bildBip2, bildBip3, bildBip4, bildBip5], font: "'BIP', sans-serif", file: "/fonts/OTF_Bip.woff2", casing: "upper", scale: 1.54, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/bip?wanted=true" },
   // — lower: Galanite + Dukat —
-  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/hannahgalanite.ttf", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
-  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/alvadukat.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
+  { name: "Galanite",         designer: "Hannah Mårtensson",     klass: "VK27", bg: "#fff800", fg: B, img: specGalanite, gallery: [bildGalanite1, bildGalanite2, bildGalanite3, bildGalanite4, bildGalanite5], font: "'Galanite', sans-serif", file: "/fonts/OTF_Galanite.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/galanite?wanted=true" },
+  { name: "Dukat",    designer: "Alva Kinneholm",  klass: "VK27", bg: "#ff2cb2", fg: W, img: specDukat, gallery: [bildDukat1, bildDukat2, bildDukat3, bildDukat4], font: "'Dukat', sans-serif", file: "/fonts/OTF_Dukat.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/dukat?wanted=true" },
   // — bottom: Crypto, Facit, Sonja, Mormor, Brus —
-  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/lovisacrypto.otf", casing: "lower", scale: 1.27, previewSize: 14, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
-  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/jesperfacit.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
-  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/vesonja.otf", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
+  { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/OTF_Cryptomono.woff2", casing: "lower", scale: 1.27, previewSize: 10, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
+  { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/OTF_Facit.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
+  { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/OTF_Sonja.woff2", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
   { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
-  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/BRUSxVelociped8VF.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
+  { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/OTF_Brus.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
 // Native variable-font typefaces — rendered directly by the browser (not the
 // SVG/opentype.js overlay) so variable-font metrics/kerning stay correct. Each
 // axis maps to a CSS font-variation-settings tag. These known ranges act as
 // fallback axis data even when opentype.js cannot parse the WOFF2 file.
+// Glyphs-panel presets. Explicit coordinates where known; otherwise the
+// coordinates come from the font's own named instances (fvar) at runtime.
+type VFPreset = { name: string; values?: Record<string, number> };
+const ELLA_WEIGHTS: [string, number][] = [["Thin", 100], ["ExtraLight", 200], ["Light", 300], ["Regular", 400], ["Medium", 500], ["SemiBold", 600], ["Bold", 700]];
+const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
+  "Ella": ELLA_WEIGHTS.flatMap(([n, w]) => [{ name: n, values: { wght: w, SRIF: 0 } }, { name: `${n} Serif`, values: { wght: w, SRIF: 100 } }]),
+  "Brus": [
+    { name: "Light", values: { wght: 60, slnt: 0 } },
+    { name: "Regular", values: { wght: 118, slnt: 0 } },
+    { name: "Medium", values: { wght: 147, slnt: 0 } },
+    { name: "Bold", values: { wght: 162, slnt: 0 } },
+    { name: "Bold Black", values: { wght: 177, slnt: 0 } },
+    { name: "Narrow Light Italic", values: { wght: 60, slnt: 60 } },
+    { name: "Italic", values: { wght: 118, slnt: 60 } },
+    { name: "Medium Italic", values: { wght: 147, slnt: 60 } },
+    { name: "Bold Italic", values: { wght: 162, slnt: 60 } },
+    { name: "Black Italic", values: { wght: 177, slnt: 60 } },
+  ],
+  "Last Call": [
+    { name: "Thin", values: { wght: 0 } },
+    { name: "ExtraLight", values: { wght: 200 } },
+    { name: "Light", values: { wght: 300 } },
+    { name: "Medium", values: { wght: 500 } },
+    { name: "SemiBold", values: { wght: 600 } },
+    { name: "Bold", values: { wght: 700 } },
+    { name: "ExtraBold", values: { wght: 800 } },
+    { name: "Black", values: { wght: 900 } },
+  ],
+  "Cheiron": [
+    { name: "Regular", values: { wght: 0, wdth: 0 } },
+    { name: "Stencil", values: { wght: 0, wdth: 100 } },
+    { name: "Bold", values: { wght: 100, wdth: 0 } },
+  ],
+  "BIP": [{ name: "Regular", values: { wght: 0 } }, { name: "Medium", values: { wght: 50 } }, { name: "Bold", values: { wght: 100 } }],
+};
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
+// Mobile UI: portrait phones/narrow windows, plus phone landscape (short + touch).
+const MOBILE_MQ = "(max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
+// Phone landscape only — Glyphs switches to the desktop two-column layout here.
+const LANDSCAPE_MQ = "(orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
+const isPortraitMobile = () => window.matchMedia(MOBILE_MQ).matches && !window.matchMedia(LANDSCAPE_MQ).matches;
 const NATIVE_VF: Record<string, VFAxis[]> = {
   "Ella": [
     { label: "Weight", tag: "wght", min: 100, max: 700, default: 100 },
@@ -347,6 +393,7 @@ const GUMROAD_PRODUCT_IDS: Record<string, string> = {
 };
 
 const VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Cheiron", "Ella", "Last Call"]);
+const CORNER_VARIABLE_FONT_STICKERS = new Set(["BIP", "Brus", "Ella"]);
 
 const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: number }> = {
   BIP: { x: -65, y: 14, rotation: -6 },
@@ -369,34 +416,160 @@ const SHOP_STICKER_LAYOUT: Record<string, { x: number; y: number; rotation: numb
 };
 
 function pageFromPath(pathname: string): Page {
-  const path = pathname.replace(/\/+$/, "") || "/";
-  if (path === "/intro" || path === "/") return { id: "home" };
+  let path = pathname.replace(/\/+$/, "") || "/";
+  try { path = decodeURIComponent(path); } catch { /* keep raw */ }
+  if (path === "/" || path === "/intro") return { id: "home" };
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
-  if (path === "/faq") return { id: "contact" };
-  if (path === "/bundle") return { id: "bundle" };
+  if (path === "/licensing" || path === "/faq") return { id: "contact" };
+  if (path === "/eula") return { id: "eula" };
+  if (path === "/megabundle" || path === "/bundle") return { id: "bundle" };
 
-  const shopMatch = path.match(/^\/shop\/([^/]+)$/);
-  if (shopMatch) {
-    const face = typefaces.find((item) => typefaceSlug(item.name) === shopMatch[1].toLowerCase());
+  const slugMatch = path.match(/^\/(?:shop\/)?([^/]+)$/);
+  if (slugMatch) {
+    const slug = slugMatch[1].toLowerCase();
+    const face = typefaces.find((item) => typefaceSlug(item.name) === slug || legacySlug(item.name) === slug);
     if (face) return { id: "typeface", name: face.name };
   }
 
   return { id: "home" };
 }
 
+// TEMPORARY (design only): live readout of an element's computed font size.
+// Absolutely positioned, pointer-events none — zero layout impact. Delete
+// <SizeBadge> usages and this component to remove.
+function SizeBadge({ label, target, style }: { label: string; target: React.RefObject<HTMLElement | null>; style?: React.CSSProperties }) {
+  const [px, setPx] = useState<string>("");
+  useEffect(() => {
+    const read = () => {
+      const el = target.current;
+      if (el) setPx(`${Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10}px`);
+    };
+    read();
+    const id = window.setInterval(read, 250);
+    return () => window.clearInterval(id);
+  }, [target]);
+  if (!px) return null;
+  return (
+    <div aria-hidden style={{ position: "absolute", zIndex: 50, pointerEvents: "none", padding: "2px 6px", borderRadius: 3, background: "rgba(0,0,0,0.6)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, whiteSpace: "nowrap", ...style }}>
+      {label}: {px}
+    </div>
+  );
+}
+
+// TEMPORARY (design only): floating size-tuning panel. Overrides are applied
+// through data attributes + CSS variables on <html> (see "TEMPORARY design size
+// controls" in index.css), so no component reads them. Phone landscape keeps
+// its own independent set of values. Remove this component,
+// its one usage in TypefacePage and that CSS block to strip it entirely.
+const DESIGN_SIZE_CONTROLS = [
+  { key: "about", label: "About Size", selector: ".tf-about-text", min: 8, max: 40, step: 0.5 },
+  { key: "glyph-big", label: "Selected Glyph Size", selector: ".tf-glyph-big", min: 40, max: 640, step: 1 },
+  { key: "glyph-ui", label: "Glyph UI Size", selector: ".tf-glyph-ui-sample", min: 8, max: 32, step: 0.5 },
+  { key: "grid", label: "Grid Glyph Size", selector: ".tf-glyph-cell", min: 8, max: 64, step: 0.5 },
+] as const;
+function DesignSizePanel() {
+  const [open, setOpen] = useState(true);
+  // Two independent value sets: phone landscape vs. everything else (desktop +
+  // portrait). Only the set for the current orientation is written to <html>.
+  const [mode, setMode] = useState<"base" | "landscape">(() => (window.matchMedia(LANDSCAPE_MQ).matches ? "landscape" : "base"));
+  useEffect(() => {
+    const mq = window.matchMedia(LANDSCAPE_MQ);
+    const onChange = () => setMode(mq.matches ? "landscape" : "base");
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [allValues, setAllValues] = useState<Record<"base" | "landscape", Record<string, number>>>({ base: {}, landscape: {} });
+  const values = allValues[mode];
+  const setValues = (fn: (v: Record<string, number>) => Record<string, number>) => setAllValues((all) => ({ ...all, [mode]: fn(all[mode]) }));
+  const [actual, setActual] = useState<Record<string, number>>({});
+  // Glyph UI scales via CSS zoom (text + cells together) relative to the site value.
+  const glyphUiBase = useRef<number | null>(null);
+  useEffect(() => {
+    const read = () => {
+      const next: Record<string, number> = {};
+      for (const c of DESIGN_SIZE_CONTROLS) {
+        const el = document.querySelector(c.selector);
+        if (!el) continue;
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        if (c.key === "glyph-ui") {
+          if (!document.documentElement.hasAttribute("data-dbg-glyph-ui")) glyphUiBase.current = px;
+          const z = parseFloat(document.documentElement.style.getPropertyValue("--dbg-glyph-ui-zoom")) || 1;
+          next[c.key] = Math.round((glyphUiBase.current ?? px) * z * 10) / 10;
+        } else next[c.key] = Math.round(px * 10) / 10;
+      }
+      setActual(next);
+    };
+    read();
+    const id = window.setInterval(read, 250);
+    return () => window.clearInterval(id);
+  }, []);
+  useEffect(() => {
+    const root = document.documentElement;
+    for (const c of DESIGN_SIZE_CONTROLS) {
+      const v = values[c.key];
+      if (v != null) {
+        root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`);
+        if (c.key === "glyph-ui" && glyphUiBase.current) root.style.setProperty("--dbg-glyph-ui-zoom", String(v / glyphUiBase.current));
+      } else {
+        root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`);
+        if (c.key === "glyph-ui") root.style.removeProperty("--dbg-glyph-ui-zoom");
+      }
+    }
+  }, [values]);
+  useEffect(() => () => {
+    const root = document.documentElement;
+    for (const c of DESIGN_SIZE_CONTROLS) { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
+    root.style.removeProperty("--dbg-glyph-ui-zoom");
+  }, []);
+  return (
+    <div className="dbg-size-panel" style={{ position: "fixed", left: 8, bottom: "calc(var(--fixed-marquee-h, 0px) + 8px)", zIndex: 400, background: "rgba(20,20,20,0.88)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, borderRadius: 6, padding: open ? "6px 8px" : 0, boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
+      <button type="button" onClick={() => setOpen((o) => !o)} style={{ all: "unset", cursor: "pointer", display: "block", padding: open ? "0 0 4px" : "6px 8px", opacity: 0.7 }}>
+        {open ? `▾ design sizes (temp) — ${mode === "landscape" ? "PHONE LANDSCAPE" : "desktop / portrait"}` : `▸ sizes${mode === "landscape" ? " (landscape)" : ""}`}
+      </button>
+      {open && DESIGN_SIZE_CONTROLS.map((c) => (
+        <div key={c.key} style={{ display: "grid", gridTemplateColumns: "8.5rem 7rem 3.6rem 1rem", alignItems: "center", gap: 6, padding: "2px 0" }}>
+          <span>{c.label}</span>
+          <input type="range" min={c.min} max={c.max} step={c.step} value={values[c.key] ?? actual[c.key] ?? c.min} onChange={(e) => { const n = Number(e.target.value); setValues((v) => ({ ...v, [c.key]: n })); }} style={{ width: "100%", accentColor: "#fff" }} />
+          <span style={{ textAlign: "right" }}>{actual[c.key] != null ? `${actual[c.key]}px` : "—"}</span>
+          <button type="button" title="Reset to site value" onClick={() => setValues((v) => { const n = { ...v }; delete n[c.key]; return n; })} style={{ all: "unset", cursor: "pointer", opacity: values[c.key] != null ? 0.8 : 0.25 }}>↺</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const DEFAULT_DESIGNER_EMAIL = "otflicense@gmail.com";
+
+const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?: string }> = {
+  "Vivi Tang": { site: "vivitang.online", email: "vivixutang@gmail.com", social: "vivi_.tang" },
+  "Emma Ljungqvist": { site: "emmaljungqvist.com", email: "emljungqvist@hotmail.com", social: "emma_ljungqvist" },
+  "Emma Tungelstedt": { email: "weraemma@me.com", social: "weraemma" },
+  "Simon Grey": { site: "simongrey.blue", email: "simongrey97@gmail.com" },
+  "Linn Willebrand": { site: "www.linnwillebrand.com", email: "linnwill@gmail.com", social: "w.illebrand" },
+  "Fahed Dehchar": { site: "fahed-dehchar.com", email: "fahed.dehchar@gmail.com", social: "tomf000lery" },
+  "Enya Borg": { email: "enya.borg@icloud.com", social: "enyaaborg" },
+  "Jesper Smeding": { email: "jespersmeding@gmail.com", social: "jespersmeding" },
+  "Caspar Broms": { email: "casparbroms9@gmail.com" },
+  "Lawrence Ponsonby": { email: "lawrenceponsonby1@gmail.com", social: "1arri" },
+  "Ve Örnehed": { email: "vornehed@gmail.com", social: "vemodiga" },
+  "Alva Kinneholm": { email: "a.kinneholm@gmail.com" },
+  "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com" },
+  "Tindra Berglund": { site: "tindraberglund.com", email: "tindraberglund02@gmail.com", social: "tindrasara" },
+};
+
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
 const designers = typefaces.map((t) => {
   const handle = t.designer.toLowerCase().replace(/\s+/g, "");
+  const contact = DESIGNER_CONTACTS[t.designer];
   return {
     name: t.designer,
     klass: t.klass,
     color: t.bg,
     textColor: t.fg,
-    site: `${handle}.se`,
-    social: handle,
-    // Per-designer address goes here once it exists; falls back to the foundry contact.
-    email: undefined as string | undefined,
+    site: contact?.site,
+    social: contact?.social ?? handle,
+    email: contact?.email ?? DEFAULT_DESIGNER_EMAIL,
   };
 });
 
@@ -441,11 +614,63 @@ function MailIcon() {
   );
 }
 
+async function copyToClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through for browsers or webviews that block the Clipboard API.
+    }
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.readOnly = true;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+
+  try {
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    textarea.remove();
+  }
+}
+
 function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number }) {
   // One random palette colour picked on enter, held stable for the whole hover.
   const [hoverBg, setHoverBg] = useState<string | null>(null);
+  const [emailCopied, setEmailCopied] = useState(false);
+  const copiedTimer = useRef<number | null>(null);
+  const isMounted = useRef(true);
   const fg = hoverBg ? (hoverBg === "#fff800" ? "#000" : "#fff") : "#000";
   const link: React.CSSProperties = { color: fg, textDecoration: "none", fontSize: "0.85rem" };
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
+    };
+  }, []);
+
+  const handleEmailClick = () => {
+    void copyToClipboard(d.email).then((copied) => {
+      if (!copied || !isMounted.current) return;
+      setEmailCopied(true);
+      if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
+      copiedTimer.current = window.setTimeout(() => {
+        setEmailCopied(false);
+        copiedTimer.current = null;
+      }, 2000);
+    });
+  };
 
   return (
     <div
@@ -462,9 +687,29 @@ function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number
     >
       <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
       <div className="about-designer-links" style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
-        <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
+        {d.site && <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>}
         <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
-        <a href={`mailto:${d.email ?? "otflicense@gmail.com"}`} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
+        <a href={`mailto:${d.email}`} onClick={handleEmailClick} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
+      </div>
+      <div
+        role="status"
+        aria-live="polite"
+        style={{
+          position: "absolute",
+          bottom: "0.45rem",
+          left: "0.5rem",
+          right: "0.5rem",
+          color: fg,
+          fontSize: "0.68rem",
+          lineHeight: 1,
+          textAlign: "center",
+          opacity: emailCopied ? 1 : 0,
+          pointerEvents: "none",
+          transition: "opacity 0.15s ease",
+        }}
+      >
+        {/* Desktop/web: no visible confirmation; touch devices keep it. */}
+        {emailCopied && !window.matchMedia("(pointer: fine)").matches ? "Email copied" : ""}
       </div>
     </div>
   );
@@ -536,6 +781,10 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
       data-side={index % 2 === 0 ? "left" : "right"}
       data-first={index === 0 ? "" : undefined}
       data-name={face.name}
+      data-s={s}
+      data-rot={rotation}
+      data-nx={nudgeX}
+      data-ny={nudgeY}
       style={{ "--zz-rot": `${[-6, 9, 2, -11, -1, 4, 12, -4, 7, -9, 0, 11, -3, -12, 5, 8][index % 16]}deg`, "--zz-x": `${[0, -3, 4, -2, 2, -4, 3, -1][index % 8]}vw`, "--s": s, width, display: "flex", alignItems: "flex-start", pointerEvents: "none", transform: `translate(${nudgeX}px, ${nudgeY}px)`, position: "relative", zIndex: hovered ? 2 : 0 } as React.CSSProperties}
     >
       <div
@@ -581,9 +830,9 @@ function Cell({ face, width, onNavigate, nudgeX = 0, nudgeY = 0, rotation = 0, i
               aria-hidden="true"
               style={{
                 position: "absolute",
-                top: "-1%",
-                right: "-1%",
-                width: `${21.505 / s}%`,
+                top: CORNER_VARIABLE_FONT_STICKERS.has(face.name) ? "-6%" : "-1%",
+                right: CORNER_VARIABLE_FONT_STICKERS.has(face.name) ? "-6%" : "-1%",
+                width: `${25.5 / s}%`,
                 height: "auto",
                 display: "block",
                 pointerEvents: "none",
@@ -658,7 +907,6 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
         // Same size and weight as the homepage marquee text.
         fontSize: "1.5rem",
         fontWeight: "bold",
-        textTransform: "uppercase",
         whiteSpace: "nowrap",
         // Same text colour rule as the marquee: black on light colours, white otherwise.
         // Idle: the nav's text colour (white on the black page mode).
@@ -687,10 +935,8 @@ function NavTextButton({ label, width, onClick, color = "#000", className = "" }
 }
 
 function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3rem", starColor, linkScale = 1, padding = "3rem 4.5rem 2.25rem", logoTop = "3rem", showEyes = true, onEyesHover, onBundlePage = false, className }: { onNavigate: (p: Page) => void; className?: string; onBundlePage?: boolean; bg?: string; fg?: string; onBrand?: () => void; logoHeight?: string; starColor?: string; linkScale?: number; padding?: string; logoTop?: string; showEyes?: boolean; onEyesHover?: () => void }) {
-  // menuMounted keeps the panel in the DOM; menuOpen drives its slide transform.
-  const [menuMounted, setMenuMounted] = useState(false);
+  // The panel is always mounted; menuOpen only toggles its slide state.
   const [menuOpen, setMenuOpen] = useState(false);
-  const closeTimer = useRef<number | undefined>(undefined);
   // Band + text colours, picked once each time the menu opens.
   const [menuColors, setMenuColors] = useState<string[]>(PALETTE.slice(0, 3));
   const toggleMenu = () => {
@@ -700,32 +946,34 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       if (shuffled[0] === prev[0]) shuffled.push(shuffled.shift()!);
       return shuffled.slice(0, 3);
     });
-    if (menuOpen) closeMenu();
-    else {
-      window.clearTimeout(closeTimer.current);
-      // Mount off-screen first, then flip to open on the next frames so the
-      // transform transition actually runs.
-      setMenuMounted(true);
-      requestAnimationFrame(() => requestAnimationFrame(() => setMenuOpen(true)));
-    }
+    setMenuOpen((o) => !o);
   };
-  // Slide out, and unmount only after the 300ms transition has finished.
-  const closeMenu = (after?: () => void) => {
+  // Close the menu on browser back/forward so it never stays open across pages.
+  useEffect(() => {
+    const close = () => setMenuOpen(false);
+    window.addEventListener("popstate", close);
+    return () => window.removeEventListener("popstate", close);
+  }, []);
+  const goBrand = onBrand ?? (() => onNavigate({ id: "foundry" }));
+  const handleBrand = () => goBrand();
+  // Menu open: the whole header (logo, eyes, X, background) is one close control.
+  // Captured before any child handler so nothing navigates; menu rows are exempt.
+  const handleHeaderCapture = (e: React.MouseEvent) => {
+    if (!menuOpen) return;
+    if ((e.target as HTMLElement).closest(".nav-menu-clip")) return;
+    e.stopPropagation();
+    e.preventDefault();
     setMenuOpen(false);
-    window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => {
-      setMenuMounted(false);
-      after?.();
-    }, 320);
   };
   const menuItems: { label: string; to: Page }[] = [
-    { label: "ABOUT US", to: { id: "about" } },
-    { label: "LICENSING STUFF", to: { id: "contact" } },
-    onBundlePage ? { label: "BUY A SINGLE TYPEFACE", to: { id: "foundry" } } : { label: "BUY THE MEGA BUNDLE!", to: { id: "bundle" } },
+    { label: "About", to: { id: "about" } },
+    { label: "Licensing", to: { id: "contact" } },
+    onBundlePage ? { label: "View All Fonts", to: { id: "foundry" } } : { label: "Buy the Mega Bundle", to: { id: "bundle" } },
   ];
   return (
     <nav
       className={`sticky top-0 z-50 tf-nav ${className ?? ""}`}
+      onClickCapture={handleHeaderCapture}
       style={{
         position: "sticky",
         background: bg,
@@ -738,12 +986,12 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       }}
     >
       <div className="nav-left" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-        <NavTextButton label="ABOUT US" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
-        <NavTextButton label="LICENSING STUFF" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
+        <NavTextButton label="About" width={140} color={fg} onClick={() => onNavigate({ id: "about" })} />
+        <NavTextButton label="Licensing" width={140} color={fg} onClick={() => onNavigate({ id: "contact" })} />
       </div>
       <button
         className="nav-logo"
-        onClick={onBrand ?? (() => onNavigate({ id: "foundry" }))}
+        onClick={handleBrand}
         style={{ position: "absolute", left: "50%", top: logoTop, transform: "translateX(-50%)", display: "flex", alignItems: "flex-start", gap: "1.1rem", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}
       >
         <img
@@ -758,7 +1006,18 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           src={headerEyesSvg}
           alt=""
           aria-hidden="true"
-          onMouseEnter={showEyes ? (e) => { e.stopPropagation(); onEyesHover?.(); } : undefined}
+          onMouseEnter={showEyes ? (e) => {
+            // Mobile: eyes are purely decorative — no easter egg.
+            if (window.matchMedia(MOBILE_MQ).matches) return;
+            e.stopPropagation(); onEyesHover?.();
+          } : undefined}
+          onClick={(e) => {
+            // Mobile: tapping the eyes does nothing (no navigation or reload).
+            if (window.matchMedia(MOBILE_MQ).matches) {
+              e.stopPropagation();
+              e.preventDefault();
+            }
+          }}
           style={{
             marginTop: "0.5rem",
             height: "1.75rem",
@@ -774,7 +1033,7 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
       {/* On the bundle page this becomes the way back to single typefaces. */}
       <NavTextButton
         className="nav-bundle"
-        label={onBundlePage ? "BUY A SINGLE TYPEFACE" : "BUY THE MEGA BUNDLE!"}
+        label={onBundlePage ? "View All Fonts" : "Buy the Mega Bundle"}
         width={344}
         color={fg}
         onClick={() => onNavigate(onBundlePage ? { id: "foundry" } : { id: "bundle" })}
@@ -792,9 +1051,8 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
           {menuOpen ? <path d="M5 5l16 16M21 5L5 21" /> : <path d="M3 6h20M3 13h20M3 20h20" />}
         </svg>
       </button>
-      {menuMounted && (
-        <div className="nav-menu-clip">
-        <div className={`nav-menu${menuOpen ? " is-open" : ""}`}>
+      <div className="nav-menu-clip">
+        <div className={`nav-menu${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
           {/* One moving band per destination, same language as the marquee. */}
           {menuItems.map(({ label, to }, row) => (
             <button
@@ -802,24 +1060,32 @@ function NavBar({ onNavigate, bg = "#fff", fg = "#000", onBrand, logoHeight = "3
               type="button"
               className="nav-menu-row"
               aria-label={label}
-              onClick={() => closeMenu(() => onNavigate(to))}
+              onClick={() => { setMenuOpen(false); window.setTimeout(() => onNavigate(to), 300); }}
               style={{ background: menuColors[row], color: LIGHT_BAND_COLORS.has(menuColors[row]) ? "#000" : "#fff" }}
             >
-              <span className="nav-menu-track" aria-hidden="true" style={{ animationDuration: `${14 + row * 3}s` }}>
+              <span
+                className="nav-menu-track"
+                aria-hidden="true"
+                // Same px/s as the main marquee, re-measured on each render (incl. opening).
+                ref={(el) => { if (el && el.scrollWidth) el.style.animationDuration = `${el.scrollWidth / 2 / bandSpeedPxPerSec}s`; }}
+              >
                 {Array.from({ length: 12 }).map((_, i) => <span key={i} className="nav-menu-word">{label}</span>)}
               </span>
             </button>
           ))}
         </div>
-        </div>
-      )}
+      </div>
     </nav>
   );
 }
 
 const PAGE_TEXT: Record<string, string> = {
   ABOUT:
-    "OTF License is an independent studio drawing original typefaces for print and screen. Open 24/7 since 2026, we design letters with equal attention to craft and character — from editorial serifs to raw display faces. Every family is developed in-house and tested across languages, sizes, and media.",
+    "OTF License is an independent type foundry started by the Class of 2027 at the Visual Communication program, Beckmans College of Design in Stockholm, Sweden.\n\n" +
+    "What began as an idea during a Graphic Identity course, grew into an online platform for the students to put their own typefaces out into the world.\n\n" +
+    "Each font is different. Some have a complete set of glyphs, others have just enough to get a job done. Some are finished when you buy them, while others will keep growing with future updates available for free. But they all come with the same license. That’s what sets this foundry apart.\n\n" +
+    "Stop by, browse the shelves and pick up something new from the designers of tomorrow for less than the price of a beer in Stockholm. Or make a designer’s day and pay a little extra if you think it’s worth it. If one font isn’t enough, get the Mega Bundle Pack and take the whole lot for a lot less!\n\n" +
+    "Special thanks to Laslo Strong, Tor Weibull and Peter Ström.",
   Licensing:
     "Our fonts are available under desktop, web, app, and broadcast licenses, priced by the number of users and monthly page views. A single trial weight is free for testing. Custom and exclusive licenses are available for brands and publishers — get in touch and we will tailor an agreement to your needs.",
   FAQ:
@@ -894,7 +1160,7 @@ function StarBuyButton({ onNavigate }: { onNavigate?: (p: Page) => void }) {
   const star = rectStarburstPath(W / 2, H / 2, 22, W / 2 - 6, H / 2 - 6, (W / 2 - 6) * 0.82, (H / 2 - 6) * 0.72);
   return (
     <button
-      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle")}
+      onClick={() => onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/megabundle")}
       onMouseEnter={() => {
         setRandColor(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
         setHover(true);
@@ -1030,6 +1296,18 @@ function GumroadInlineCheckout({ url, productId, minHeight = 640 }: { url: strin
           </a>
         </p>
       )}
+      <div className="gumroad-checkout-help">
+        <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+          Open checkout on Gumroad
+        </a>
+        <span>
+          Already purchased?{" "}
+          <a href="https://gumroad.com/library" target="_blank" rel="noopener noreferrer">
+            Download from your Gumroad Library
+          </a>
+          . Gumroad also sends the download link to the email used at checkout.
+        </span>
+      </div>
     </div>
   );
 }
@@ -1077,7 +1355,8 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
 const ABOUT_VIDEO_SRC = "";
 
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
-  const [klassFilter, setKlassFilter] = useState<string>("");
+  const [klassFilter, setKlassFilter] = useState<string>("All");
+  const [klassOpen, setKlassOpen] = useState(false);
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
   if (title === "ABOUT") {
@@ -1085,11 +1364,12 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
       <div className="min-h-screen bg-white flex flex-col">
         <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
         {/* Two-column layout: left = description + names, right = scroll gallery */}
-        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "5.5rem" }}>
+        <div className="about-intro" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", paddingTop: "2.5rem" }}>
           {/* Left column */}
           <div className="about-intro-col" style={{ padding: "0 3rem 0 4rem" }}>
-            <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1.15rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem" }}>
+            <p className="about-intro-text" style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", color: "#000", lineHeight: 1.6, marginBottom: "2.5rem", whiteSpace: "pre-line" }}>
               {PAGE_TEXT["ABOUT"]}
+              <span className="about-image-credit">Certain images courtesy of Kvartalsrapport &amp; Frida Vega Salomonsson</span>
             </p>
 
 
@@ -1101,23 +1381,40 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
             ) : (
               <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
             )}
-            <p className="about-video-credit" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.75rem", color: "#000", opacity: 0.7, margin: "0.4rem 0 0" }}>Promo video by Jesper Smeding</p>
           </div>
         </div>
 
         {/* Designers heading + filter — below the whole text/video row */}
         <div className="about-designers-head" style={{ padding: "2.5rem 4rem 0", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-          <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", color: "#000", margin: 0 }}>Designers</h2>
-          <select
-            value={klassFilter}
-            onChange={(e) => setKlassFilter(e.target.value)}
-            style={{ fontFamily: "Arial, sans-serif", fontSize: "1rem", padding: "0.4rem 0.75rem", border: "1.5px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
-          >
-            <option value="" disabled hidden>Class of...</option>
-            {DESIGNER_CLASSES.map((c) => (
-              <option key={c} value={c}>{c === "All" ? "All" : klassYear(c)}</option>
-            ))}
-          </select>
+          {/* Same dropdown language as the Glyphs presets: arrow first, custom menu. */}
+          <div style={{ position: "relative" }}>
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={klassOpen}
+              onClick={() => setKlassOpen((o) => !o)}
+              style={{ display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", color: "#000", padding: 0, minHeight: 44, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", whiteSpace: "nowrap", touchAction: "manipulation" }}
+            >
+              <span>{klassFilter === "All" ? "All Designers" : klassLabel(klassFilter)}</span>
+              <span aria-hidden="true" style={{ display: "inline-block", width: "1.4rem", textAlign: "center", fontSize: "1.8rem", fontWeight: "normal", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+            </button>
+            {klassOpen && (
+              <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, background: "#fff", color: "#000", border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+                {DESIGNER_CLASSES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={c === klassFilter}
+                    onClick={() => { setKlassFilter(c); setKlassOpen(false); }}
+                    style={{ display: "block", width: "100%", padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: c === klassFilter ? "#000" : "transparent", color: c === klassFilter ? "#fff" : "#000", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", whiteSpace: "nowrap", cursor: "pointer" }}
+                  >
+                    {c === "All" ? "All Designers" : klassLabel(c)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Designer grid — full content width, as many columns as fit */}
@@ -1137,7 +1434,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
           {PAGE_TEXT[title] ?? "Coming soon."}
         </p>
         {title === "Buy" && (
-          <a href="https://otflicenser.gumroad.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://otflicense.gumroad.com" target="_blank" rel="noopener noreferrer"
             style={{ alignSelf: "flex-start", marginTop: "2rem", fontFamily: "Arial, sans-serif", fontSize: "1.1rem", fontWeight: "bold", color: "#fff", background: "#000", padding: "0.9rem 2rem", textDecoration: "none", cursor: "pointer" }}>
             Buy on Gumroad →
           </a>
@@ -1205,12 +1502,43 @@ const GLYPH_NAMES: Record<string, string> = {
 // an explicit per-face display exception (the glyphs are not removed from the font).
 const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 
+// Named glyphs appended to a face's "Other" category, looked up by glyph name in
+// the loaded font (they may have no Unicode mapping). Panel entries for these use
+// a "\u0000name" key so they never collide with real characters.
+const NAMED_OTHER_GLYPHS: Record<string, string[]> = {
+  Galanite: ["icon.airplane", "icon.bus", "icon.car", "icon.dog", "icon.horse", "icon.other", "icon.smiley", "icon.telephone", "icon.train"],
+  Kuriren: ["logo"],
+};
+const NAMED_PREFIX = "\u0000";
+function findGlyphByName(fk: any, name: string): any | null {
+  if (!fk) return null;
+  for (let i = 0; i < fk.numGlyphs; i++) {
+    try { const g = fk.getGlyph(i); if (g?.name === name) return g; } catch {}
+  }
+  return null;
+}
+// Draws a named glyph's real outline from the font (used when it has no Unicode).
+function NamedGlyph({ fk, glyph, asText = false }: { fk: any; glyph: any; asText?: boolean }) {
+  const asc = fk.ascent, desc = fk.descent, adv = glyph.advanceWidth || fk.unitsPerEm, upm = fk.unitsPerEm || 1000;
+  const d = glyph.path?.toSVG?.() ?? "";
+  return (
+    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={asText
+      // Showcase: laid out exactly like a text glyph at the same font-size —
+      // inline, sized in em from the font's own metrics, sitting on the baseline.
+      // Any ascent+descent beyond 1em overhangs (like text ink) instead of growing the line.
+      ? { display: "inline-block", height: `${(asc - desc) / upm}em`, width: `${adv / upm}em`, verticalAlign: `${desc / upm}em`, marginTop: `${Math.min(0, 1 - (asc - desc) / upm)}em`, overflow: "visible" }
+      : { height: "1.15em", width: "auto", maxWidth: "100%", overflow: "visible", display: "block" }} aria-hidden>
+      <path d={d} transform="scale(1,-1)" fill="currentColor" />
+    </svg>
+  );
+}
+
 // Full-width panel: large showcase on the left, categorised character list on the right.
 // Coverage is read from the selected font's own cmap: opentype.js for the parseable
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug }: { font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
+function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug, glyphListSize }: { fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1224,15 +1552,31 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
       const name = otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(c))?.name : undefined;
       return !(name && DUKAT_HIDDEN_GLYPHS.has(name));
     }),
-  })).filter((group) => group.chars.length > 0);
+  }));
+  // Named non-Unicode-safe glyphs (e.g. Galanite icons, Kuriren logo) from the font itself.
+  const namedGlyphs = new Map<string, any>();
+  for (const n of NAMED_OTHER_GLYPHS[faceName] ?? []) {
+    const g = findGlyphByName(fk, n);
+    if (g) namedGlyphs.set(NAMED_PREFIX + n, g);
+  }
+  const other = groups.find((g) => g.label === "Other");
+  if (other) other.chars = [...other.chars, ...namedGlyphs.keys()];
+  const renderEntry = (g: string, asText = false) => {
+    const ng = namedGlyphs.get(g);
+    if (!ng) return g;
+    const cp = ng.codePoints?.[0];
+    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} asText={asText} />;
+  };
+  const visibleGroups = groups.filter((group) => group.chars.length > 0);
 
   // Mobile only: categories act as independent accordions, all collapsed on load.
-  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches);
+  // Phone landscape uses the desktop Glyphs layout, so only portrait counts here.
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && isPortraitMobile());
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
-    const onChange = () => setIsMobile(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const mqs = [window.matchMedia(MOBILE_MQ), window.matchMedia(LANDSCAPE_MQ)];
+    const onChange = () => setIsMobile(isPortraitMobile());
+    mqs.forEach((mq) => mq.addEventListener("change", onChange));
+    return () => mqs.forEach((mq) => mq.removeEventListener("change", onChange));
   }, []);
   const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set());
   const toggleGroup = (label: string) =>
@@ -1242,7 +1586,7 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
       return next;
     });
 
-  const firstChar = groups[0]?.chars[0] ?? "A";
+  const firstChar = visibleGroups[0]?.chars[0] ?? "A";
   const [hovered, setHovered] = useState(firstChar);
   useEffect(() => {
     setHovered(firstChar);
@@ -1252,15 +1596,40 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
   // Metadata for the currently highlighted glyph. The Unicode value comes from
   // the character itself; the glyph name is read from the parsed font when
   // available, falling back to the character.
-  const codePoint = hovered.codePointAt(0) ?? 0;
-  const glyphUnicode = "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0");
-  const glyphName =
+  const hoveredNamed = namedGlyphs.get(hovered);
+  const codePoint = hoveredNamed ? hoveredNamed.codePoints?.[0] : hovered.codePointAt(0) ?? 0;
+  const glyphUnicode = codePoint != null ? "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0") : null;
+  const glyphName = hoveredNamed ? hovered.slice(1) :
     GLYPH_NAMES[hovered] ??
     (otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(hovered))?.name : undefined) ??
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
+  const glyphBigRef = useRef<HTMLSpanElement | null>(null);
+  // Phone landscape: slim thumb mirroring the glyph list's real scroll position
+  // (iOS hides/ignores styled native scrollbars). Hidden elsewhere via CSS.
+  const glyphListRef = useRef<HTMLDivElement | null>(null);
+  const [thumb, setThumb] = useState<{ left: number; top: number; height: number } | null>(null);
+  useEffect(() => {
+    const el = glyphListRef.current;
+    if (!el) return;
+    const update = () => {
+      const { scrollHeight, clientHeight, scrollTop, offsetTop, offsetLeft, offsetWidth } = el;
+      if (scrollHeight <= clientHeight + 1) { setThumb(null); return; }
+      const h = Math.max(24, (clientHeight / scrollHeight) * clientHeight);
+      const t = offsetTop + (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - h);
+      setThumb({ left: offsetLeft + offsetWidth + 6, top: t, height: h });
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+    if (el.firstElementChild) ro?.observe(el.firstElementChild);
+    return () => { el.removeEventListener("scroll", update); window.removeEventListener("resize", update); ro?.disconnect(); };
+  }, [visibleGroups.length]);
+
   return (
-    <div className="tf-glyphs" style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+    <div className="tf-glyphs" style={{ position: "relative", background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
       {/* Showcase — left. The variable-font / "Regular" controls sit at the top
           of this column so they share the top row with the first glyph category
           heading in the right column. Shares the exact same axis state as the
@@ -1271,23 +1640,30 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
             {controls}
           </div>
         )}
-        <div className="tf-glyph-stage" style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+        <div className="tf-glyph-stage" style={{ position: "relative", flex: 1, minHeight: 0, minWidth: 0, contain: "inline-size", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
           {/* Keyed so each glyph gets a fresh node (no stale paint), and padded
               (offset by an equal negative margin) so the element's paint box
               covers ink beyond the line box — outlines outside it were leaving
               fragments behind on repaint. Layout size is unchanged. */}
-          <span key={hovered} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{hovered}</span>
-          <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
-            <div>Glyph: {glyphName}</div>
-            <div>Unicode: {glyphUnicode}</div>
+          {/* Ghosting fix: the glyph lives in its own compositing layer,
+              keyed by glyph + axis state. On any change the whole layer is dropped
+              and rebuilt, so no stale ink (which can overhang the text box and
+              escape repaint invalidation, esp. in mobile WebKit) can survive. */}
+          <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
+                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
+          </div>
+          <div className="tf-glyph-meta" style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
+            <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
+            {glyphUnicode && <div>Unicode: {glyphUnicode}</div>}
           </div>
           {sizeDebug}
         </div>
       </div>
 
       {/* Character list — right, grouped by category */}
-      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {groups.map((group) => {
+      {thumb && <div aria-hidden className="tf-glyph-scroll-thumb" style={{ left: thumb.left, top: thumb.top, height: thumb.height, background: panelText }} />}
+      <div ref={glyphListRef} className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {visibleGroups.map((group) => {
           const open = !isMobile || openGroups.has(group.label);
           return (
           <div key={group.label}>
@@ -1296,21 +1672,23 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
                 type="button"
                 aria-expanded={open}
                 onClick={() => toggleGroup(group.label)}
+                className="tf-glyph-cat-head"
                 style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: open ? "0.4rem" : 0, textAlign: "left" }}
               >
                 <span>{group.label}</span>
-                <span aria-hidden="true">{open ? "−" : "+"}</span>
+                <span aria-hidden="true" style={{ display: "inline-block", fontSize: "1rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
               </button>
             ) : (
-            <div style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
+            <div className="tf-glyph-cat-head" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
               {group.label}
             </div>
             )}
             {open && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
+            <div className="tf-glyph-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(34px, 1fr))", gap: 2 }}>
               {group.chars.map((g, i) => (
                 <div
                   key={i}
+                  className="tf-glyph-cell"
                   onMouseEnter={() => setHovered(g)}
                   onClick={() => setHovered(g)}
                   style={{
@@ -1322,13 +1700,13 @@ function GlyphSection({ font, faceName, otFont, coverage, panelBg, panelText, fo
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1rem",
+                    fontSize: glyphListSize ?? "1rem",
                     cursor: "default",
                     borderRadius: 2,
                     transition: "background 0.15s ease, color 0.15s ease",
                   }}
                 >
-                  {g}
+                  {renderEntry(g)}
                 </div>
               ))}
             </div>
@@ -1483,6 +1861,66 @@ type Mode = "color" | "invert" | "panelsDark" | "panelsLight";
 // Wraps text into visual lines the same way the textarea does: break on explicit
 // newlines, then greedily wrap words once a line's measured advance width exceeds
 // the available box width.
+// ── .notdef handling for the editable Preview ──────────────────────────────
+// Each font file is fetched + parsed by fontkit once and cached. Code points the
+// font's cmap maps to glyph 0 are unsupported; for those we build a tiny runtime
+// font holding ONLY the current font's own .notdef outline (at the live axis
+// values) and append it right after the face in the font stack, so the browser
+// draws the real .notdef natively — never a system fallback.
+const fontkitCache = new Map<string, Promise<any>>();
+function loadFontkit(file: string): Promise<any> {
+  let p = fontkitCache.get(file);
+  if (!p) {
+    p = fetch(file)
+      .then((r) => r.arrayBuffer())
+      .then((b) => (fontkit as any).create(new Uint8Array(b)));
+    p.catch(() => fontkitCache.delete(file));
+    fontkitCache.set(file, p);
+  }
+  return p;
+}
+function fontkitSupports(fk: any, cp: number): boolean {
+  try {
+    const id = fk.glyphForCodePoint(cp)?.id ?? 0;
+    return id !== 0;
+  } catch {
+    return false;
+  }
+}
+// Whitespace, controls, and the mirror's zero-width space never show .notdef.
+const isLayoutChar = (cp: number) => cp < 0x20 || cp === 0x7f || cp === 0x200b || /\s/u.test(String.fromCodePoint(cp));
+let notdefSeq = 0;
+function buildNotdefFace(fk: any, codePoints: number[], axes: Record<string, number> | null): ArrayBuffer {
+  let src = fk;
+  if (axes && fk.variationAxes && Object.keys(fk.variationAxes).length) {
+    try { src = fk.getVariation(axes); } catch { src = fk; }
+  }
+  const g = src.getGlyph(0);
+  const upm = fk.unitsPerEm;
+  const path = new opentype.Path();
+  for (const c of g.path.commands as { command: string; args: number[] }[]) {
+    const a = c.args;
+    if (c.command === "moveTo") path.moveTo(a[0], a[1]);
+    else if (c.command === "lineTo") path.lineTo(a[0], a[1]);
+    else if (c.command === "quadraticCurveTo") path.quadraticCurveTo(a[0], a[1], a[2], a[3]);
+    else if (c.command === "bezierCurveTo") path.curveTo(a[0], a[1], a[2], a[3], a[4], a[5]);
+    else if (c.command === "closePath") path.close();
+  }
+  const adv = g.advanceWidth;
+  const glyphs = [new opentype.Glyph({ name: ".notdef", unicode: 0, advanceWidth: adv, path })];
+  // Every unsupported code point maps to a copy of that same .notdef design.
+  codePoints.forEach((cp, i) => glyphs.push(new opentype.Glyph({ name: `nd${i}`, unicode: cp, advanceWidth: adv, path })));
+  const out = new opentype.Font({
+    familyName: "OTFNotdef",
+    styleName: "Regular",
+    unitsPerEm: upm,
+    ascender: fk.ascent ?? upm * 0.8,
+    descender: fk.descent ?? -upm * 0.2,
+    glyphs,
+  });
+  return out.toArrayBuffer();
+}
+
 function wrapLines(font: opentype.Font, text: string, fontSizePx: number, maxWidthPx: number): string[] {
   const paragraphs = text.split("\n");
   const result: string[] = [];
@@ -1634,7 +2072,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // rem — initial size per typeface: desktop uses previewSize, ≤768px uses
   // mobilePreviewSize. Chosen once on open; the Size slider owns it afterwards.
   const [size, setSize] = useState(() =>
-    window.matchMedia("(max-width: 768px)").matches
+    window.matchMedia(MOBILE_MQ).matches
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
@@ -1655,20 +2093,39 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const [axisValues, setAxisValues] = useState<Record<string, number>>({});
   // Mobile only: ONE active control shared by Preview and Glyphs. It only picks
   // which control is visible — values live in the states above and never reset.
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_MQ).matches);
+  // Glyphs controls follow the portrait-only mobile layout (landscape uses desktop Glyphs).
+  const [glyphMobile, setGlyphMobile] = useState(() => isPortraitMobile());
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
+    const mqs = [window.matchMedia(MOBILE_MQ), window.matchMedia(LANDSCAPE_MQ)];
+    const onChange = () => setGlyphMobile(isPortraitMobile());
+    mqs.forEach((mq) => mq.addEventListener("change", onChange));
+    return () => mqs.forEach((mq) => mq.removeEventListener("change", onChange));
+  }, []);
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_MQ);
     const onChange = () => setIsMobile(mq.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
+  // Phone landscape: Glyphs always uses the compact single-slider control.
+  const [isLandscape, setIsLandscape] = useState(() => window.matchMedia(LANDSCAPE_MQ).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(LANDSCAPE_MQ);
+    const onChange = () => setIsLandscape(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const compactGlyphControls = isMobile || isLandscape;
   const [activeControl, setActiveControl] = useState("size");
-  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | null>(null);
+  const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | "preset" | null>(null);
+  const [resolvedPresets, setResolvedPresets] = useState<{ name: string; values: Record<string, number> }[]>([]);
   // Mobile Glyphs has its own control picker (axes only — no Size/Space).
   const [glyphControl, setGlyphControl] = useState("wght");
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const aboutTextRef = useRef<HTMLParagraphElement | null>(null);
 
   // Track the preview box's rendered width so the overlay can wrap words to match.
   useEffect(() => {
@@ -1699,7 +2156,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     if (nativeAxes) {
       const init: Record<string, number> = {};
       for (const a of nativeAxes) init[a.tag] = a.default;
-      setAxisValues(init);
+      const presetDefs = VARIABLE_FONT_PRESETS[name] ?? [];
+      const staticPresets = presetDefs.every((p) => p.values) ? presetDefs.map((p) => ({ name: p.name, values: p.values! })) : [];
+      setResolvedPresets(staticPresets);
+      const staticRegular = staticPresets.find((p) => p.name === "Regular");
+      setAxisValues(staticRegular ? { ...init, ...staticRegular.values } : init);
       if (face?.file) {
         fetch(face.file)
           .then((res) => res.arrayBuffer())
@@ -1735,10 +2196,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           }
         })
         .catch(() => {
-          if (!cancelled) {
-            setFont(null);
-            setWeightAxis(null);
-          }
+          if (cancelled) return;
+          setFont(null);
+          setWeightAxis(null);
+          // Static faces served as WOFF2 can't be parsed by opentype.js; read their
+          // cmap coverage via fontkit so the Glyphs list (right column) still fills.
+          fetch(face.file!)
+            .then((res) => res.arrayBuffer())
+            .then((buffer) => {
+              if (cancelled) return;
+              const fk = (fontkit as any).create(new Uint8Array(buffer));
+              setCoverage(new Set<number>(fk?.characterSet ?? []));
+            })
+            .catch(() => {});
         });
     }
     return () => {
@@ -1753,13 +2223,92 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     const seed = name === "Last Call" ? "LASTCALL" : face?.casing === "upperInitial" ? shown.toUpperCase() : shown;
     let i = 0;
     setTop("");
+    setIntroDone(false);
     const id = setInterval(() => {
       i++;
       setTop(seed.slice(0, i));
-      if (i >= seed.length) clearInterval(id);
+      if (i >= seed.length) {
+        clearInterval(id);
+        setIntroDone(true);
+        // Desktop: hand the real caret to the Preview at the end of the text,
+        // once only and only if nothing else has focus. Touch devices skip this
+        // so the keyboard never opens on load (they get a visual caret instead).
+        const el = textareaRef.current;
+        const touch = window.matchMedia("(pointer: coarse)").matches;
+        if (el && !touch && (document.activeElement === document.body || !document.activeElement)) {
+          el.focus({ preventScroll: true });
+          el.setSelectionRange(el.value.length, el.value.length);
+        }
+      }
     }, 100);
     return () => clearInterval(id);
   }, [name]);
+
+  const [introDone, setIntroDone] = useState(false);
+  const [previewFocused, setPreviewFocused] = useState(false);
+  // One shared caret for every typeface: whenever the insertion point sits at the
+  // end of the text (or the field is unfocused after the intro), the native caret
+  // is hidden and this uniform blinking caret is drawn instead. Mid-text editing
+  // and selections keep the native caret.
+  const [caretAtEnd, setCaretAtEnd] = useState(true);
+  const [caretTick, setCaretTick] = useState(0);
+  const syncCaret = (el: HTMLTextAreaElement) => {
+    setCaretAtEnd(el.selectionStart === el.selectionEnd && el.selectionEnd === el.value.length);
+    setCaretTick((t) => t + 1);
+  };
+  const isTouch = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const showTouchCaret = previewFocused ? caretAtEnd : introDone && isTouch;
+
+  // Missing-glyph handling: unsupported code points in the Preview render as
+  // this font's own .notdef via a generated companion face (see buildNotdefFace).
+  const [fk, setFk] = useState<any>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setFk(null);
+    if (face?.file) loadFontkit(face.file).then((f) => { if (!cancelled) setFk(f); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [name]);
+  const missingKey = (() => {
+    if (!fk || !face) return "";
+    const src = face.casing === "upper" ? top.toUpperCase() : face.casing === "lower" ? top.toLowerCase() : top;
+    const set = new Set<number>();
+    for (const ch of src) {
+      const cp = ch.codePointAt(0)!;
+      if (!isLayoutChar(cp) && !fontkitSupports(fk, cp)) set.add(cp);
+    }
+    return [...set].sort((a, b) => a - b).join(",");
+  })();
+  const axisKey = nativeAxes
+    ? nativeAxes.map((a) => `${a.tag}:${axisValues[a.tag] ?? a.default}`).join(",")
+    : weightAxis ? `wght:${weightValue}` : "";
+  const [notdefFamily, setNotdefFamily] = useState<string | null>(null);
+  useEffect(() => {
+    if (!fk || !missingKey) { setNotdefFamily(null); return; }
+    let cancelled = false;
+    let added: FontFace | null = null;
+    const id = setTimeout(() => {
+      try {
+        const cps = missingKey.split(",").map(Number);
+        const axes: Record<string, number> = {};
+        axisKey.split(",").filter(Boolean).forEach((kv) => { const [k, v] = kv.split(":"); axes[k] = Number(v); });
+        const fam = `OTFNotdef${++notdefSeq}`;
+        const ff = new FontFace(fam, buildNotdefFace(fk, cps, axisKey ? axes : null));
+        ff.load().then((loaded) => {
+          if (cancelled) return;
+          document.fonts.add(loaded);
+          added = loaded;
+          setNotdefFamily(fam);
+        }).catch(() => {});
+      } catch {}
+    }, 0);
+    // Old generated faces are removed so nothing accumulates between edits.
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+      const prev = added;
+      if (prev) setTimeout(() => document.fonts.delete(prev), 500);
+    };
+  }, [fk, missingKey, axisKey]);
 
   if (!face) return null;
 
@@ -1806,14 +2355,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // Variable-font controls shared between the Preview panel and the Glyphs
   // panel so both interfaces read and write the exact same axis state. Null for
   // non-variable typefaces (Preview falls back to a "Regular" label).
-  const renderAxis = (axis: VFAxis) =>
+  const renderAxis = (axis: VFAxis, toggleFirst = false) =>
         axis.onOff ? (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+            {!toggleFirst && (<span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
               {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
               <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
               <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
-            </span>
+            </span>)}
             <button
               onClick={() =>
                 setAxisValues((prev) => ({
@@ -1825,7 +2374,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 width: 34,
                 height: 20,
                 borderRadius: 10,
-                border: "1.5px solid rgba(128,128,128,0.6)",
+                // Glyphs: shell outline uses the same colour as the dot.
+                border: toggleFirst ? `1.5px solid ${(axisValues[axis.tag] ?? axis.default) >= axis.max ? panelBg : panelText}` : "1.5px solid rgba(128,128,128,0.6)",
                 background: (axisValues[axis.tag] ?? axis.default) >= axis.max ? panelText : "transparent",
                 cursor: "pointer",
                 padding: 0,
@@ -1846,6 +2396,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 }}
               />
             </button>
+            {toggleFirst && (<span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText, display: "inline-grid", textAlign: "left" }}>
+              {/* Invisible "Regular" reserves a fixed width so toggling never shifts layout. */}
+              <span aria-hidden style={{ gridArea: "1 / 1", visibility: "hidden" }}>Regular</span>
+              <span style={{ gridArea: "1 / 1" }}>{(axisValues[axis.tag] ?? axis.default) >= axis.max ? "Italic" : "Regular"}</span>
+            </span>)}
           </div>
         ) : (
           <div key={axis.tag} style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -1858,6 +2413,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               value={axisValues[axis.tag] ?? axis.default}
               onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
               className="size-slider"
+              style={{ color: panelText }}
             />
           </div>
         );
@@ -1872,10 +2428,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         value={weightValue}
         onChange={(e) => setWeightValue(Number(e.target.value))}
         className="size-slider"
+        style={{ color: panelText }}
       />
     </div>
   ) : null;
-  const variableControls = isNative ? <>{nativeAxes!.map(renderAxis)}</> : weightControl;
+  const variableControls = isNative ? <>{nativeAxes!.map((a) => renderAxis(a))}</> : weightControl;
 
   const sizeControl = (
     <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -1912,22 +2469,29 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     setActiveKey: (k: string) => void = setActiveControl,
   ) => {
     const activeOption = options.find((o) => o.key === activeKey) ?? options[0];
-    return (
-    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
-      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+    const optionsButton = (
       <button
         type="button"
         aria-label="Choose control"
         aria-haspopup="menu"
         aria-expanded={controlMenu === where}
         onClick={() => setControlMenu((m) => (m === where ? null : where))}
-        style={{ flexShrink: 0, width: 30, height: 30, borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+        style={{ flexShrink: 0, width: 44, height: 44, margin: -7, border: "none", background: "transparent", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center", touchAction: "manipulation", position: "relative", zIndex: 1 }}
       >
-        {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
-        <span aria-hidden="true" style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        {/* 44px invisible hit area around the unchanged 30px visible circle. */}
+        <span aria-hidden="true" style={{ width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === where ? panelText : "transparent", color: controlMenu === where ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+          {/* Same "›" glyph as the slideshow arrows, turned to point down (up when open). */}
+          <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === where ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        </span>
       </button>
+    );
+    return (
+    <div className="tf-mobile-control" style={{ position: "relative", display: "flex", alignItems: "center", gap: 12, width: "100%", color: panelText }}>
+      {where === "glyphs" && optionsButton}
+      <div className="tf-mobile-control-active" style={{ flex: 1, minWidth: 0, display: "flex" }}>{activeOption.node}</div>
+      {where !== "glyphs" && optionsButton}
       {controlMenu === where && (
-        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", ...(where === "glyphs" ? { left: 0 } : { right: 0 }), zIndex: 5, minWidth: 128, background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
           {options.map((o) => (
             <button
               key={o.key}
@@ -1946,6 +2510,47 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     );
   };
 
+  // Glyphs preset dropdown — writes into axisValues; the label is derived by exact match.
+  const activePreset = resolvedPresets.find((p) => Object.entries(p.values).every(([t, v]) => axisValues[t] === v));
+  const presetControl = resolvedPresets.length > 0 ? (
+    <div style={{ position: "relative", flexShrink: 0, color: panelText }}>
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={controlMenu === "preset"}
+        onClick={() => setControlMenu((m) => (m === "preset" ? null : "preset"))}
+        style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 6, maxWidth: "100%", minHeight: isMobile ? 44 : undefined, margin: isMobile ? "-7px 0" : undefined, border: "none", background: "transparent", color: panelText, padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", whiteSpace: "nowrap", touchAction: "manipulation" }}
+      >
+        {isMobile ? (
+          /* Mobile: same circled arrow as the axis control below, sharing its left edge. */
+          <span aria-hidden="true" style={{ flexShrink: 0, width: 30, height: 30, boxSizing: "border-box", borderRadius: "50%", border: `1.5px solid ${panelText}`, background: controlMenu === "preset" ? panelText : "transparent", color: controlMenu === "preset" ? panelBg : panelText, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ display: "block", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+          </span>
+        ) : (
+          /* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */
+          <span aria-hidden="true" style={{ display: "inline-block", width: "1rem", textAlign: "center", fontSize: "1.1rem", lineHeight: 1, transform: `rotate(${controlMenu === "preset" ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+        )}
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{activePreset?.name ?? "Variable"}</span>
+      </button>
+      {controlMenu === "preset" && (
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, maxWidth: "70vw", maxHeight: 280, overflowY: "auto", background: panelBg, color: panelText, border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+          {resolvedPresets.map((p) => (
+            <button
+              key={p.name}
+              type="button"
+              role="menuitemradio"
+              aria-checked={p === activePreset}
+              onClick={() => { setAxisValues((prev) => ({ ...prev, ...p.values })); setControlMenu(null); }}
+              style={{ display: "block", width: "100%", padding: "0.5rem 0.65rem", border: "none", borderRadius: 5, background: p === activePreset ? panelText : "transparent", color: p === activePreset ? panelBg : panelText, fontFamily: "Arial, sans-serif", fontSize: "0.9rem", textAlign: "left", whiteSpace: "nowrap", cursor: "pointer" }}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  ) : null;
+
   // Static-typeface fallback label, shared by Preview and Glyphs so both show
   // "Regular" in the same control-area position.
   const regularLabel = (
@@ -1954,8 +2559,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     </div>
   );
 
+  // Insert the generated .notdef face directly after the typeface so unsupported
+  // characters never reach a system font.
+  const previewFamily = notdefFamily && missingKey ? face.font.replace(/^([^,]+)/, `$1, '${notdefFamily}'`) : face.font;
   const fieldBase: React.CSSProperties = {
-    fontFamily: face.font,
+    fontFamily: previewFamily,
     fontVariationSettings,
     letterSpacing: `${spacing}em`,
     background: panelBg,
@@ -1968,15 +2576,36 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     overflow: "hidden",
   };
 
-  const aboutText = `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
+  const designerEmail = DESIGNER_CONTACTS[face.designer]?.email;
+  const aboutText = name === "Ella"
+    ? "Originally developed for a speculative revival of Swedish electronics company RIFA as a contemporary tech conglomerate, this typeface draws on the visual language of modern technology brands. It is a variable font with seven weights, available both with and without serifs. It was later used as the primary typeface for a newspaper created during the Editorial Design course."
+    : name === "Cheiron"
+      ? "Cheiron Studios, a Stockholm-based music studio that played a defining role in late-1990s and early-2000s global pop production. A custom stencil-based typeface developed without enclosed counters, allowing it to be used as a physical stencil for fast, repeatable branding. The typeface references both studio production workflows and utilitarian marking systems."
+      : name === "BIP"
+        ? "BIP is based on the original logo of Botnia Internet Provider, a Swedish internet provider active between 1997 and 1999. BIP draws inspiration from Eurostile, Microgramma and the optimism of early internet culture."
+        : name === "Facit"
+          ? "FACIT AB was a typemachine and countingmachine manufacturer located in Åtvidaberg, Sweden. FACIT by is inspired, redrawn and digitalized from existing logos and typefaces on the products. This typeface works perfect for bold, big and attention seeking sentences, with its low height and heavy weight."
+          : name === "Last Call"
+            ? "LASTCALL was developed for Aerotransport Snowflake, a speculative airline merging two moments in Swedish aviation history: ABA Aerotransport and SAS Snowflake. Inspired by airport departure boards, the variable typeface shifts between different forms and widths, bridging early aviation optimism with the visual language of early 2000s budget air travel."
+          : name === "Brus"
+            ? "Brus was developed for Fram, a Swedish bicycle and motorcycle manufacturer founded in Uppsala in 1897. Inspired by the visual culture of competitive racing, the variable typeface moves through a wide range of weights and slants, from narrow and lightweight to heavy and expressive forms."
+          : name === "Svek"
+            ? "SVEK, a Swedish record label rooted in house and electronic music culture, active during the 1990s to early 2000s. The typeface extends the letters of the original logo into uppercase letters and selected glyphs, reactivating SVEK’s visual legacy while maintaining a connection to its historical context."
+          : name === "Mormor"
+            ? "Mormor is a typeface inspired by the silly advertising used by the discontinued Swedish boutique Bæckmans. A chain that sold high-end women's clothing, yet marketed itself through quirky graphics and tongue-in-cheek charm. Mormor balances sharpness and precision with approachability and bliss."
+          : name === "Sonja"
+            ? "Sonja caramel and chocolate factory; a part of the Swedish home since 1921. A condensed, art deco-like typeface, inspired by the industrial elements of a 1930s factory building and the legacy of artisanal candy production."
+          : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
+      <DesignSizePanel />
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
           {/* Size slider + colour dots, side by side and centred at the top. */}
+          <SizeBadge label="Preview" target={textareaRef} style={{ left: 8, bottom: 8 }} />
           <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
             {isMobile && mobileControlRow("preview")}
             {/* Size */}
@@ -1991,6 +2620,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
+              {/* TEMPORARY: live Size readout for choosing BIP's preview size. */}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -2044,6 +2674,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
                 rows={1}
+                onFocus={(e) => { setPreviewFocused(true); syncCaret(e.currentTarget); }}
+                onBlur={() => setPreviewFocused(false)}
+                onSelect={(e) => syncCaret(e.currentTarget)}
                 style={{
                   ...fieldBase,
                   display: "block",
@@ -2056,7 +2689,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   // drawn transparent and the visible text comes from the unclipped
                   // mirror below. The caret and selection stay native.
                   color: "transparent",
-                  caretColor: panelText,
+                  caretColor: previewFocused && caretAtEnd ? "transparent" : panelText,
                 }}
               />
               {/* Visible preview text — native browser rendering through the real
@@ -2081,6 +2714,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 }}
               >
                 {previewText.endsWith("\n") ? previewText + "\u200b" : previewText}
+                {/* Touch only, while unfocused: stand-in for the native caret (which
+                    would require opening the keyboard). Hidden once the field is focused. */}
+                {showTouchCaret && <span key={caretTick} className="tf-touch-caret" />}
               </div>
             </div>
           </div>
@@ -2106,17 +2742,19 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
+            <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
               {applyCase(aboutText)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {/* Listed bottom-up: the container is column-reverse, so this
                   renders First sketched → Format from top to bottom. */}
               {[
+                ...(designerEmail ? [["Contact:", designerEmail]] : []),
                 ["EULA:", ""],
-                ["Format:", "ttf, otf, woff"],
-                ["Range:", name === "Ella"
-                  ? "Thin Serif, Thin, ExtraLight, ExtraLight Serif, Light Serif, Light, Light Serif Italic, Regular Serif, Regular, Regular Italic, Medium Serif, Medium, Medium Serif Italic, Medium Italic, SemiBold, SemiBold Serif, Bold Serif, Bold, Bold Serif Italic"
+                ["Format:", "OTF, TTF, WOFF2"],
+                // Preset fonts: Range is derived from the Glyphs presets (single source of truth).
+                ["Range:", VARIABLE_FONT_PRESETS[name]
+                  ? VARIABLE_FONT_PRESETS[name].map((p) => p.name).join(", ")
                   : name === "Svek"
                     ? "Regular, Italic"
                     : variableControls
@@ -2124,13 +2762,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                       : "Regular"],
                 ["Version:", "1.0"],
                 ["Last update:", "October 2026"],
-                ["Released:", "October 2026"],
                 ["First sketched:", "October 2025"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
                   <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
-                  {label === "EULA:" ? (
-                    <a href="/faq" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
+                  {label === "Contact:" ? (
+                    <a href={`mailto:${value}`} style={{ flex: 1, minWidth: 0, color: "inherit", textDecoration: "underline", overflowWrap: "anywhere" }}>{value}</a>
+                  ) : label === "EULA:" ? (
+                    <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
                   ) : (
                     <span style={{ flex: 1 }}>{value}</span>
                   )}
@@ -2149,16 +2788,23 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             Extra top margin so the gap above the panel matches the preview→columns
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
-          <GlyphSection font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={isMobile ? (
+          <GlyphSection fk={fk} font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
+            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{compactGlyphControls ? (
+              glyphOptions.length > 1
+                ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
+                : glyphOptions.length === 1
+                ? <div className="tf-mobile-control-active" style={{ flex: 1, width: "100%", minWidth: 0, display: "flex" }}>{glyphOptions[0].node}</div>
+                : regularLabel
+            ) : variableControls}</div></div> : compactGlyphControls ? (
               glyphToggleAxes.length > 0
-                ? <>{glyphToggleAxes.map(renderAxis)}</>
+                ? <>{glyphToggleAxes.map((a) => renderAxis(a, true))}</>
                 : glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
                 ? glyphOptions[0].node
                 : regularLabel
-            ) : variableControls ?? regularLabel}
+            ) : (nativeAxes?.some((a) => a.onOff) ? <>{nativeAxes.map((a) => renderAxis(a, true))}</> : variableControls ?? regularLabel)}
+            glyphListSize={name === "Svek" ? `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem` : undefined}
             mobileGlyphSize={`${GLYPH_SHOWCASE_MOBILE}rem`}
             desktopGlyphSize={`${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
           />
@@ -2231,7 +2877,7 @@ function MarqueeBand({ direction = "forward", onNavigate, interactive = true }: 
     <button
       onClick={() => {
         if (!interactive) return;
-        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/bundle");
+        onNavigate ? onNavigate({ id: "bundle" }) : window.location.assign("/megabundle");
       }}
       tabIndex={interactive ? 0 : -1}
       aria-hidden={interactive ? undefined : true}
@@ -2253,11 +2899,11 @@ function BundlePage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Pag
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column" }}>
       <NavBar onNavigate={onNavigate} onBundlePage showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
+      <div className="bundle-body" style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "2rem", paddingBottom: "5rem" }}>
         <GumroadInlineCheckout url={BUNDLE_URL} productId={BUNDLE_PRODUCT_ID} minHeight={2600} />
         <SiteFooter />
       </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+      <div className="tf-buy-marquee" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
         <MarqueeBand direction="reverse" onNavigate={onNavigate} />
       </div>
     </div>
@@ -2292,36 +2938,60 @@ function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
 
 const FAQ_ITEMS = [
   {
-    q: "About the fonts",
-    a: "These typefaces were designed by students at Beckmans College of Design, class VK27. They are real, original fonts — but some are still in development. Think of them as trials, demos, and experiments made with care and shared with joy!",
+    q: "Price",
+    a: "Each typeface costs 72 SEK (approximately $8 USD). Or make a designer’s day and pay a little extra if you think it’s worth it. The price you choose does not change the license or what you are allowed to do with the font.",
   },
   {
-    q: "What does the desktop license cover?",
-    a: "The desktop license covers the use of the font for creating graphics, printed materials, videos and animations, wordmarks, logos, and social media content.",
+    q: "Discount code",
+    a: "If you received a discount code with an OTF License keychain, enter the code at checkout. Each code can only be used once and applies to individual typefaces only, not the Mega Bundle Pack. The same license terms apply as with any other purchase.",
   },
   {
-    q: "What does it not cover?",
-    a: "The standard license does not cover:\n\n— use in broadcasting (TV, cinema, video-on-demand, or subscription streaming services)\n— use on streaming or social media platforms with over 100,000 followers or subscribers\n— use in applications or games\n— use of the font as a logo or wordmark for an organisation with more than 50 employees\n— embedding the font in hardware or software\n— any use related to NFTs or cryptocurrencies\n— use in a political or religious context without our written consent\n\nFor any of the above, please get in touch at otflicense@gmail.com. The fonts can never be used to promote violence or discrimination.",
+    q: "The License",
+    a: "All fonts on OTF License share the same license. The Mega Bundle Pack does not have any special terms, it simply gives you multiple fonts for a lower price.\n\nThe license covers one person or a small team of up to 5 people. It covers personal and commercial use, including identities, logos, print, books, magazines, packaging, merchandise, social media, advertising, websites, film and video.\n\nYour purchase includes OTF, TTF and WOFF2 files, all covered by the same license, with no separate desktop or web license.",
   },
   {
-    q: "Can I modify the fonts?",
-    a: "You may convert letterforms to outlines in design software. Modifying the font file itself is not permitted. If you would like a specific modification, get in touch — we are happy to help.",
+    q: "Outside the License",
+    a: "If your team has more than 5 people, or the font will be used enterprise-wide or for other large-scale commercial use, contact the designer directly. Uses outside the license can be agreed on a case-by-case basis with the designer, including the scope, terms and price.",
   },
   {
-    q: "How do I buy a font?",
-    a: "Head to our Gumroad shop at otflicense.gumroad.com. Choose a font, complete the purchase, and you will receive the font file by email from Gumroad. Files are available in OTF and TTF format.",
+    q: "Client work",
+    a: "You can use a font while designing something for a client. If the client chooses to use the font for their identity, website, communications, products or similar, they need to buy their own license.",
   },
   {
-    q: "Will I receive updates?",
-    a: "Yes. If a designer updates their font, Gumroad will send you the new file automatically. You only pay once!",
+    q: "App, game & software",
+    a: "If you want to use any of the fonts in an app, game, software product, design generator or anything else where the actual font software is embedded or distributed as part of the product, please contact the designer first.",
   },
   {
-    q: "What is the refund policy?",
-    a: "All sales are final. We do not offer refunds on digital goods.",
+    q: "Modification",
+    a: "Turning text into outlines and stretching, cutting or modifying it as part of a design or logo is fine. Opening the actual font file in Glyphs or another font editor, changing glyphs, kerning, weights, names or other font data and exporting your own version is not.",
   },
   {
-    q: "I bought a font token at an event — how do I redeem it?",
-    a: "We sell physical font tokens at festivals and events. Each token comes with a unique redemption code. To download your font, go to the product page on our Gumroad shop, enter your code in the discount code field at checkout, and the price drops to zero. The font file will then be sent to your email.",
+    q: "Sharing",
+    a: "No reselling, giving away, uploading or sending the font files to friends. A developer, printer or other production partner can temporarily receive the files when needed to complete your project, but they do not get their own license and should delete the files afterwards.",
+  },
+  {
+    q: "Finished fonts",
+    a: "Not all fonts are necessarily finished. What you see on each typeface page is what currently exists. Some fonts may continue to grow and some may stay exactly as they are.",
+  },
+  {
+    q: "Updates",
+    a: "Updates are free for anyone who has already licensed the font. Updates are released at the individual designer’s discretion and do not mean that a typeface will continue to be developed indefinitely.",
+  },
+  {
+    q: "License expiration",
+    a: "The license does not expire.",
+  },
+  {
+    q: "Restricted use",
+    a: "Uses involving areas such as political campaigns and organisations, religious organisations, weapons or military, gambling and tobacco or nicotine require approval from the designer.\n\nThe fonts cannot be used primarily to promote hatred, violence or discrimination.\n\nThe fonts and their underlying data cannot be used to train or develop AI or machine-learning systems without prior permission from the designer.",
+  },
+  {
+    q: "EULA",
+    a: "For the complete terms, read the full End User License Agreement (EULA).",
+  },
+  {
+    q: "Contact",
+    a: "Still have a question? Feel free to contact the designer of the typeface directly. You can find their email on the relevant typeface page.",
   },
 ];
 
@@ -2343,19 +3013,20 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
   return (
     <div
       className="faq-item"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") setHover(true); }}
+      onPointerLeave={(e) => { if (e.pointerType === "mouse") setHover(false); }}
       style={{ marginBottom: "1.4rem", padding: "1.1rem 1.25rem", marginLeft: "-1.25rem", marginRight: "-1.25rem", background: active ? color : "transparent", color: fg, WebkitMask: active ? NOTCH_MASK : undefined, mask: active ? NOTCH_MASK : undefined }}
     >
       <button
         type="button"
+        className="faq-header"
         aria-expanded={open}
         onClick={toggle}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", textAlign: "left" }}
       >
-        <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", textDecoration: "underline", textUnderlineOffset: "5px", textDecorationThickness: "2px" }}>{q}</span>
+        <span style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold" }}>{q}</span>
         {/* Same "›" glyph as the slideshow/options arrows: down when closed, up when open. */}
-        <span aria-hidden="true" style={{ flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", fontSize: "1.6rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
+        <span aria-hidden="true" className="faq-arrow" style={{ display: "inline-block", flexShrink: 0, width: "1.6rem", textAlign: "center", marginLeft: "auto", marginRight: "-0.4rem" /* ink edge sits 1.25rem in, mirroring the text */, fontSize: "1.6rem", lineHeight: 1, pointerEvents: "none", transform: `rotate(${open ? -90 : 90}deg)`, WebkitTransform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.3s ease" }}>›</span>
       </button>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
         <div style={{ overflow: "hidden" }}>
@@ -2372,25 +3043,31 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
 
 function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const faqSections = [
-    ...FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />),
-    // Contact block
-    <FaqItem key="contact" q="Contact" color={PALETTE[FAQ_ITEMS.length % PALETTE.length]}>
-      <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
-        For licensing questions, large organisation inquiries, or anything else:{" "}
-        <a href="mailto:otflicense@gmail.com" style={{ color: "inherit" }}>otflicense@gmail.com</a>
-      </p>
-    </FaqItem>,
+    ...FAQ_ITEMS.map(({ q, a }, i) => (
+      <FaqItem key={i} q={q} color={PALETTE[i % PALETTE.length]}>
+        {a.split("\n\n").map((para, j) => (
+          <p key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+            {para}
+          </p>
+        ))}
+        {q === "EULA" && (
+          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+            <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ color: "inherit", fontWeight: "bold", textDecoration: "underline" }}>Read the full EULA</a>
+          </p>
+        )}
+      </FaqItem>
+    )),
   ].map((node, i) => ({ i, node }));
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
-      <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "5.5rem", paddingBottom: "1rem" }}>
-        {/* Two independent stacks (even items left, odd right) so an open section
+      <div className="faq-grid flex-1 px-10" style={{ display: "flex", alignItems: "flex-start", gap: "4rem", width: "100%", boxSizing: "border-box", paddingTop: "2.5rem", paddingBottom: "1rem" }}>
+        {/* Two independent stacks (first half left, rest right, read top-down) so an open section
             only pushes down its own column. On mobile the stacks dissolve and
             `order` restores the original sequence. */}
         {[0, 1].map((col) => (
           <div key={col} className="faq-stack" style={{ flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column" }}>
-            {faqSections.filter((_, i) => i % 2 === col).map(({ i, node }) => (
+            {faqSections.filter((_, i) => (i < Math.ceil(faqSections.length / 2) ? 0 : 1) === col).map(({ i, node }) => (
               <div key={i} style={{ order: i }}>{node}</div>
             ))}
           </div>
@@ -2401,10 +3078,175 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
   );
 }
 
+// Full End User License Agreement (/eula). Plain document page — no accordions.
+// Body lines: "- " → list item (consecutive items grouped), "## " → subheading, else paragraph.
+const EULA_SECTIONS: { heading: string; body: string[] }[] = [
+  {
+    heading: "1. GENERAL",
+    body: [
+      "This End User License Agreement (“Agreement”) governs your use of the typefaces and font software (“Fonts”) distributed by OTF License.",
+      "By purchasing, downloading, installing or using the Fonts, you agree to the terms of this Agreement.",
+      "Upon receipt of full payment, OTF License grants you a limited, non-exclusive, non-transferable license to use the Fonts in accordance with this Agreement.",
+      "Purchasing a Font gives you the right to use it. It does not transfer ownership of the Font, its design or its underlying software to you. The intellectual property rights to each typeface remain with its respective designer and/or rights holder.",
+      "This Agreement applies equally to Fonts purchased individually, purchased as part of the Mega Bundle Pack, or obtained through a valid discount code. The price paid or method of purchase does not grant any additional licensing rights.",
+      "If you are unsure whether your intended use is covered by this Agreement, please contact the respective typeface designer before using the Font. Contact details are available on each typeface page.",
+    ],
+  },
+  {
+    heading: "2. THE LICENSE",
+    body: [
+      "Unless otherwise agreed in writing, each Font is licensed under the terms of this Agreement.",
+      "The License permits use by one individual or a small team of up to five (5) users within the same organisation.",
+      "The License permits both personal and commercial use, including but not limited to:",
+      "- graphic design and visual identities",
+      "- logotypes and branding",
+      "- books, magazines and editorial design",
+      "- posters and printed matter",
+      "- packaging",
+      "- merchandise",
+      "- presentations",
+      "- social media",
+      "- advertising",
+      "- film, video and motion graphics",
+      "- websites",
+      "- other comparable static or visual design applications",
+      "The Fonts may be used worldwide and across an unlimited number of projects by the License Owner, subject to the terms and restrictions of this Agreement.",
+      "The License does not cover organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use. Such use requires a separate agreement with the respective typeface designer.",
+    ],
+  },
+  {
+    heading: "3. CLIENT WORK AND THIRD PARTIES",
+    body: [
+      "Designers, studios and agencies may use the Fonts while creating work for a client.",
+      "If a Font is selected for and used by a client in its own identity, communications, website, products or other ongoing activities, the client must purchase its own license.",
+      "A designer’s or agency’s license does not transfer to the client.",
+      "A License Owner may temporarily provide the necessary Font files to a printer, developer, production partner or other subcontractor working directly on its behalf, solely for the licensed project.",
+      "The third party may not use the Fonts for any other client, organisation or purpose and must delete all copies of the Font files when its work for the License Owner is complete.",
+    ],
+  },
+  {
+    heading: "4. FONT FILES, WEB USE AND MODIFICATION",
+    body: [
+      "Fonts are supplied in OTF, TTF and WOFF2 formats. All supplied formats are covered by the same License. There is no separate desktop or web license.",
+      "Only the Font files supplied by OTF License may be used. You may not convert the Fonts into other font formats without prior written permission from the respective typeface designer.",
+      "You may not modify, adapt, rename, reverse engineer, decompile, disassemble, reformat, alter or otherwise edit the Font software.",
+      "This includes, but is not limited to:",
+      "- adding, removing or modifying glyphs",
+      "- changing spacing or kerning",
+      "- creating additional weights or styles",
+      "- modifying variable-font data",
+      "- opening and modifying the Fonts in font-editing software",
+      "- creating and distributing a modified or derivative Font",
+      "You may convert text to outlines in graphic design software and modify those outlines as part of an artwork, logotype, illustration or other design. Such modifications do not create a new Font license or give you ownership of the original typeface design.",
+      "Use involving the embedding or distribution of the Font software in an application, game, software product, editable template, design generator, digital product, hardware or similar system requires prior written permission from the respective typeface designer and may require a separate licensing agreement.",
+    ],
+  },
+  {
+    heading: "5. REDISTRIBUTION AND RESTRICTIONS",
+    body: [
+      "You may not sell, resell, sublicense, rent, lend, gift, share, publicly upload or otherwise distribute the Font files to any unlicensed third party, except for the limited third-party use permitted under Article 3.",
+      "You may not claim the Font, Font software or original typeface design as your own.",
+      "You must take reasonable precautions to prevent unauthorised access to the Font files.",
+      "## AI and Machine Learning",
+      "The Fonts, Font files, typeface designs and their underlying data may not be used to train, fine-tune, develop or improve artificial intelligence or machine-learning systems, models or datasets without prior written permission from the respective typeface designer.",
+      "## Hateful or Discriminatory Use",
+      "The Fonts may not be used in material whose primary purpose is to promote hatred, violence or discrimination against a person or group based on characteristics such as race, ethnicity, nationality, religion, gender, gender identity, sexual orientation or disability.",
+      "## Sensitive Uses Requiring Prior Approval",
+      "Use of the Fonts in connection with political parties, political candidates, political campaigns, lobbying organisations or other explicitly political organisations requires prior written approval from the respective typeface designer.",
+      "Use in connection with religious organisations, military or weapons-related organisations, gambling, tobacco or nicotine products, or other comparably sensitive industries also requires prior written approval from the respective typeface designer.",
+      "Requests will be considered on a case-by-case basis. Permission is not guaranteed.",
+      "If you are unsure whether your intended use falls within this section, contact the respective typeface designer before use.",
+    ],
+  },
+  {
+    heading: "6. WORK IN PROGRESS AND UPDATES",
+    body: [
+      "OTF License distributes typefaces at different stages of development. Some Fonts are finished products, while others are works in progress.",
+      "The current state and available styles, weights and glyphs of each Font are presented on its respective typeface page at the time of purchase.",
+      "Fonts are licensed in their current state. A Font being described as a work in progress does not constitute a promise that additional glyphs, styles, weights, features or other improvements will be released.",
+      "If an updated version of a Font is released, existing license holders of that Font are entitled to the updated version at no additional license fee. The release of an update does not imply automatic notification or delivery.",
+      "The designer may discontinue development of a Font at any time. Discontinuation of development does not terminate an existing valid license.",
+      "Updates remain subject to this Agreement or, where clearly stated at the time an update is provided, an applicable updated version of the Agreement, subject always to applicable law.",
+    ],
+  },
+  {
+    heading: "7. USE OUTSIDE THE LICENSE",
+    body: [
+      "Organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use fall outside the scope of the License and require a separate agreement with the respective typeface designer.",
+      "A separate agreement may also be required for uses involving embedding or distribution of the Font software in applications, games, software products, digital products, hardware or similar systems.",
+      "The scope, price and conditions of such use are determined on a case-by-case basis with the respective typeface designer.",
+      "If you are unsure whether your organisation or intended use falls outside the License, contact the respective typeface designer before use.",
+    ],
+  },
+  {
+    heading: "8. TERM AND TERMINATION",
+    body: [
+      "A valid license does not expire solely because time has passed.",
+      "You may continue using the licensed Font in accordance with this Agreement for as long as you comply with its terms.",
+      "If you materially breach this Agreement, OTF License may terminate the License to the extent permitted by applicable law. Upon termination, you must cease using the Font and delete all copies of the Font files in your possession or control.",
+      "Termination does not limit any rights or remedies available under applicable law.",
+    ],
+  },
+  {
+    heading: "9. WARRANTY AND LIABILITY",
+    body: [
+      "Some Fonts distributed by OTF License are works in progress and may contain imperfections, incomplete character sets or other limitations. OTF License aims to communicate the current state of each Font on its respective typeface page.",
+      "If you encounter a technical problem with a Font, please contact the respective typeface designer. Contact details are available on each typeface page. Where required by applicable law, defects will be remedied in accordance with your statutory rights.",
+      "Except for rights and warranties that cannot legally be excluded or limited, the Fonts are provided in their current state without additional warranties regarding suitability for a particular project or purpose.",
+      "To the maximum extent permitted by applicable law, OTF License and the respective typeface designer shall not be liable for indirect or consequential losses resulting from the use or inability to use the Fonts.",
+      "Nothing in this Agreement limits any mandatory rights you may have under applicable consumer law.",
+    ],
+  },
+  {
+    heading: "10. LEGAL",
+    body: [
+      "This Agreement constitutes the license terms governing your use of the Fonts, together with any additional written terms expressly agreed between you and OTF License or the respective typeface designer, as applicable.",
+      "If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions will remain in effect to the extent permitted by law.",
+      "A failure by OTF License to enforce a provision of this Agreement on one occasion does not waive its right to enforce that provision in the future.",
+      "You may not transfer or assign your License to another person or organisation without prior written permission from OTF License.",
+      "This Agreement is governed by Swedish law, without limiting any mandatory consumer protections or other rights that apply under applicable law.",
+      "By purchasing, downloading, installing or using the Fonts, you acknowledge that you have read and agreed to this Agreement.",
+    ],
+  },
+];
+const EULA_CLOSING = "Questions about licensing, uses outside the License or unusual uses should be directed to the respective typeface designer. Contact details are available on each typeface page.";
+
+function EulaPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
+  const text: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0", overflowWrap: "break-word" };
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <article className="eula-doc flex-1 px-10" style={{ width: "100%", maxWidth: "46rem", boxSizing: "border-box", paddingTop: "2.5rem", paddingBottom: "4rem", color: "#000" }}>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", fontWeight: "bold", letterSpacing: "0.04em", margin: 0 }}>OTF LICENSE</p>
+        <h1 style={{ fontFamily: "Arial, sans-serif", fontSize: "2rem", fontWeight: "bold", lineHeight: 1.15, margin: "0.4rem 0 0" }}>End User License Agreement (EULA)</h1>
+        <p style={{ ...text, fontSize: "0.9rem", opacity: 0.7, margin: "0.5rem 0 0" }}>Version 1.0</p>
+        {EULA_SECTIONS.map((sec) => (
+          <section key={sec.heading} style={{ marginTop: "2.25rem" }}>
+            <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", lineHeight: 1.2, margin: 0 }}>{sec.heading}</h2>
+            {sec.body.reduce<React.ReactNode[]>((out, line, j, all) => {
+              if (line.startsWith("- ")) {
+                if (all[j - 1]?.startsWith("- ")) return out;
+                const items: string[] = [];
+                for (let k = j; k < all.length && all[k].startsWith("- "); k++) items.push(all[k].slice(2));
+                out.push(<ul key={j} style={{ ...text, paddingLeft: "1.25rem", listStyle: "disc" }}>{items.map((it) => <li key={it}>{it}</li>)}</ul>);
+              } else if (line.startsWith("## ")) {
+                out.push(<h3 key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", fontWeight: "bold", lineHeight: 1.3, margin: "1.5rem 0 0" }}>{line.slice(3)}</h3>);
+              } else out.push(<p key={j} style={text}>{line}</p>);
+              return out;
+            }, [])}
+          </section>
+        ))}
+        <p style={{ ...text, marginTop: "2.5rem" }}>{EULA_CLOSING}</p>
+      </article>
+      <SiteFooter />
+    </div>
+  );
+}
+
 // ——— Eyes easter egg ———
 // Phase 0: eyes shown in navbar
 // Phase 1–3: eyes floating at a random screen position (hop 1, 2, 3)
-// Phase 4: modal shown
+// Hovering phase 3 completes the sequence and opens the Mega Bundle page.
 function getRandomEyesPos() {
   const margin = 80;
   return {
@@ -2440,70 +3282,6 @@ function FloatingEyes({ pos, onHover, filter }: { pos: { x: number; y: number };
   );
 }
 
-function EasterEggModal({ onClose, onNavigate }: { onClose: () => void; onNavigate?: (p: Page) => void }) {
-  const [entered, setEntered] = useState(false);
-  const [colorIdx, setColorIdx] = useState(0);
-
-  useEffect(() => {
-    requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setColorIdx((prev) => (prev + 1) % PALETTE.length);
-    }, 1200);
-    return () => clearInterval(id);
-  }, []);
-
-  const modalBg = PALETTE[colorIdx];
-  const modalText = LIGHT_BAND_COLORS.has(modalBg) ? "#000" : "#fff";
-
-  return (
-    <div
-      style={{
-        position: "fixed", inset: 0, zIndex: 9000,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: "rgba(0,0,0,0.35)",
-        opacity: entered ? 1 : 0,
-        transition: "opacity 0.4s ease",
-      }}
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          onClose();
-          if (onNavigate) onNavigate({ id: "bundle" });
-          else window.location.assign("/bundle");
-        }}
-        style={{
-          width: "min(80vw, 420px)",
-          aspectRatio: "1",
-          boxSizing: "border-box",
-          background: modalBg,
-          border: "none",
-          padding: "3rem",
-          textAlign: "center",
-          cursor: "pointer",
-          transform: entered ? "translateY(0)" : "translateY(24px)",
-          transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <p style={{ fontFamily: "Arial, sans-serif", fontWeight: "bold", fontSize: "2rem", color: modalText, margin: "0 0 0.75rem", transition: "color 0.3s ease" }}>
-          Good job!
-        </p>
-        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.1rem", color: modalText, margin: 0, transition: "color 0.3s ease" }}>
-          Click to redeem your offer.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [page, setPage] = useState<Page>(() => {
     const initialPage = pageFromPath(window.location.pathname);
@@ -2529,7 +3307,7 @@ export default function App() {
       setEyesPhase((p) => p + 1);
       setEyesPos(getRandomEyesPos());
     } else {
-      setEyesPhase(4);
+      navigate({ id: "bundle" });
     }
   }
 
@@ -2584,7 +3362,7 @@ export default function App() {
   }
 
   function completeIntro() {
-    window.history.replaceState(null, "", "/shop");
+    window.history.replaceState(null, "", "/");
     setShowIntro(false);
     // Keep the entrance class until the synchronized nav reveal has finished.
     window.setTimeout(() => setLandingEntrance(false), 860);
@@ -2599,18 +3377,85 @@ export default function App() {
 
     const handlePopState = () => {
       const nextPage = pageFromPath(window.location.pathname);
-      if (nextPage.id === "home") {
-        setPage({ id: "foundry" });
-        setLandingEntrance(true);
-        setShowIntro(true);
-      } else {
-        transitionTo(nextPage);
-      }
+      // "/" is both intro and sticker page; history moves go straight to stickers.
+      transitionTo(nextPage.id === "home" ? { id: "foundry" } : nextPage);
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  // Document title + description/Open Graph metadata per page.
+  useEffect(() => {
+    const homeDesc = "OTF License is an independent type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
+    let title = "OTF License — Independent Type Foundry";
+    let desc = homeDesc;
+    if (page.id === "about") title = "About — OTF License";
+    else if (page.id === "contact") title = "Licensing — OTF License";
+    else if (page.id === "eula") title = "EULA — OTF License";
+    else if (page.id === "bundle") title = "Mega Bundle — OTF License";
+    else if (page.id === "typeface") {
+      const face = typefaces.find((t) => t.name === page.name) as { name: string; displayName?: string; klass: string; designer: string } | undefined;
+      const label = face?.displayName?.includes(" ") ? face.displayName : page.name;
+      title = `${label} — OTF License`;
+      if (face) desc = `${label} is a ${face.klass} typeface designed by ${face.designer} at OTF License.`;
+    }
+    document.title = title;
+    const setMeta = (attr: "name" | "property", key: string, value: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.content = value;
+    };
+    setMeta("name", "description", desc);
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", desc);
+    setMeta("property", "og:site_name", "OTF License");
+  }, [page]);
+
+  // Desktop sticker composition: measure the real (rotated + scaled) artwork
+  // bounds and uniformly fit/centre the whole field inside the stage with white
+  // margins, so nothing is clipped by the viewport, nav or marquee.
+  const shopStageRef = useRef<HTMLDivElement | null>(null);
+  const shopGridRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const stage = shopStageRef.current;
+    const grid = shopGridRef.current;
+    if (!stage || !grid) return;
+    const fit = () => {
+      grid.style.transform = "";
+      grid.style.transformOrigin = "";
+      if (window.matchMedia(MOBILE_MQ).matches) return;
+      // Computed from layout boxes + known rotation/scale (not getBoundingClientRect),
+      // so the intro pop-in animation can't skew the measurement. Stage coordinates.
+      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+      grid.querySelectorAll<HTMLElement>(".cell").forEach((cell) => {
+        const inner = cell.querySelector<HTMLElement>(".cell-inner");
+        if (!inner || !inner.offsetWidth || !inner.offsetHeight) return;
+        const sc = Number(cell.dataset.s) || 1;
+        const rad = ((Number(cell.dataset.rot) || 0) * Math.PI) / 180;
+        const w = inner.offsetWidth * sc, h = inner.offsetHeight * sc;
+        const bw = w * Math.abs(Math.cos(rad)) + h * Math.abs(Math.sin(rad));
+        const bh = w * Math.abs(Math.sin(rad)) + h * Math.abs(Math.cos(rad));
+        const cx = cell.offsetLeft + (Number(cell.dataset.nx) || 0) + inner.offsetLeft + inner.offsetWidth / 2;
+        const cy = cell.offsetTop + (Number(cell.dataset.ny) || 0) + inner.offsetTop + inner.offsetHeight / 2;
+        l = Math.min(l, cx - bw / 2); r = Math.max(r, cx + bw / 2);
+        t = Math.min(t, cy - bh / 2); b = Math.max(b, cy + bh / 2);
+      });
+      if (!isFinite(l)) return;
+      const sw = stage.clientWidth, sh = stage.clientHeight;
+      const marginX = Math.max(40, sw * 0.04);
+      const marginY = 28;
+      const k = Math.min(1, (sw - marginX * 2) / (r - l), (sh - marginY * 2) / (b - t));
+      const cx = (l + r) / 2, cy = (t + b) / 2;
+      grid.style.transformOrigin = `${cx - grid.offsetLeft}px ${cy - grid.offsetTop}px`;
+      grid.style.transform = `translate(${sw / 2 - cx}px, ${sh / 2 - cy}px) scale(${k})`;
+    };
+    fit();
+    const imgs = Array.from(grid.querySelectorAll("img"));
+    imgs.forEach((img) => img.addEventListener("load", fit));
+    window.addEventListener("resize", fit);
+    return () => { imgs.forEach((img) => img.removeEventListener("load", fit)); window.removeEventListener("resize", fit); };
+  }, [page.id]);
 
   const cols = 4;
   const colGap = 48;
@@ -2641,16 +3486,17 @@ export default function App() {
   let content: React.ReactNode;
   if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "eula")     content = <EulaPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
-    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ overflowX: "clip", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
         <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
-      <div className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
-        <div className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
+      <div ref={shopStageRef} className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
+        <div ref={shopGridRef} className="shop-grid" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", rowGap }}>
           <div className="shop-row" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", columnGap: colGap }}>
             {shopTypefaces.slice(0, 6).map((face, i) => (
               <Cell key={face.name} face={face} width={cellWidth} onNavigate={navigate} nudgeX={SHOP_STICKER_LAYOUT[face.name].x} nudgeY={SHOP_STICKER_LAYOUT[face.name].y} rotation={SHOP_STICKER_LAYOUT[face.name].rotation} index={shopTypefaces.indexOf(face)} />
@@ -2684,14 +3530,9 @@ export default function App() {
         <FloatingEyes key={eyesPhase} pos={eyesPos} onHover={handleEyesHover} />
       )}
 
-      {/* Eyes easter egg — reward modal (phase 4), foundry page only */}
-      {page.id === "foundry" && eyesPhase === 4 && (
-        <EasterEggModal onClose={() => setEyesPhase(0)} onNavigate={navigate} />
-      )}
-
       {/* Global fixed marquee — visible on every page, sits above content */}
       {page.id !== "home" && page.id !== "foundry" && page.id !== "bundle" && (
-        <div ref={fixedMarqueeRef} className={page.id === "typeface" ? "tf-buy-marquee" : undefined} style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
+        <div ref={fixedMarqueeRef} className="tf-buy-marquee" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200 }}>
           <MarqueeBand direction="reverse" onNavigate={navigate} />
         </div>
       )}
@@ -2711,7 +3552,7 @@ export default function App() {
             dangerouslySetInnerHTML={{
               __html: transitionSvgRaw
                 .replace(/#00ab53/gi, transColor)
-                .replace("<svg ", `<svg preserveAspectRatio="${window.innerWidth <= 768 ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
+                .replace("<svg ", `<svg preserveAspectRatio="${window.matchMedia(MOBILE_MQ).matches ? "xMidYMid slice" : "none"}" style="width:100%;height:100%;display:block" `),
             }}
           />
         </div>
