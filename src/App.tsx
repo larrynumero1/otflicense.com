@@ -176,6 +176,7 @@ type Page =
   | { id: "about" }
   | { id: "licensing" }
   | { id: "contact" }
+  | { id: "eula" }
   | { id: "bundle" }
   | { id: "typeface"; name: string };
 
@@ -421,6 +422,7 @@ function pageFromPath(pathname: string): Page {
   if (path === "/shop") return { id: "foundry" };
   if (path === "/about") return { id: "about" };
   if (path === "/licensing" || path === "/faq") return { id: "contact" };
+  if (path === "/eula") return { id: "eula" };
   if (path === "/megabundle" || path === "/bundle") return { id: "bundle" };
 
   const slugMatch = path.match(/^\/(?:shop\/)?([^/]+)$/);
@@ -469,12 +471,20 @@ function DesignSizePanel() {
   const [open, setOpen] = useState(true);
   const [values, setValues] = useState<Record<string, number>>({});
   const [actual, setActual] = useState<Record<string, number>>({});
+  // Glyph UI scales via CSS zoom (text + cells together) relative to the site value.
+  const glyphUiBase = useRef<number | null>(null);
   useEffect(() => {
     const read = () => {
       const next: Record<string, number> = {};
       for (const c of DESIGN_SIZE_CONTROLS) {
         const el = document.querySelector(c.selector);
-        if (el) next[c.key] = Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10;
+        if (!el) continue;
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        if (c.key === "glyph-ui") {
+          if (!document.documentElement.hasAttribute("data-dbg-glyph-ui")) glyphUiBase.current = px;
+          const z = parseFloat(document.documentElement.style.getPropertyValue("--dbg-glyph-ui-zoom")) || 1;
+          next[c.key] = Math.round((glyphUiBase.current ?? px) * z * 10) / 10;
+        } else next[c.key] = Math.round(px * 10) / 10;
       }
       setActual(next);
     };
@@ -486,13 +496,17 @@ function DesignSizePanel() {
     const root = document.documentElement;
     for (const c of DESIGN_SIZE_CONTROLS) {
       const v = values[c.key];
-      if (v != null) { root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`); }
+      if (v != null) {
+        root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`);
+        if (c.key === "glyph-ui" && glyphUiBase.current) root.style.setProperty("--dbg-glyph-ui-zoom", String(v / glyphUiBase.current));
+      } else if (c.key === "glyph-ui") root.style.removeProperty("--dbg-glyph-ui-zoom");
       else { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
     }
   }, [values]);
   useEffect(() => () => {
     const root = document.documentElement;
     for (const c of DESIGN_SIZE_CONTROLS) { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
+    root.style.removeProperty("--dbg-glyph-ui-zoom");
   }, []);
   return (
     <div className="dbg-size-panel" style={{ position: "fixed", left: 8, bottom: "calc(var(--fixed-marquee-h, 0px) + 8px)", zIndex: 400, background: "rgba(20,20,20,0.88)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, borderRadius: 6, padding: open ? "6px 8px" : 0, boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
@@ -1620,7 +1634,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
                       <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
           </div>
-          <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
+          <div className="tf-glyph-meta" style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
             {glyphUnicode && <div>Unicode: {glyphUnicode}</div>}
           </div>
@@ -1640,13 +1654,14 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
                 type="button"
                 aria-expanded={open}
                 onClick={() => toggleGroup(group.label)}
+                className="tf-glyph-cat-head"
                 style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: open ? "0.4rem" : 0, textAlign: "left" }}
               >
                 <span>{group.label}</span>
                 <span aria-hidden="true" style={{ display: "inline-block", fontSize: "1rem", lineHeight: 1, transform: `rotate(${open ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
               </button>
             ) : (
-            <div style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
+            <div className="tf-glyph-cat-head" style={{ fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, marginBottom: "0.4rem" }}>
               {group.label}
             </div>
             )}
@@ -2547,11 +2562,15 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const aboutText = name === "Ella"
     ? "Originally developed for a speculative revival of Swedish electronics company RIFA as a contemporary tech conglomerate, this typeface draws on the visual language of modern technology brands. It is a variable font with seven weights, available both with and without serifs. It was later used as the primary typeface for a newspaper created during the Editorial Design course."
     : name === "Cheiron"
-      ? "Designed for a new take on the identity of Cheiron Studios, the former Stockholm studio behind some of the biggest pop hits of the late 1990s. The typeface takes its cues from practical stencil lettering and the fast pace of music production. Open counters allow the letters to be cut out and used as physical stencils."
+      ? "Cheiron Studios, a Stockholm-based music studio that played a defining role in late-1990s and early-2000s global pop production. A custom stencil-based typeface developed without enclosed counters, allowing it to be used as a physical stencil for fast, repeatable branding. The typeface references both studio production workflows and utilitarian marking systems."
       : name === "BIP"
         ? "BIP is based on the original logo of Botnia Internet Provider, a Swedish internet provider active between 1997 and 1999. BIP draws inspiration from Eurostile, Microgramma and the optimism of early internet culture."
         : name === "Facit"
           ? "FACIT AB was a typemachine and countingmachine manufacturer located in Åtvidaberg, Sweden. FACIT by is inspired, redrawn and digitalized from existing logos and typefaces on the products. This typeface works perfect for bold, big and attention seeking sentences, with its low height and heavy weight."
+          : name === "Svek"
+            ? "SVEK, a Swedish record label rooted in house and electronic music culture, active during the 1990s to early 2000s. The typeface extends the letters of the original logo into uppercase letters and selected glyphs, reactivating SVEK’s visual legacy while maintaining a connection to its historical context."
+          : name === "Mormor"
+            ? "Mormor is a typeface inspired by the silly advertising used by the discontinued Swedish boutique Bæckmans. A chain that sold high-end women's clothing, yet marketed itself through quirky graphics and tongue-in-cheek charm. Mormor balances sharpness and precision with approachability and bliss."
           : name === "Sonja"
             ? "Sonja caramel and chocolate factory; a part of the Swedish home since 1921. A condensed, art deco-like typeface, inspired by the industrial elements of a 1930s factory building and the legacy of artisanal candy production."
           : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
@@ -2897,36 +2916,56 @@ function HomePage({ onIntroComplete }: { onIntroComplete: () => void }) {
 
 const FAQ_ITEMS = [
   {
-    q: "About the fonts",
-    a: "These typefaces were designed by students at Beckmans College of Design, class VK27. They are real, original fonts — but some are still in development. Think of them as trials, demos, and experiments made with care and shared with joy!",
+    q: "Redeem your code",
+    a: "If you received a redeem code with an OTF License keychain, enter the code through the redemption link provided with it to access your typeface. The same license terms apply as when purchasing a font directly.",
   },
   {
-    q: "What does the desktop license cover?",
-    a: "The desktop license covers the use of the font for creating graphics, printed materials, videos and animations, wordmarks, logos, and social media content.",
+    q: "The License",
+    a: "All fonts on OTF License share the same license. The Mega Bundle Pack does not have any special terms — it simply gives you multiple fonts for a lower price.\n\nFor 72 SEK, you get the Standard License for one person or a small team of up to 5 people. It covers personal and commercial use, including identities, logos, print, books, magazines, packaging, merchandise, social media, advertising, websites, film and video.\n\nYour purchase includes OTF, TTF and WOFF2 files — all covered by the same license, with no separate desktop or web license.",
   },
   {
-    q: "What does it not cover?",
-    a: "The standard license does not cover:\n\n— use in broadcasting (TV, cinema, video-on-demand, or subscription streaming services)\n— use on streaming or social media platforms with over 100,000 followers or subscribers\n— use in applications or games\n— use of the font as a logo or wordmark for an organisation with more than 50 employees\n— embedding the font in hardware or software\n— any use related to NFTs or cryptocurrencies\n— use in a political or religious context without our written consent\n\nFor any of the above, please get in touch at otflicense@gmail.com. The fonts can never be used to promote violence or discrimination.",
+    q: "Extended license",
+    a: "The Standard License is made for individuals and small teams. If your team has more than 5 people, or the font will be used enterprise-wide or for other large-scale commercial use, contact the designer directly. The scope, terms and price can then be agreed on a case-by-case basis.",
   },
   {
-    q: "Can I modify the fonts?",
-    a: "You may convert letterforms to outlines in design software. Modifying the font file itself is not permitted. If you would like a specific modification, get in touch — we are happy to help.",
+    q: "Client work",
+    a: "You can use a font while designing something for a client. If the client chooses to use the font for their identity, website, communications, products or similar, they need to buy their own 72 SEK license.",
   },
   {
-    q: "How do I buy a font?",
-    a: "Head to our Gumroad shop at otflicense.gumroad.com. Choose a font, complete the purchase, and you will receive the font file by email from Gumroad. Files are available in OTF and TTF format.",
+    q: "App, game & software",
+    a: "If you want to use any of the fonts in an app, game, software product, design generator or anything else where the actual font software is embedded or distributed as part of the product, contact the designer directly before using it.",
   },
   {
-    q: "Will I receive updates?",
-    a: "Yes. If a designer updates their font, Gumroad will send you the new file automatically. You only pay once!",
+    q: "Modification",
+    a: "You can mess with outlines, not the font file. Turning text into outlines and stretching, cutting or modifying it as part of a design or logo is fine. Opening the actual font in Glyphs or another font editor, changing glyphs, kerning, weights, names or other font data and exporting your own version is not.",
   },
   {
-    q: "What is the refund policy?",
-    a: "All sales are final. We do not offer refunds on digital goods.",
+    q: "Sharing",
+    a: "No reselling, giving away, uploading or sending the font files to friends. A developer, printer or other production partner can temporarily receive the files when needed to complete your project, but they do not get their own license and should delete the files afterwards.",
   },
   {
-    q: "I bought a font token at an event — how do I redeem it?",
-    a: "We sell physical font tokens at festivals and events. Each token comes with a unique redemption code. To download your font, go to the product page on our Gumroad shop, enter your code in the discount code field at checkout, and the price drops to zero. The font file will then be sent to your email.",
+    q: "Finished fonts",
+    a: "Not all fonts are necessarily finished. What you see on each typeface page is what currently exists. Some fonts may continue to grow and some may stay exactly as they are.",
+  },
+  {
+    q: "Updates",
+    a: "Updates are free for anyone who has already licensed the font. Updates are released at the individual designer’s discretion and do not mean that a typeface will continue to be developed indefinitely.",
+  },
+  {
+    q: "License expiration",
+    a: "The license does not expire. As long as you follow the license, you do not need to buy the same license again just because time has passed.",
+  },
+  {
+    q: "Restricted use",
+    a: "The fonts and their underlying data cannot be used to train or develop AI or machine-learning systems without prior permission from the designer.\n\nThe fonts cannot be used primarily to promote hatred, violence or discrimination. Political campaigns and organisations require approval, and uses involving areas such as religious organisations, weapons or military, gambling and tobacco or nicotine may also require approval from the designer.",
+  },
+  {
+    q: "EULA",
+    a: "The points above are the short version. For the complete terms, read the full End User License Agreement (EULA).",
+  },
+  {
+    q: "Contact",
+    a: "Still have a question, need licensing outside the Standard License or want permission for a specific use? Contact the designer of the typeface directly. You can find their email on the relevant typeface page.",
   },
 ];
 
@@ -2978,14 +3017,20 @@ function FaqItem({ q, a = "", color, children }: { q: string; a?: string; color:
 
 function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const faqSections = [
-    ...FAQ_ITEMS.map(({ q, a }, i) => <FaqItem key={i} q={q} a={a} color={PALETTE[i % PALETTE.length]} />),
-    // Contact block
-    <FaqItem key="contact" q="Contact" color={PALETTE[FAQ_ITEMS.length % PALETTE.length]}>
-      <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
-        For licensing questions, large organisation inquiries, or anything else:{" "}
-        <a href="mailto:otflicense@gmail.com" style={{ color: "inherit" }}>otflicense@gmail.com</a>
-      </p>
-    </FaqItem>,
+    ...FAQ_ITEMS.map(({ q, a }, i) => (
+      <FaqItem key={i} q={q} color={PALETTE[i % PALETTE.length]}>
+        {a.split("\n\n").map((para, j) => (
+          <p key={j} style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", color: "inherit", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+            {para}
+          </p>
+        ))}
+        {q === "EULA" && (
+          <p style={{ fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0" }}>
+            <a href="/eula" onClick={(e) => { e.preventDefault(); onNavigate({ id: "eula" }); }} style={{ color: "inherit", fontWeight: "bold" }}>Read the full EULA →</a>
+          </p>
+        )}
+      </FaqItem>
+    )),
   ].map((node, i) => ({ i, node }));
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -3002,6 +3047,64 @@ function FaqPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) 
           </div>
         ))}
       </div>
+      <SiteFooter />
+    </div>
+  );
+}
+
+// Full End User License Agreement (/eula). Plain document page — no accordions.
+// Sections: { heading, paragraphs }. Paragraphs starting with "— " render as list items.
+const EULA_SECTIONS: { heading: string; body: string[] }[] = [
+  {
+    heading: "Font files",
+    body: ["Fonts are supplied in OTF, TTF and WOFF2 formats. All supplied formats are covered by the same license. There is no separate desktop or web license."],
+  },
+  {
+    heading: "Embedding",
+    body: ["Use involving the embedding or distribution of the Font software in an application, game, software product, design generator, digital product, hardware or similar system requires prior written permission from the respective typeface designer and may require a separate licensing agreement."],
+  },
+  {
+    heading: "Artificial intelligence",
+    body: ["The Fonts, Font files, typeface designs and their underlying data may not be used to train, fine-tune, develop or improve artificial intelligence or machine-learning systems, models or datasets without prior written permission from the respective typeface designer."],
+  },
+  {
+    heading: "Updates",
+    body: ["If an updated version of a Font is released, existing license holders of that Font are entitled to the updated version at no additional license fee. The release of an update does not imply automatic notification or delivery."],
+  },
+  {
+    heading: "7. Extended licensing",
+    body: [
+      "The Standard License is intended for individuals and small teams.",
+      "Organisations or teams exceeding five (5) users, enterprise-wide use, or other large-scale commercial use fall outside the scope of the Standard License and require a separate agreement with the respective typeface designer.",
+      "A separate agreement may also be required for uses involving embedding or distribution of the Font software in applications, games, software products, digital products, hardware or similar systems.",
+      "The scope, price and conditions of such use are determined on a case-by-case basis in consultation with the respective typeface designer.",
+      "If you are unsure whether your organisation or intended use falls outside the Standard License, contact the respective typeface designer before use.",
+    ],
+  },
+  {
+    heading: "Technical problems",
+    body: ["If you encounter a technical problem with a Font, please contact the respective typeface designer."],
+  },
+];
+const EULA_CLOSING = "Questions about licensing, uses outside the Standard License or unusual uses should be directed to the respective typeface designer. Contact details are available on each typeface page.";
+
+function EulaPage({ onNavigate, showEyes, onEyesHover }: { onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
+  const text: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: "1.05rem", lineHeight: 1.65, margin: "0.7rem 0 0", overflowWrap: "break-word" };
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <NavBar onNavigate={onNavigate} showEyes={showEyes} onEyesHover={onEyesHover} />
+      <article className="eula-doc flex-1 px-10" style={{ width: "100%", maxWidth: "46rem", boxSizing: "border-box", paddingTop: "2.5rem", paddingBottom: "4rem", color: "#000" }}>
+        <p style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", fontWeight: "bold", letterSpacing: "0.04em", margin: 0 }}>OTF LICENSE</p>
+        <h1 style={{ fontFamily: "Arial, sans-serif", fontSize: "2rem", fontWeight: "bold", lineHeight: 1.15, margin: "0.4rem 0 0" }}>End User License Agreement (EULA)</h1>
+        <p style={{ ...text, fontSize: "0.9rem", opacity: 0.7, margin: "0.5rem 0 0" }}>Version 1.0</p>
+        {EULA_SECTIONS.map((sec) => (
+          <section key={sec.heading} style={{ marginTop: "2.25rem" }}>
+            <h2 style={{ fontFamily: "Arial, sans-serif", fontSize: "1.45rem", fontWeight: "bold", lineHeight: 1.2, margin: 0 }}>{sec.heading}</h2>
+            {sec.body.map((para, j) => <p key={j} style={text}>{para}</p>)}
+          </section>
+        ))}
+        <p style={{ ...text, marginTop: "2.5rem" }}>{EULA_CLOSING}</p>
+      </article>
       <SiteFooter />
     </div>
   );
@@ -3156,6 +3259,7 @@ export default function App() {
     let desc = homeDesc;
     if (page.id === "about") title = "About — OTF License";
     else if (page.id === "contact") title = "Licensing — OTF License";
+    else if (page.id === "eula") title = "EULA — OTF License";
     else if (page.id === "bundle") title = "Mega Bundle — OTF License";
     else if (page.id === "typeface") {
       const face = typefaces.find((t) => t.name === page.name) as { name: string; displayName?: string; klass: string; designer: string } | undefined;
@@ -3249,6 +3353,7 @@ export default function App() {
   let content: React.ReactNode;
   if (page.id === "about")    content = <SimplePage title="ABOUT" onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "eula")     content = <EulaPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (

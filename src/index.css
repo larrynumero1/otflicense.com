@@ -1113,10 +1113,15 @@ html {
     overflow-x: hidden;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
+    /* Single indicator: the synced .tf-glyph-scroll-thumb (always visible on
+       iOS) stands in for the native bar, which otherwise doubled it. */
+    scrollbar-width: none;
     min-height: 0;
   }
   /* Glyph list scroll position: slim thumb in the panel's right gutter. */
+  .tf-glyph-list::-webkit-scrollbar {
+    display: none;
+  }
   .tf-glyph-scroll-thumb {
     display: block;
   }
@@ -1206,9 +1211,17 @@ html {
 :root[data-dbg-about] .tf-about-text { font-size: var(--dbg-about) !important; }
 :root[data-dbg-glyph-big] .tf-glyphs .tf-glyph-big { font-size: var(--dbg-glyph-big) !important; }
 :root[data-dbg-grid] .tf-glyphs .tf-glyph-cell { font-size: var(--dbg-grid) !important; }
-:root[data-dbg-glyph-ui] .tf-glyphs *:not(.tf-glyph-big, .tf-glyph-big *, .tf-glyph-cell, .tf-glyph-cell *, svg, svg *) {
-  font-size: var(--dbg-glyph-ui) !important;
+:root[data-dbg-glyph-ui] .tf-glyphs :is(.tf-glyph-controls, .tf-glyph-meta, .tf-glyph-cat-head) {
+  zoom: var(--dbg-glyph-ui-zoom, 1);
 }
 @media (max-width: 768px) {
   .dbg-size-panel { transform: scale(0.85); transform-origin: bottom left; }
+}
+
+/* EULA document page: same side margins as the Licensing page on phones. */
+@media (max-width: 768px) {
+  .eula-doc { padding-left: 1.25rem !important; padding-right: 1.25rem !important; padding-top: 1.5rem !important; }
+}
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .eula-doc { padding-left: var(--li) !important; padding-right: var(--ri) !important; padding-top: 1rem !important; }
 }
