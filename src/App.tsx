@@ -455,6 +455,62 @@ function SizeBadge({ label, target, style }: { label: string; target: React.RefO
   );
 }
 
+// TEMPORARY (design only): floating size-tuning panel. Overrides are applied
+// through data attributes + CSS variables on <html> (see "TEMPORARY design size
+// controls" in index.css), so no component reads them. Remove this component,
+// its one usage in TypefacePage and that CSS block to strip it entirely.
+const DESIGN_SIZE_CONTROLS = [
+  { key: "about", label: "About Size", selector: ".tf-about-text", min: 8, max: 40, step: 0.5 },
+  { key: "glyph-big", label: "Selected Glyph Size", selector: ".tf-glyph-big", min: 40, max: 640, step: 1 },
+  { key: "glyph-ui", label: "Glyph UI Size", selector: ".tf-glyph-ui-sample", min: 8, max: 32, step: 0.5 },
+  { key: "grid", label: "Grid Glyph Size", selector: ".tf-glyph-cell", min: 8, max: 64, step: 0.5 },
+] as const;
+function DesignSizePanel() {
+  const [open, setOpen] = useState(true);
+  const [values, setValues] = useState<Record<string, number>>({});
+  const [actual, setActual] = useState<Record<string, number>>({});
+  useEffect(() => {
+    const read = () => {
+      const next: Record<string, number> = {};
+      for (const c of DESIGN_SIZE_CONTROLS) {
+        const el = document.querySelector(c.selector);
+        if (el) next[c.key] = Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10;
+      }
+      setActual(next);
+    };
+    read();
+    const id = window.setInterval(read, 250);
+    return () => window.clearInterval(id);
+  }, []);
+  useEffect(() => {
+    const root = document.documentElement;
+    for (const c of DESIGN_SIZE_CONTROLS) {
+      const v = values[c.key];
+      if (v != null) { root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`); }
+      else { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
+    }
+  }, [values]);
+  useEffect(() => () => {
+    const root = document.documentElement;
+    for (const c of DESIGN_SIZE_CONTROLS) { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
+  }, []);
+  return (
+    <div className="dbg-size-panel" style={{ position: "fixed", left: 8, bottom: "calc(var(--fixed-marquee-h, 0px) + 8px)", zIndex: 400, background: "rgba(20,20,20,0.88)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, borderRadius: 6, padding: open ? "6px 8px" : 0, boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
+      <button type="button" onClick={() => setOpen((o) => !o)} style={{ all: "unset", cursor: "pointer", display: "block", padding: open ? "0 0 4px" : "6px 8px", opacity: 0.7 }}>
+        {open ? "▾ design sizes (temp)" : "▸ sizes"}
+      </button>
+      {open && DESIGN_SIZE_CONTROLS.map((c) => (
+        <div key={c.key} style={{ display: "grid", gridTemplateColumns: "8.5rem 7rem 3.6rem 1rem", alignItems: "center", gap: 6, padding: "2px 0" }}>
+          <span>{c.label}</span>
+          <input type="range" min={c.min} max={c.max} step={c.step} value={values[c.key] ?? actual[c.key] ?? c.min} onChange={(e) => setValues((v) => ({ ...v, [c.key]: Number(e.target.value) }))} style={{ width: "100%", accentColor: "#fff" }} />
+          <span style={{ textAlign: "right" }}>{actual[c.key] != null ? `${actual[c.key]}px` : "—"}</span>
+          <button type="button" title="Reset to site value" onClick={() => setValues((v) => { const n = { ...v }; delete n[c.key]; return n; })} style={{ all: "unset", cursor: "pointer", opacity: values[c.key] != null ? 0.8 : 0.25 }}>↺</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const DEFAULT_DESIGNER_EMAIL = "otflicense@gmail.com";
 
 const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?: string }> = {
@@ -624,7 +680,8 @@ function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number
           transition: "opacity 0.15s ease",
         }}
       >
-        {emailCopied ? "Email copied" : ""}
+        {/* Desktop/web: no visible confirmation; touch devices keep it. */}
+        {emailCopied && !window.matchMedia("(pointer: fine)").matches ? "Email copied" : ""}
       </div>
     </div>
   );
@@ -1564,7 +1621,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
                       <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
           </div>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
-            <div>Glyph: {glyphName}</div>
+            <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
             {glyphUnicode && <div>Unicode: {glyphUnicode}</div>}
           </div>
           {sizeDebug}
@@ -1572,7 +1629,6 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
       </div>
 
       {/* Character list — right, grouped by category */}
-      <SizeBadge label="Glyph" target={glyphBigRef} style={{ left: 8, bottom: 8 }} />
       {thumb && <div aria-hidden className="tf-glyph-scroll-thumb" style={{ left: thumb.left, top: thumb.top, height: thumb.height, background: panelText }} />}
       <div ref={glyphListRef} className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
         {visibleGroups.map((group) => {
@@ -1599,6 +1655,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
               {group.chars.map((g, i) => (
                 <div
                   key={i}
+                  className="tf-glyph-cell"
                   onMouseEnter={() => setHovered(g)}
                   onClick={() => setHovered(g)}
                   style={{
@@ -2018,6 +2075,15 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
+  // Phone landscape: Glyphs always uses the compact single-slider control.
+  const [isLandscape, setIsLandscape] = useState(() => window.matchMedia(LANDSCAPE_MQ).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(LANDSCAPE_MQ);
+    const onChange = () => setIsLandscape(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const compactGlyphControls = isMobile || isLandscape;
   const [activeControl, setActiveControl] = useState("size");
   const [controlMenu, setControlMenu] = useState<"preview" | "glyphs" | "preset" | null>(null);
   const [resolvedPresets, setResolvedPresets] = useState<{ name: string; values: Record<string, number> }[]>([]);
@@ -2314,6 +2380,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               value={axisValues[axis.tag] ?? axis.default}
               onChange={(e) => setAxisValues((prev) => ({ ...prev, [axis.tag]: Number(e.target.value) }))}
               className="size-slider"
+              style={{ color: panelText }}
             />
           </div>
         );
@@ -2328,6 +2395,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         value={weightValue}
         onChange={(e) => setWeightValue(Number(e.target.value))}
         className="size-slider"
+        style={{ color: panelText }}
       />
     </div>
   ) : null;
@@ -2475,6 +2543,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
     overflow: "hidden",
   };
 
+  const designerEmail = DESIGNER_CONTACTS[face.designer]?.email;
   const aboutText = name === "Ella"
     ? "Originally developed for a speculative revival of Swedish electronics company RIFA as a contemporary tech conglomerate, this typeface draws on the visual language of modern technology brands. It is a variable font with seven weights, available both with and without serifs. It was later used as the primary typeface for a newspaper created during the Editorial Design course."
     : name === "Cheiron"
@@ -2489,6 +2558,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
+      <DesignSizePanel />
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
@@ -2631,7 +2701,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <SizeBadge label="About" target={aboutTextRef} style={{ right: 8, top: 8 }} />
             <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
               {applyCase(aboutText)}
             </p>
@@ -2639,8 +2708,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               {/* Listed bottom-up: the container is column-reverse, so this
                   renders First sketched → Format from top to bottom. */}
               {[
+                ...(designerEmail ? [["Contact:", designerEmail]] : []),
                 ["EULA:", ""],
-                ["Format:", "TTF, OTF, WOFF2"],
+                ["Format:", "OTF, TTF, WOFF2"],
                 // Preset fonts: Range is derived from the Glyphs presets (single source of truth).
                 ["Range:", VARIABLE_FONT_PRESETS[name]
                   ? VARIABLE_FONT_PRESETS[name].map((p) => p.name).join(", ")
@@ -2651,12 +2721,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                       : "Regular"],
                 ["Version:", "1.0"],
                 ["Last update:", "October 2026"],
-                ["Released:", "October 2026"],
                 ["First sketched:", "October 2025"],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: "0.75rem", padding: "0.3rem 0" }}>
                   <span style={{ flex: "0 0 42%", fontWeight: "bold" }}>{label}</span>
-                  {label === "EULA:" ? (
+                  {label === "Contact:" ? (
+                    <a href={`mailto:${value}`} style={{ flex: 1, minWidth: 0, color: "inherit", textDecoration: "underline", overflowWrap: "anywhere" }}>{value}</a>
+                  ) : label === "EULA:" ? (
                     <a href="/licensing" onClick={(e) => { e.preventDefault(); onNavigate({ id: "contact" }); }} style={{ flex: 1, color: "inherit", textDecoration: "underline" }}>Click here</a>
                   ) : (
                     <span style={{ flex: 1 }}>{value}</span>
@@ -2677,13 +2748,13 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             whitespace (which also spans the designer marquee row between them). */}
         <div className="tf-glyphs-wrap" style={{ marginTop: "calc(1.2rem + 12px)" }}>
           <GlyphSection fk={fk} font={face.font} faceName={face.name} otFont={font} coverage={coverage} panelBg={panelBg} panelText={panelText} fontVariationSettings={fontVariationSettings}
-            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{isMobile ? (
+            controls={presetControl ? <div className="tf-glyph-preset-stack" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem", width: "100%", minWidth: 0 }}>{presetControl}<div style={{ width: "100%", minWidth: 0, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem" }}>{compactGlyphControls ? (
               glyphOptions.length > 1
                 ? mobileControlRow("glyphs", glyphOptions, glyphControl, setGlyphControl)
                 : glyphOptions.length === 1
                 ? <div className="tf-mobile-control-active" style={{ flex: 1, width: "100%", minWidth: 0, display: "flex" }}>{glyphOptions[0].node}</div>
                 : regularLabel
-            ) : variableControls}</div></div> : isMobile ? (
+            ) : variableControls}</div></div> : compactGlyphControls ? (
               glyphToggleAxes.length > 0
                 ? <>{glyphToggleAxes.map((a) => renderAxis(a, true))}</>
                 : glyphOptions.length > 1

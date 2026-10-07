@@ -1201,3 +1201,14 @@ html {
   animation: tf-caret-blink 1.06s steps(1) infinite;
 }
 @keyframes tf-caret-blink { 50% { opacity: 0; } }
+
+/* TEMPORARY design size controls (DesignSizePanel in App.tsx) — delete with it. */
+:root[data-dbg-about] .tf-about-text { font-size: var(--dbg-about) !important; }
+:root[data-dbg-glyph-big] .tf-glyphs .tf-glyph-big { font-size: var(--dbg-glyph-big) !important; }
+:root[data-dbg-grid] .tf-glyphs .tf-glyph-cell { font-size: var(--dbg-grid) !important; }
+:root[data-dbg-glyph-ui] .tf-glyphs *:not(.tf-glyph-big, .tf-glyph-big *, .tf-glyph-cell, .tf-glyph-cell *, svg, svg *) {
+  font-size: var(--dbg-glyph-ui) !important;
+}
+@media (max-width: 768px) {
+  .dbg-size-panel { transform: scale(0.85); transform-origin: bottom left; }
+}
