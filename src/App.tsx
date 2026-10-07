@@ -433,20 +433,45 @@ function pageFromPath(pathname: string): Page {
   return { id: "home" };
 }
 
+// TEMPORARY (design only): live readout of an element's computed font size.
+// Absolutely positioned, pointer-events none — zero layout impact. Delete
+// <SizeBadge> usages and this component to remove.
+function SizeBadge({ label, target, style }: { label: string; target: React.RefObject<HTMLElement | null>; style?: React.CSSProperties }) {
+  const [px, setPx] = useState<string>("");
+  useEffect(() => {
+    const read = () => {
+      const el = target.current;
+      if (el) setPx(`${Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10}px`);
+    };
+    read();
+    const id = window.setInterval(read, 250);
+    return () => window.clearInterval(id);
+  }, [target]);
+  if (!px) return null;
+  return (
+    <div aria-hidden style={{ position: "absolute", zIndex: 50, pointerEvents: "none", padding: "2px 6px", borderRadius: 3, background: "rgba(0,0,0,0.6)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, whiteSpace: "nowrap", ...style }}>
+      {label}: {px}
+    </div>
+  );
+}
+
 const DEFAULT_DESIGNER_EMAIL = "otflicense@gmail.com";
 
 const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?: string }> = {
   "Vivi Tang": { site: "vivitang.online", email: "vivixutang@gmail.com", social: "vivi_.tang" },
   "Emma Ljungqvist": { site: "emmaljungqvist.com", email: "emljungqvist@hotmail.com", social: "emma_ljungqvist" },
-  "Emma Tungelstedt": { social: "weraemma" },
+  "Emma Tungelstedt": { email: "weraemma@me.com", social: "weraemma" },
   "Simon Grey": { site: "simongrey.blue", email: "simongrey97@gmail.com" },
-  "Linn Willebrand": { site: "www.linnwillebrand.com", email: "linnwill@gmail.com" },
+  "Linn Willebrand": { site: "www.linnwillebrand.com", email: "linnwill@gmail.com", social: "w.illebrand" },
   "Fahed Dehchar": { site: "fahed-dehchar.com", email: "fahed.dehchar@gmail.com", social: "tomf000lery" },
   "Enya Borg": { email: "enya.borg@icloud.com", social: "enyaaborg" },
-  "Jesper Smeding": { site: "jespersmeding.com", email: "jespersmeding@gmail.com", social: "jespersmeding" },
+  "Jesper Smeding": { email: "jespersmeding@gmail.com", social: "jespersmeding" },
   "Caspar Broms": { email: "casparbroms9@gmail.com" },
   "Lawrence Ponsonby": { email: "lawrenceponsonby1@gmail.com", social: "1arri" },
-  "Ve Örnehed": { social: "vemodiga" },
+  "Ve Örnehed": { email: "vornehed@gmail.com", social: "vemodiga" },
+  "Alva Kinneholm": { email: "a.kinneholm@gmail.com" },
+  "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com" },
+  "Tindra Berglund": { site: "tindraberglund.com", email: "tindraberglund02@gmail.com", social: "tindrasara" },
 };
 
 // Designer directory, derived from the typefaces (each colour/contrast pairing reused).
@@ -458,7 +483,7 @@ const designers = typefaces.map((t) => {
     klass: t.klass,
     color: t.bg,
     textColor: t.fg,
-    site: contact?.site ?? `${handle}.se`,
+    site: contact?.site,
     social: contact?.social ?? handle,
     email: contact?.email ?? DEFAULT_DESIGNER_EMAIL,
   };
@@ -578,7 +603,7 @@ function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number
     >
       <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
       <div className="about-designer-links" style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
-        <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>
+        {d.site && <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>}
         <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
         <a href={`mailto:${d.email}`} onClick={handleEmailClick} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
       </div>
@@ -1490,8 +1515,32 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
     (otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(hovered))?.name : undefined) ??
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
+  const glyphBigRef = useRef<HTMLSpanElement | null>(null);
+  // Phone landscape: slim thumb mirroring the glyph list's real scroll position
+  // (iOS hides/ignores styled native scrollbars). Hidden elsewhere via CSS.
+  const glyphListRef = useRef<HTMLDivElement | null>(null);
+  const [thumb, setThumb] = useState<{ left: number; top: number; height: number } | null>(null);
+  useEffect(() => {
+    const el = glyphListRef.current;
+    if (!el) return;
+    const update = () => {
+      const { scrollHeight, clientHeight, scrollTop, offsetTop, offsetLeft, offsetWidth } = el;
+      if (scrollHeight <= clientHeight + 1) { setThumb(null); return; }
+      const h = Math.max(24, (clientHeight / scrollHeight) * clientHeight);
+      const t = offsetTop + (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - h);
+      setThumb({ left: offsetLeft + offsetWidth + 6, top: t, height: h });
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+    if (el.firstElementChild) ro?.observe(el.firstElementChild);
+    return () => { el.removeEventListener("scroll", update); window.removeEventListener("resize", update); ro?.disconnect(); };
+  }, [visibleGroups.length]);
+
   return (
-    <div className="tf-glyphs" style={{ background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
+    <div className="tf-glyphs" style={{ position: "relative", background: panelBg, padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "stretch", transition: "background 0.25s ease" }}>
       {/* Showcase — left. The variable-font / "Regular" controls sit at the top
           of this column so they share the top row with the first glyph category
           heading in the right column. Shares the exact same axis state as the
@@ -1512,7 +1561,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
               and rebuilt, so no stale ink (which can overhang the text box and
               escape repaint invalidation, esp. in mobile WebKit) can survive. */}
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
-                      <span className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
+                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered)}</span>
           </div>
           <div style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div>Glyph: {glyphName}</div>
@@ -1523,7 +1572,9 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
       </div>
 
       {/* Character list — right, grouped by category */}
-      <div className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <SizeBadge label="Glyph" target={glyphBigRef} style={{ left: 8, bottom: 8 }} />
+      {thumb && <div aria-hidden className="tf-glyph-scroll-thumb" style={{ left: thumb.left, top: thumb.top, height: thumb.height, background: panelText }} />}
+      <div ref={glyphListRef} className="tf-glyph-list" style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
         {visibleGroups.map((group) => {
           const open = !isMobile || openGroups.has(group.label);
           return (
@@ -1975,6 +2026,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const aboutTextRef = useRef<HTMLParagraphElement | null>(null);
 
   // Track the preview box's rendered width so the overlay can wrap words to match.
   useEffect(() => {
@@ -2095,7 +2147,18 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
   const [introDone, setIntroDone] = useState(false);
   const [previewFocused, setPreviewFocused] = useState(false);
-  const showTouchCaret = introDone && !previewFocused && typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  // One shared caret for every typeface: whenever the insertion point sits at the
+  // end of the text (or the field is unfocused after the intro), the native caret
+  // is hidden and this uniform blinking caret is drawn instead. Mid-text editing
+  // and selections keep the native caret.
+  const [caretAtEnd, setCaretAtEnd] = useState(true);
+  const [caretTick, setCaretTick] = useState(0);
+  const syncCaret = (el: HTMLTextAreaElement) => {
+    setCaretAtEnd(el.selectionStart === el.selectionEnd && el.selectionEnd === el.value.length);
+    setCaretTick((t) => t + 1);
+  };
+  const isTouch = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const showTouchCaret = previewFocused ? caretAtEnd : introDone && isTouch;
 
   // Missing-glyph handling: unsupported code points in the Preview render as
   // this font's own .notdef via a generated companion face (see buildNotdefFace).
@@ -2420,6 +2483,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         ? "BIP is based on the original logo of Botnia Internet Provider, a Swedish internet provider active between 1997 and 1999. BIP draws inspiration from Eurostile, Microgramma and the optimism of early internet culture."
         : name === "Facit"
           ? "FACIT AB was a typemachine and countingmachine manufacturer located in Åtvidaberg, Sweden. FACIT by is inspired, redrawn and digitalized from existing logos and typefaces on the products. This typeface works perfect for bold, big and attention seeking sentences, with its low height and heavy weight."
+          : name === "Sonja"
+            ? "Sonja caramel and chocolate factory; a part of the Swedish home since 1921. A condensed, art deco-like typeface, inspired by the industrial elements of a 1930s factory building and the legacy of artisanal candy production."
           : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
 
   return (
@@ -2429,6 +2494,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
           {/* Size slider + colour dots, side by side and centred at the top. */}
+          <SizeBadge label="Preview" target={textareaRef} style={{ left: 8, bottom: 8 }} />
           <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
             {isMobile && mobileControlRow("preview")}
             {/* Size */}
@@ -2497,8 +2563,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   if (e.target.value.split("\n").length <= 4) setTop(e.target.value);
                 }}
                 rows={1}
-                onFocus={() => setPreviewFocused(true)}
+                onFocus={(e) => { setPreviewFocused(true); syncCaret(e.currentTarget); }}
                 onBlur={() => setPreviewFocused(false)}
+                onSelect={(e) => syncCaret(e.currentTarget)}
                 style={{
                   ...fieldBase,
                   display: "block",
@@ -2511,7 +2578,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                   // drawn transparent and the visible text comes from the unclipped
                   // mirror below. The caret and selection stay native.
                   color: "transparent",
-                  caretColor: panelText,
+                  caretColor: previewFocused && caretAtEnd ? "transparent" : panelText,
                 }}
               />
               {/* Visible preview text — native browser rendering through the real
@@ -2538,7 +2605,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 {previewText.endsWith("\n") ? previewText + "\u200b" : previewText}
                 {/* Touch only, while unfocused: stand-in for the native caret (which
                     would require opening the keyboard). Hidden once the field is focused. */}
-                {showTouchCaret && <span className="tf-touch-caret" />}
+                {showTouchCaret && <span key={caretTick} className="tf-touch-caret" />}
               </div>
             </div>
           </div>
@@ -2564,7 +2631,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
+            <SizeBadge label="About" target={aboutTextRef} style={{ right: 8, top: 8 }} />
+            <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
               {applyCase(aboutText)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>

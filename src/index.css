@@ -230,6 +230,16 @@ html {
   animation: introStickerIn 1.05s cubic-bezier(0.65, 0, 0.35, 1) 0.17s both;
 }
 
+.tf-glyph-scroll-thumb {
+  display: none;
+  position: absolute;
+  width: 3px;
+  border-radius: 2px;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 3;
+}
+
 .intro-band {
   position: absolute;
   left: 0;
@@ -1073,9 +1083,11 @@ html {
   }
   /* Panel fits the short viewport: left column stays put, right list scrolls. */
   .tf-glyphs {
-    height: calc(100vh - 2rem);
-    height: calc(100svh - 2rem);
-    min-height: 15rem;
+    /* Uses the full visible viewport height (dynamic units grow as the
+       browser chrome retracts), reaching down toward the bottom marquee. */
+    height: 100vh;
+    height: 100dvh;
+    min-height: 18rem;
     align-items: stretch !important;
     padding-top: 0.75rem !important;
     padding-bottom: 0.75rem !important;
@@ -1104,9 +1116,15 @@ html {
     scrollbar-width: thin;
     min-height: 0;
   }
-  /* Shorter bottom marquee in the short viewport. */
+  /* Glyph list scroll position: slim thumb in the panel's right gutter. */
+  .tf-glyph-scroll-thumb {
+    display: block;
+  }
+  /* Shorter bottom marquee in the short viewport — one size site-wide,
+     intro bands included, so nothing jumps when the intro hands over. */
   .shop-bottom-marquee .marquee-band,
-  .tf-buy-marquee .marquee-band {
+  .tf-buy-marquee .marquee-band,
+  .intro-band .marquee-band {
     padding-top: 0.55rem !important;
     padding-bottom: 0.55rem !important;
   }
@@ -1169,14 +1187,16 @@ html {
   }
 }
 
-/* Touch-only stand-in caret for the Preview (desktop uses the native caret). */
+/* Shared Preview caret — identical for every typeface (fixed thickness,
+   timing and placement; never derived from the font's own metrics). */
 .tf-touch-caret {
   display: inline-block;
-  width: 0.04em;
-  min-width: 1.5px;
+  width: 2px;
   height: 1em;
-  margin-left: 0.02em;
+  margin-left: 2px;
+  margin-right: -4px;
   vertical-align: -0.12em;
+  font-family: Arial, sans-serif;
   background: currentColor;
   animation: tf-caret-blink 1.06s steps(1) infinite;
 }
