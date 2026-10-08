@@ -23,7 +23,7 @@
 }
 @font-face {
   font-family: 'XOXO';
-  src: url('/fonts/emmaxoxo.otf') format('opentype');
+  src: url('/fonts/OTF_Xoxo.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -58,7 +58,7 @@
 }
 @font-face {
   font-family: 'Mormor';
-  src: url('/fonts/lawrencemormor_v2.otf') format('opentype');
+  src: url('/fonts/OTF_Mormor.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

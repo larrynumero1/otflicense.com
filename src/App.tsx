@@ -238,7 +238,7 @@ function rectStarburstPath(cx: number, cy: number, spikes: number, outerRX: numb
 const typefaces = [
   // — top row: stay —
   { name: "Last Call", displayName: "LastCall",    designer: "Emma Ljungqvist",    klass: "VK27", bg: "#0074ff", fg: W, img: specLastCall, gallery: [bildLastCall1, bildLastCall2, bildLastCall3, bildLastCall4, bildLastCall5], font: "'Last Call', sans-serif", file: "/fonts/OTF_Lastcall.woff2", casing: "upperInitial", scale: 1.50, previewSize: 16, mobilePreviewSize: 3.5, gumroad: "https://otflicense.gumroad.com/l/lastcall?wanted=true" },
-  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/emmaxoxo.otf", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
+  { name: "XOXO",        designer: "Emma Tungelstedt",   klass: "VK27", bg: "#ff2cb2", fg: W, img: specXOXO, gallery: [bildXoxo1, bildXoxo2, bildXoxo3, bildXoxo4, bildXoxo5], font: "'XOXO', sans-serif", file: "/fonts/OTF_Xoxo.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/xoxo?wanted=true" },
   { name: "Liljan",         designer: "Enya Borg",        klass: "VK27", bg: "#ff5756", fg: W, img: specLiljan, gallery: [bildLiljan1, bildLiljan2, bildLiljan3, bildLiljan4, bildLiljan5], font: "'Liljan', sans-serif", file: "/fonts/OTF_Liljan.woff2", casing: "lower", scale: 0.84, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/liljan?wanted=true" },
   { name: "Kuriren",       designer: "Fahed Dehchar",     klass: "VK27", bg: "#fff800", fg: B, img: specKurir, gallery: [bildKuriren1, bildKuriren2, bildKuriren3, bildKuriren4, bildKuriren5], font: "'Kurir', sans-serif", file: "/fonts/OTF_Kuriren.woff2", scale: 1.42, previewSize: 16, mobilePreviewSize: 5, gumroad: "https://otflicense.gumroad.com/l/kuriren?wanted=true" },
   // — middle —
@@ -254,7 +254,7 @@ const typefaces = [
   { name: "Crypto", displayName: "Crypto Mono", designer: "Lovisa Åkerblom",   klass: "VK27", bg: "#0074ff", fg: W, img: specCrypto, gallery: [bildCrypto1, bildCrypto2, bildCrypto3, bildCrypto4, bildCrypto5], font: "'Crypto', sans-serif", file: "/fonts/OTF_Cryptomono.woff2", casing: "lower", scale: 1.27, previewSize: 10, mobilePreviewSize: 3, gumroad: "https://otflicense.gumroad.com/l/crypto?wanted=true" },
   { name: "Facit",        designer: "Jesper Smeding",        klass: "VK27", bg: "#ff1d38", fg: W, img: specFacit, gallery: [bildFacit1, bildFacit2, bildFacit3, bildFacit4, bildFacit5], font: "'Facit', sans-serif", file: "/fonts/OTF_Facit.woff2", casing: "upper", scale: 1.27, previewSize: 16, mobilePreviewSize: 5.5, gumroad: "https://otflicense.gumroad.com/l/facit?wanted=true" },
   { name: "Sonja",         designer: "Ve Örnehed",    klass: "VK27", bg: "#c3872f", fg: W, img: specSonja, gallery: [bildSonja1, bildSonja2, bildSonja3, bildSonja4, bildSonja5], font: "'Sonja', sans-serif", file: "/fonts/OTF_Sonja.woff2", casing: "upper", scale: 1.03, previewSize: 16, mobilePreviewSize: 7, gumroad: "https://otflicense.gumroad.com/l/sonja?wanted=true" },
-  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/lawrencemormor_v2.otf", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
+  { name: "Mormor",         designer: "Lawrence Ponsonby",   klass: "VK27", bg: "#ff5756", fg: W, img: specMormor, gallery: [bildMormor1, bildMormor2, bildMormor3, bildMormor4, bildMormor5], font: "'Mormor', sans-serif", file: "/fonts/OTF_Mormor.woff2", scale: 1.65, previewSize: 16, mobilePreviewSize: 4.5, gumroad: "https://otflicense.gumroad.com/l/mormor?wanted=true" },
   { name: "Brus",         designer: "Linn Willebrand",    klass: "VK27", bg: "#00ab53", fg: W, img: specBrus, gallery: [bildBrus1, bildBrus2, bildBrus3, bildBrus4, bildBrus5], font: "'Brus', sans-serif", file: "/fonts/OTF_Brus.woff2", scale: 1.27, previewSize: 16, mobilePreviewSize: 6.5, gumroad: "https://otflicense.gumroad.com/l/brus?wanted=true" },
 ];
 
@@ -541,20 +541,23 @@ function DesignSizePanel() {
 
 const DEFAULT_DESIGNER_EMAIL = "otflicense@gmail.com";
 
-const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?: string }> = {
+// social: null = no Instagram link (otherwise defaults to the name-derived handle).
+const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?: string | null }> = {
   "Vivi Tang": { site: "vivitang.online", email: "vivixutang@gmail.com", social: "vivi_.tang" },
   "Emma Ljungqvist": { site: "emmaljungqvist.com", email: "emljungqvist@hotmail.com", social: "emma_ljungqvist" },
   "Emma Tungelstedt": { email: "weraemma@me.com", social: "weraemma" },
-  "Simon Grey": { site: "simongrey.blue", email: "simongrey97@gmail.com" },
+  "Simon Grey": { site: "simongrey.blue", email: "simongrey97@gmail.com", social: "simon.grey" },
   "Linn Willebrand": { site: "www.linnwillebrand.com", email: "linnwill@gmail.com", social: "w.illebrand" },
   "Fahed Dehchar": { site: "fahed-dehchar.com", email: "fahed.dehchar@gmail.com", social: "tomf000lery" },
   "Enya Borg": { email: "enya.borg@icloud.com", social: "enyaaborg" },
   "Jesper Smeding": { email: "jespersmeding@gmail.com", social: "jespersmeding" },
-  "Caspar Broms": { email: "casparbroms9@gmail.com" },
+  "Caspar Broms": { site: "casparbroms.se", email: "casparbroms9@gmail.com" },
   "Lawrence Ponsonby": { email: "lawrenceponsonby1@gmail.com", social: "1arri" },
   "Ve Örnehed": { email: "vornehed@gmail.com", social: "vemodiga" },
   "Alva Kinneholm": { email: "a.kinneholm@gmail.com" },
-  "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com" },
+  "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com", social: "lovisakerblom" },
+  "Silje Nordback": { email: "Silje.nordback@gmail.com" },
+  "Hannah Mårtensson": { email: "hannah.martensson@edu.beckmans.se", social: null },
   "Tindra Berglund": { site: "tindraberglund.com", email: "tindraberglund02@gmail.com", social: "tindrasara" },
 };
 
@@ -568,7 +571,7 @@ const designers = typefaces.map((t) => {
     color: t.bg,
     textColor: t.fg,
     site: contact?.site,
-    social: contact?.social ?? handle,
+    social: contact?.social === null ? undefined : contact?.social ?? handle,
     email: contact?.email ?? DEFAULT_DESIGNER_EMAIL,
   };
 });
@@ -688,7 +691,7 @@ function DesignerCell({ d, index = 0 }: { d: typeof designers[0]; index?: number
       <div className="about-designer-name" style={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.15, marginBottom: "0.6rem", textAlign: "center" }}>{d.name}</div>
       <div className="about-designer-links" style={{ display: "flex", justifyContent: "center", gap: "1.25rem", width: "70%" }}>
         {d.site && <a href={`https://${d.site}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} website`} title="Website" style={link}><GlobeIcon /></a>}
-        <a href={`https://instagram.com/${d.social}`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>
+        {d.social && <a href={`https://www.instagram.com/${d.social}/`} target="_blank" rel="noopener noreferrer" aria-label={`${d.name} on Instagram`} title="Instagram" style={link}><InstagramIcon /></a>}
         <a href={`mailto:${d.email}`} onClick={handleEmailClick} aria-label={`Email ${d.name}`} title="Email" style={link}><MailIcon /></a>
       </div>
       <div
@@ -1518,14 +1521,17 @@ function findGlyphByName(fk: any, name: string): any | null {
   return null;
 }
 // Draws a named glyph's real outline from the font (used when it has no Unicode).
-function NamedGlyph({ fk, glyph, fit = false }: { fk: any; glyph: any; fit?: boolean }) {
-  const asc = fk.ascent, desc = fk.descent, adv = glyph.advanceWidth || fk.unitsPerEm;
+function NamedGlyph({ fk, glyph, asText = false }: { fk: any; glyph: any; asText?: boolean }) {
+  const asc = fk.ascent, desc = fk.descent, adv = glyph.advanceWidth || fk.unitsPerEm, upm = fk.unitsPerEm || 1000;
   const d = glyph.path?.toSVG?.() ?? "";
   return (
-    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={fit
-      // Showcase: drawn inside the same 1em-tall, full-width box as a text glyph
-      // (viewBox "meet" keeps proportions), so it can never resize the layout.
-      ? { height: "1em", width: "100%", overflow: "visible", display: "block" }
+    <svg viewBox={`0 ${-asc} ${adv} ${asc - desc}`} style={asText
+      // Showcase: laid out exactly like a text glyph at the same font-size —
+      // inline, sized in em from the font's own metrics, sitting on the baseline.
+      // Its margin box equals a text glyph's 1em inline box (centred on the content
+      // area), so any ascent+descent beyond 1em overhangs equally — like text ink —
+      // and the line box never grows or shifts when a named glyph is selected.
+      ? { display: "inline-block", height: `${(asc - desc) / upm}em`, width: `${adv / upm}em`, verticalAlign: `${desc / upm + ((asc - desc) / upm - 1) / 2}em`, marginTop: `${(1 - (asc - desc) / upm) / 2}em`, marginBottom: `${(1 - (asc - desc) / upm) / 2}em`, overflow: "visible" }
       : { height: "1.15em", width: "auto", maxWidth: "100%", overflow: "visible", display: "block" }} aria-hidden>
       <path d={d} transform="scale(1,-1)" fill="currentColor" />
     </svg>
@@ -1560,11 +1566,11 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
   }
   const other = groups.find((g) => g.label === "Other");
   if (other) other.chars = [...other.chars, ...namedGlyphs.keys()];
-  const renderEntry = (g: string, fit = false) => {
+  const renderEntry = (g: string, asText = false) => {
     const ng = namedGlyphs.get(g);
     if (!ng) return g;
     const cp = ng.codePoints?.[0];
-    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} fit={fit} />;
+    return cp != null ? String.fromCodePoint(cp) : <NamedGlyph fk={fk} glyph={ng} asText={asText} />;
   };
   const visibleGroups = groups.filter((group) => group.chars.length > 0);
 
@@ -1604,6 +1610,13 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
 
   const glyphBigRef = useRef<HTMLSpanElement | null>(null);
+  // CSS centres the font's content area (ascent + descent) in the 1em line box, so a
+  // font with an inflated ascender drops its baseline — and the selected glyph — low,
+  // past the panel. Lift the artwork (per font, never per glyph) by the amount its
+  // cap zone sits below the line box's centre. Zero for typical metrics; transform
+  // only, so the stage, metadata and panel never move or resize.
+  const upm = fk?.unitsPerEm || 1000;
+  const glyphLiftEm = fk ? Math.max(0, (fk.ascent + fk.descent - (fk.capHeight || fk.ascent)) / 2 / upm) : 0;
   // Phone landscape: slim thumb mirroring the glyph list's real scroll position
   // (iOS hides/ignores styled native scrollbars). Hidden elsewhere via CSS.
   const glyphListRef = useRef<HTMLDivElement | null>(null);
@@ -1649,7 +1662,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
               and rebuilt, so no stale ink (which can overhang the text box and
               escape repaint invalidation, esp. in mobile WebKit) can survive. */}
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
-                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, height: "1em", whiteSpace: "nowrap", padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none" } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
+                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none", transform: glyphLiftEm ? `translateY(-${glyphLiftEm.toFixed(4)}em)` : undefined } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
           </div>
           <div className="tf-glyph-meta" style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
@@ -2592,6 +2605,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             ? "SVEK, a Swedish record label rooted in house and electronic music culture, active during the 1990s to early 2000s. The typeface extends the letters of the original logo into uppercase letters and selected glyphs, reactivating SVEK’s visual legacy while maintaining a connection to its historical context."
           : name === "Mormor"
             ? "Mormor is a typeface inspired by the silly advertising used by the discontinued Swedish boutique Bæckmans. A chain that sold high-end women's clothing, yet marketed itself through quirky graphics and tongue-in-cheek charm. Mormor balances sharpness and precision with approachability and bliss."
+          : name === "Kuriren"
+            ? "Kuriren is a typeface that pays tribute to the nearly four-hundred-year history of the Royal Swedish Post Office. It draws inspiration from its official logo, as well as post office signs, stamps, postcards and other visual material from across several centuries."
           : name === "Sonja"
             ? "Sonja caramel and chocolate factory; a part of the Swedish home since 1921. A condensed, art deco-like typeface, inspired by the industrial elements of a 1930s factory building and the legacy of artisanal candy production."
           : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
@@ -2742,7 +2757,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
             <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
-              {applyCase(aboutText)}
+              {name === "Last Call" ? aboutText.toUpperCase() : applyCase(aboutText)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
               {/* Listed bottom-up: the container is column-reverse, so this
