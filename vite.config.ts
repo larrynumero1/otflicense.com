@@ -2,6 +2,7 @@ import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
+import fs from 'node:fs/promises'
 
 import siteConfiguration from './.figma/make/site.json'
 
@@ -20,10 +21,14 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       figmaSiteConfiguration(siteConfiguration),
+      githubPagesSpaFallback(),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: '/src/**/*.stories.{ts,tsx,js,jsx}' }),
     ],
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-dev-runtime', 'opentype.js', 'fontkit'],
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -45,6 +50,24 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
+
+/**
+ * GitHub Pages has no SPA rewrites: unknown paths (e.g. /brus on refresh) are
+ * answered with 404.html. Emitting an exact copy of the built index.html there
+ * boots the app at the original URL (path, query and hash untouched), and the
+ * History API router in App.tsx renders the matching page. No redirects, so no
+ * loops and no URL rewriting.
+ */
+function githubPagesSpaFallback(): Plugin {
+  return {
+    name: 'github-pages-spa-fallback',
+    apply: 'build',
+    async writeBundle(options) {
+      const outDir = options.dir ?? path.resolve(__dirname, 'dist')
+      await fs.copyFile(path.join(outDir, 'index.html'), path.join(outDir, '404.html'))
+    },
+  }
+}
 
 type FigmaSiteConfiguration = {
   title?: string
@@ -272,7 +295,9 @@ function figmaErrorOverlayReplay(): Plugin {
  * the old tree mounted until the page is reloaded.
  */
 function figmaReactRefreshBoundaryFallback(): Plugin {
+  type ModuleNode = import('vite').ModuleNode
   const hadRefreshBoundary = new Map<string, boolean>()
+  const lostRefreshBoundaries = new Set<string>()
   let sendFullReload: (() => void) | null = null
 
   return {
@@ -282,6 +307,29 @@ function figmaReactRefreshBoundaryFallback(): Plugin {
     configureServer(server) {
       sendFullReload = () => server.ws.send({ type: 'full-reload', path: '*' })
     },
+    handleHotUpdate({ modules, server, timestamp }) {
+      if (lostRefreshBoundaries.size === 0) return
+
+      const visited = new Set<ModuleNode>()
+      const pending = [...modules]
+      while (pending.length > 0) {
+        const current = pending.pop()
+        if (!current || visited.has(current)) continue
+        visited.add(current)
+
+        const moduleId = current.id?.split('?')[0]
+        if (moduleId && lostRefreshBoundaries.has(moduleId)) {
+          const invalidated = new Set<ModuleNode>()
+          for (const updatedModule of modules) {
+            server.moduleGraph.invalidateModule(updatedModule, invalidated, timestamp, true)
+          }
+          sendFullReload?.()
+          return []
+        }
+
+        pending.push(...current.importers)
+      }
+    },
     transform(code, id) {
       if (!/\.[jt]sx?(?:\?|$)/.test(id) || id.includes('/node_modules/')) return null
 
@@ -290,7 +338,9 @@ function figmaReactRefreshBoundaryFallback(): Plugin {
       const previousHadRefreshBoundary = hadRefreshBoundary.get(moduleId)
       hadRefreshBoundary.set(moduleId, hasRefreshBoundary)
 
+      if (hasRefreshBoundary) lostRefreshBoundaries.delete(moduleId)
       if (previousHadRefreshBoundary && !hasRefreshBoundary) {
+        lostRefreshBoundaries.add(moduleId)
         queueMicrotask(() => sendFullReload?.())
       }
 
