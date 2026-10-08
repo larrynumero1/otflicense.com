@@ -556,7 +556,7 @@ const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?
   "Ve Örnehed": { email: "vornehed@gmail.com", social: "vemodiga" },
   "Alva Kinneholm": { email: "a.kinneholm@gmail.com" },
   "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com", social: "lovisakerblom" },
-  "Silje Nordback": { email: "Silje.nordback@gmail.com" },
+  "Silje Nordback": { email: "Silje.nordback@gmail.com", social: "celiagracesokorai" },
   "Hannah Mårtensson": { email: "hannah.martensson@edu.beckmans.se", social: null },
   "Tindra Berglund": { site: "tindraberglund.com", email: "tindraberglund02@gmail.com", social: "tindrasara" },
 };
@@ -1513,6 +1513,10 @@ const NAMED_OTHER_GLYPHS: Record<string, string[]> = {
   Kuriren: ["logo"],
 };
 const NAMED_PREFIX = "\u0000";
+// Display labels for named glyphs (font glyph names stay unchanged).
+const NAMED_GLYPH_LABELS: Record<string, Record<string, string>> = {
+  Kuriren: { logo: "Logo" },
+};
 function findGlyphByName(fk: any, name: string): any | null {
   if (!fk) return null;
   for (let i = 0; i < fk.numGlyphs; i++) {
@@ -1604,7 +1608,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
   const hoveredNamed = namedGlyphs.get(hovered);
   const codePoint = hoveredNamed ? hoveredNamed.codePoints?.[0] : hovered.codePointAt(0) ?? 0;
   const glyphUnicode = codePoint != null ? "U+" + codePoint.toString(16).toUpperCase().padStart(4, "0") : null;
-  const glyphName = hoveredNamed ? hovered.slice(1) :
+  const glyphName = hoveredNamed ? (NAMED_GLYPH_LABELS[faceName]?.[hovered.slice(1)] ?? hovered.slice(1)) :
     GLYPH_NAMES[hovered] ??
     (otFont ? otFont.glyphs.get(otFont.charToGlyphIndex(hovered))?.name : undefined) ??
     "uni" + codePoint.toString(16).toUpperCase().padStart(4, "0");
@@ -2607,6 +2611,14 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             ? "Mormor is a typeface inspired by the silly advertising used by the discontinued Swedish boutique Bæckmans. A chain that sold high-end women's clothing, yet marketed itself through quirky graphics and tongue-in-cheek charm. Mormor balances sharpness and precision with approachability and bliss."
           : name === "Kuriren"
             ? "Kuriren is a typeface that pays tribute to the nearly four-hundred-year history of the Royal Swedish Post Office. It draws inspiration from its official logo, as well as post office signs, stamps, postcards and other visual material from across several centuries."
+          : name === "XOXO"
+            ? "XOXO is a typeface inspired by Puss & Kram, a Swedish jeans brand based at Gamla Brogatan 34 in Stockholm between 1971 and 1979. Drawing from the embroidered labels on the back of the jeans and small details found along the waistband, the typeface pays tribute to the brand's craftsmanship and history."
+          : name === "LCD Über"
+            ? "LCD Über was developed for a reimagined identity of Uber/Tzar, a Swedish rave organisation active between 2014 and 2024. Inspired by the organisation's italic sans-serif logo, warning-tape graphics and the typographic logic of Wim Crouwel, the typeface brings together underground club culture, utilitarian aesthetics and the visual language of control."
+          : name === "Liljan"
+            ? "Liljan is a delicate, ornamental serif typeface inspired by Palmstruchska Banken, Sweden's first bank, founded in 1656. Built around lowercase letterforms, the typeface combines sharp details with fragile, decorative shapes, drawing from the visual character of early Swedish banking and printed documents."
+          : name === "Galanite"
+            ? "Galanite is a bold, playful sans-serif typeface inspired by the Swedish toy manufacturer founded in 1947, best known for its colourful plastic cars. Built around strong uppercase letterforms and graphic shapes, the typeface captures the playful character of the company's toys."
           : name === "Sonja"
             ? "Sonja caramel and chocolate factory; a part of the Swedish home since 1921. A condensed, art deco-like typeface, inspired by the industrial elements of a 1930s factory building and the legacy of artisanal candy production."
           : `${(face as { displayName?: string }).displayName ?? face.name} is a ${face.klass} typeface designed by ${face.designer} at OTF License. Drawn for editorial and display use, it balances character and clarity across sizes. More on its history, features, and language support is coming soon.`;
