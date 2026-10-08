@@ -3398,7 +3398,7 @@ export default function App() {
     const initialPage = pageFromPath(window.location.pathname);
     const canonicalPath = pageToPath(initialPage);
     if (window.location.pathname !== canonicalPath) {
-      window.history.replaceState(null, "", canonicalPath);
+      window.history.replaceState(null, "", canonicalPath + window.location.search + window.location.hash);
     }
 
     const handlePopState = () => {
