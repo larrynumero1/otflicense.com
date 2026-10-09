@@ -1343,6 +1343,20 @@ const GLYPH_SHOWCASE_DESKTOP: Record<string, number> = {
   Kuriren: 28, "Last Call": 28, "LCD Über": 28, Liljan: 28, Mormor: 28, Sonja: 28, Svek: 28, XOXO: 25.25,
 };
 const GLYPH_SHOWCASE_MOBILE = 16;
+// Exact desktop selected-glyph overrides (px); take precedence over GLYPH_SHOWCASE_DESKTOP.
+const GLYPH_SHOWCASE_DESKTOP_PX: Record<string, number> = { Galanite: 373, Kuriren: 289 };
+// Exact phone-landscape selected-glyph sizes (px).
+const GLYPH_SHOWCASE_LANDSCAPE_PX: Record<string, number> = {
+  BIP: 197, Brus: 217, Cheiron: 210, Crypto: 292, Dukat: 217, Ella: 224, Facit: 272, Galanite: 176,
+  Kuriren: 251, "Last Call": 224, "LCD Über": 238, Liljan: 306, Svek: 299, XOXO: 197, Sonja: 286, Mormor: 238,
+};
+// Exact About sizes (px) for phone portrait / phone landscape; override ABOUT_SIZE there.
+const ABOUT_SIZE_PORTRAIT_PX: Record<string, number> = {
+  Cheiron: 13.5, Facit: 15.5, Galanite: 16.5, "Last Call": 14, "LCD Über": 16, Liljan: 16.5, Svek: 22, XOXO: 16.5,
+};
+const ABOUT_SIZE_LANDSCAPE_PX: Record<string, number> = {
+  Cheiron: 14.5, Facit: 16, Galanite: 17.5, "Last Call": 14.5, "LCD Über": 18, Liljan: 17, Svek: 24.5, XOXO: 19,
+};
 
 function SiteFooter({ color = "#000" }: { color?: string }) {
   return (
@@ -1514,6 +1528,7 @@ const DUKAT_HIDDEN_GLYPHS = new Set(["lozenge", "uni25CC"]);
 const NAMED_OTHER_GLYPHS: Record<string, string[]> = {
   Galanite: ["icon.airplane", "icon.bus", "icon.car", "icon.dog", "icon.horse", "icon.other", "icon.smiley", "icon.telephone", "icon.train"],
   Kuriren: ["logo"],
+  Mormor: ["f_adieresis.liga", "f_b.liga", "f_h.liga", "f_i.liga", "f_k.liga", "f_l.liga", "g_j.liga", "j_j.liga", "q_j.liga", "y_j.liga"],
 };
 const NAMED_PREFIX = "\u0000";
 // Display labels for named glyphs (font glyph names stay unchanged).
@@ -1550,7 +1565,7 @@ function NamedGlyph({ fk, glyph, asText = false }: { fk: any; glyph: any; asText
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, sizeDebug, glyphListSize }: { fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
+function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, landscapeGlyphSize, sizeDebug, glyphListSize }: { landscapeGlyphSize?: string; fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1669,7 +1684,7 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
               and rebuilt, so no stale ink (which can overhang the text box and
               escape repaint invalidation, esp. in mobile WebKit) can survive. */}
           <div key={`${hovered}|${fontVariationSettings ?? ""}`} className="tf-glyph-layer" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", willChange: "transform", pointerEvents: "none" }}>
-                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none", transform: glyphLiftEm ? `translateY(-${glyphLiftEm.toFixed(4)}em)` : undefined } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
+                      <span ref={glyphBigRef} className="tf-glyph-big" style={{ display: "block", fontFamily: font, fontVariationSettings, fontSize: desktopGlyphSize ?? "clamp(7rem, 18vw, 18rem)", "--glyph-mobile-size": mobileGlyphSize, "--glyph-landscape-size": landscapeGlyphSize, lineHeight: 1, padding: "0.5em", margin: "-0.5em", overflow: "visible", pointerEvents: "none", transform: glyphLiftEm ? `translateY(-${glyphLiftEm.toFixed(4)}em)` : undefined } as React.CSSProperties}>{renderEntry(hovered, true)}</span>
           </div>
           <div className="tf-glyph-meta" style={{ position: "absolute", left: 0, bottom: 0, fontFamily: "Arial, sans-serif", fontSize: "0.8rem", lineHeight: 1.5, color: panelText }}>
             <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
@@ -2091,7 +2106,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   // rem — initial size per typeface: desktop uses previewSize, ≤768px uses
   // mobilePreviewSize. Chosen once on open; the Size slider owns it afterwards.
   const [size, setSize] = useState(() =>
-    window.matchMedia(MOBILE_MQ).matches
+    face?.name === "Crypto" && isPortraitMobile()
+      ? 2.5 // 40px, phone portrait only
+      : window.matchMedia(MOBILE_MQ).matches
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
@@ -2622,7 +2639,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             ? "Liljan is a delicate, ornamental serif typeface inspired by Palmstruchska Banken, Sweden's first bank, founded in 1656. Built around lowercase letterforms, the typeface combines sharp details with fragile, decorative shapes, drawing from the visual character of early Swedish banking and printed documents."
           : name === "Galanite"
             ? "Galanite is a bold, playful sans-serif typeface inspired by the Swedish toy manufacturer founded in 1947, best known for its colourful plastic cars. Built around strong uppercase letterforms and graphic shapes, the typeface captures the playful character of the company's toys."
-          : name === "Crypto Mono"
+          : name === "Crypto"
             ? "Crypto Mono is a monospaced typeface developed for AB Kryptoteknik, inspired by cryptography, early information systems and coding."
           : name === "Dukat"
             ? "Dukat was developed for a reimagined Trafikrestauranger, a Swedish train catering company. The typeface combines references to the company's original identity with organic forms inspired by a new concept of growing fresh produce on board."
@@ -2775,7 +2792,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
         <div className="tf-info-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: GAP, alignItems: "stretch" }}>
           {/* Info — left: description + details */}
           <div className="tf-info" style={{ position: "relative", background: panelBg, color: panelText, padding: "1.75rem", display: "flex", flexDirection: "column", transition: "background 0.25s ease, color 0.25s ease" }}>
-            <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
+            <p ref={aboutTextRef} className="tf-about-text" style={{ fontFamily: face.font, fontVariationSettings: name === "Brus" ? '"slnt" 0' : name === "BIP" ? '"wght" 0' : undefined, fontSize: isLandscape && ABOUT_SIZE_LANDSCAPE_PX[face.name] != null ? `${ABOUT_SIZE_LANDSCAPE_PX[face.name]}px` : glyphMobile && ABOUT_SIZE_PORTRAIT_PX[face.name] != null ? `${ABOUT_SIZE_PORTRAIT_PX[face.name]}px` : `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem`, color: panelText, opacity: 0.85, margin: "0 0 1.75rem", lineHeight: 1.6 }}>
               {name === "Last Call" || name === "Cheiron" ? aboutText.toUpperCase() : applyCase(aboutText)}
             </p>
             <div style={{ marginTop: "auto", fontFamily: "Arial, sans-serif", fontSize: "0.8rem", color: panelText, display: "flex", flexDirection: "column-reverse" }}>
@@ -2839,7 +2856,8 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
             ) : (nativeAxes?.some((a) => a.onOff) ? <>{nativeAxes.map((a) => renderAxis(a, true))}</> : variableControls ?? regularLabel)}
             glyphListSize={name === "Svek" ? `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem` : undefined}
             mobileGlyphSize={`${GLYPH_SHOWCASE_MOBILE}rem`}
-            desktopGlyphSize={`${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
+            desktopGlyphSize={GLYPH_SHOWCASE_DESKTOP_PX[face.name] != null ? `${GLYPH_SHOWCASE_DESKTOP_PX[face.name]}px` : `${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
+            landscapeGlyphSize={GLYPH_SHOWCASE_LANDSCAPE_PX[face.name] != null ? `${GLYPH_SHOWCASE_LANDSCAPE_PX[face.name]}px` : undefined}
           />
         </div>
 

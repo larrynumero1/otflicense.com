@@ -1104,7 +1104,7 @@ html {
     padding-bottom: 2.4rem;
   }
   .tf-glyph-big {
-    font-size: min(var(--glyph-mobile-size, 9rem), 38svh) !important;
+    font-size: var(--glyph-landscape-size, min(var(--glyph-mobile-size, 9rem), 38svh)) !important;
   }
   .tf-glyph-list {
     max-height: 100%;
