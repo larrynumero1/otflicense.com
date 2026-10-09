@@ -438,110 +438,6 @@ function pageFromPath(pathname: string): Page {
   return { id: "home" };
 }
 
-// TEMPORARY (design only): live readout of an element's computed font size.
-// Absolutely positioned, pointer-events none — zero layout impact. Delete
-// <SizeBadge> usages and this component to remove.
-function SizeBadge({ label, target, style }: { label: string; target: React.RefObject<HTMLElement | null>; style?: React.CSSProperties }) {
-  const [px, setPx] = useState<string>("");
-  useEffect(() => {
-    const read = () => {
-      const el = target.current;
-      if (el) setPx(`${Math.round(parseFloat(getComputedStyle(el).fontSize) * 10) / 10}px`);
-    };
-    read();
-    const id = window.setInterval(read, 250);
-    return () => window.clearInterval(id);
-  }, [target]);
-  if (!px) return null;
-  return (
-    <div aria-hidden style={{ position: "absolute", zIndex: 50, pointerEvents: "none", padding: "2px 6px", borderRadius: 3, background: "rgba(0,0,0,0.6)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, whiteSpace: "nowrap", ...style }}>
-      {label}: {px}
-    </div>
-  );
-}
-
-// TEMPORARY (design only): floating size-tuning panel. Overrides are applied
-// through data attributes + CSS variables on <html> (see "TEMPORARY design size
-// controls" in index.css), so no component reads them. Phone landscape keeps
-// its own independent set of values. Remove this component,
-// its one usage in TypefacePage and that CSS block to strip it entirely.
-const DESIGN_SIZE_CONTROLS = [
-  { key: "about", label: "About Size", selector: ".tf-about-text", min: 8, max: 40, step: 0.5 },
-  { key: "glyph-big", label: "Selected Glyph Size", selector: ".tf-glyph-big", min: 40, max: 640, step: 1 },
-  { key: "glyph-ui", label: "Glyph UI Size", selector: ".tf-glyph-ui-sample", min: 8, max: 32, step: 0.5 },
-  { key: "grid", label: "Grid Glyph Size", selector: ".tf-glyph-cell", min: 8, max: 64, step: 0.5 },
-] as const;
-function DesignSizePanel() {
-  const [open, setOpen] = useState(true);
-  // Two independent value sets: phone landscape vs. everything else (desktop +
-  // portrait). Only the set for the current orientation is written to <html>.
-  const [mode, setMode] = useState<"base" | "landscape">(() => (window.matchMedia(LANDSCAPE_MQ).matches ? "landscape" : "base"));
-  useEffect(() => {
-    const mq = window.matchMedia(LANDSCAPE_MQ);
-    const onChange = () => setMode(mq.matches ? "landscape" : "base");
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-  const [allValues, setAllValues] = useState<Record<"base" | "landscape", Record<string, number>>>({ base: {}, landscape: {} });
-  const values = allValues[mode];
-  const setValues = (fn: (v: Record<string, number>) => Record<string, number>) => setAllValues((all) => ({ ...all, [mode]: fn(all[mode]) }));
-  const [actual, setActual] = useState<Record<string, number>>({});
-  // Glyph UI scales via CSS zoom (text + cells together) relative to the site value.
-  const glyphUiBase = useRef<number | null>(null);
-  useEffect(() => {
-    const read = () => {
-      const next: Record<string, number> = {};
-      for (const c of DESIGN_SIZE_CONTROLS) {
-        const el = document.querySelector(c.selector);
-        if (!el) continue;
-        const px = parseFloat(getComputedStyle(el).fontSize);
-        if (c.key === "glyph-ui") {
-          if (!document.documentElement.hasAttribute("data-dbg-glyph-ui")) glyphUiBase.current = px;
-          const z = parseFloat(document.documentElement.style.getPropertyValue("--dbg-glyph-ui-zoom")) || 1;
-          next[c.key] = Math.round((glyphUiBase.current ?? px) * z * 10) / 10;
-        } else next[c.key] = Math.round(px * 10) / 10;
-      }
-      setActual(next);
-    };
-    read();
-    const id = window.setInterval(read, 250);
-    return () => window.clearInterval(id);
-  }, []);
-  useEffect(() => {
-    const root = document.documentElement;
-    for (const c of DESIGN_SIZE_CONTROLS) {
-      const v = values[c.key];
-      if (v != null) {
-        root.setAttribute(`data-dbg-${c.key}`, ""); root.style.setProperty(`--dbg-${c.key}`, `${v}px`);
-        if (c.key === "glyph-ui" && glyphUiBase.current) root.style.setProperty("--dbg-glyph-ui-zoom", String(v / glyphUiBase.current));
-      } else {
-        root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`);
-        if (c.key === "glyph-ui") root.style.removeProperty("--dbg-glyph-ui-zoom");
-      }
-    }
-  }, [values]);
-  useEffect(() => () => {
-    const root = document.documentElement;
-    for (const c of DESIGN_SIZE_CONTROLS) { root.removeAttribute(`data-dbg-${c.key}`); root.style.removeProperty(`--dbg-${c.key}`); }
-    root.style.removeProperty("--dbg-glyph-ui-zoom");
-  }, []);
-  return (
-    <div className="dbg-size-panel" style={{ position: "fixed", left: 8, bottom: "calc(var(--fixed-marquee-h, 0px) + 8px)", zIndex: 400, background: "rgba(20,20,20,0.88)", color: "#fff", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10, lineHeight: 1.3, borderRadius: 6, padding: open ? "6px 8px" : 0, boxShadow: "0 4px 14px rgba(0,0,0,0.3)" }}>
-      <button type="button" onClick={() => setOpen((o) => !o)} style={{ all: "unset", cursor: "pointer", display: "block", padding: open ? "0 0 4px" : "6px 8px", opacity: 0.7 }}>
-        {open ? `▾ design sizes (temp) — ${mode === "landscape" ? "PHONE LANDSCAPE" : "desktop / portrait"}` : `▸ sizes${mode === "landscape" ? " (landscape)" : ""}`}
-      </button>
-      {open && DESIGN_SIZE_CONTROLS.map((c) => (
-        <div key={c.key} style={{ display: "grid", gridTemplateColumns: "8.5rem 7rem 3.6rem 1rem", alignItems: "center", gap: 6, padding: "2px 0" }}>
-          <span>{c.label}</span>
-          <input type="range" min={c.min} max={c.max} step={c.step} value={values[c.key] ?? actual[c.key] ?? c.min} onChange={(e) => { const n = Number(e.target.value); setValues((v) => ({ ...v, [c.key]: n })); }} style={{ width: "100%", accentColor: "#fff" }} />
-          <span style={{ textAlign: "right" }}>{actual[c.key] != null ? `${actual[c.key]}px` : "—"}</span>
-          <button type="button" title="Reset to site value" onClick={() => setValues((v) => { const n = { ...v }; delete n[c.key]; return n; })} style={{ all: "unset", cursor: "pointer", opacity: values[c.key] != null ? 0.8 : 0.25 }}>↺</button>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const DEFAULT_DESIGNER_EMAIL = "otflicense@gmail.com";
 
 // social: null = no Instagram link (otherwise defaults to the name-derived handle).
@@ -1565,7 +1461,7 @@ function NamedGlyph({ fk, glyph, asText = false }: { fk: any; glyph: any; asText
 // (otf/ttf) faces, and `coverage` (a set of code points read via fontkit) for the
 // native WOFF2 variable fonts opentype.js cannot parse. A character is shown only
 // when it genuinely exists in that font — never inferred from browser fallback.
-function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, landscapeGlyphSize, sizeDebug, glyphListSize }: { landscapeGlyphSize?: string; fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string; sizeDebug?: React.ReactNode }) {
+function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText, fontVariationSettings, controls, mobileGlyphSize, desktopGlyphSize, landscapeGlyphSize, glyphListSize }: { landscapeGlyphSize?: string; fk?: any; glyphListSize?: string; font: string; faceName: string; otFont: opentype.Font | null; coverage: Set<number> | null; panelBg: string; panelText: string; fontVariationSettings?: string; controls?: React.ReactNode; mobileGlyphSize?: string; desktopGlyphSize?: string }) {
   const groups = CHAR_GROUPS.map((group) => ({
     label: group.label,
     chars: (otFont
@@ -1690,7 +1586,6 @@ function GlyphSection({ fk, font, faceName, otFont, coverage, panelBg, panelText
             <div className="tf-glyph-ui-sample">Glyph: {glyphName}</div>
             {glyphUnicode && <div>Unicode: {glyphUnicode}</div>}
           </div>
-          {sizeDebug}
         </div>
       </div>
 
@@ -2649,13 +2544,11 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
-      <DesignSizePanel />
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
           {/* Size slider + colour dots, side by side and centred at the top. */}
-          <SizeBadge label="Preview" target={textareaRef} style={{ left: 8, bottom: 8 }} />
           <div className="tf-preview-controls" style={{ position: "absolute", top: 16, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, zIndex: 2, color: panelText }}>
             {isMobile && mobileControlRow("preview")}
             {/* Size */}
@@ -2670,7 +2563,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
               />
-              {/* TEMPORARY: live Size readout for choosing BIP's preview size. */}
             </div>}
             {/* Space — em letter spacing; numeric value intentionally hidden. */}
             {!isMobile && <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
