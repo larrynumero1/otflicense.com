@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type React from "react";
 import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
+import promoVideo from "./imports/Otf_Promofilm.mp4";
 import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
 import galleryImg1 from "./imports/gallery-1.jpg";
@@ -1272,7 +1273,7 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
 
 // About-page video: the first video uploaded to src/imports is bundled as a
 // local asset (hashed into dist/assets on build, so it deploys with the site).
-const ABOUT_VIDEO_SRC = new URL("./imports/Otf_Promofilm.mp4", import.meta.url).href;
+const ABOUT_VIDEO_SRC = promoVideo;
 
 // Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
 // About page, so every visit starts muted again.
