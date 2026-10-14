@@ -1272,9 +1272,7 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
 
 // About-page video: the first video uploaded to src/imports is bundled as a
 // local asset (hashed into dist/assets on build, so it deploys with the site).
-const ABOUT_VIDEO_SRC: string = Object.values(
-  import.meta.glob<string>("./imports/*.{mp4,MP4,webm,WEBM,mov,MOV,m4v,M4V}", { eager: true, query: "?url", import: "default" })
-)[0] ?? "";
+const ABOUT_VIDEO_SRC = new URL("./imports/Otf_Promofilm.mp4", import.meta.url).href;
 
 // Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
 // About page, so every visit starts muted again.
