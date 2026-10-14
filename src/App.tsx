@@ -1243,11 +1243,19 @@ const GLYPH_SHOWCASE_DESKTOP: Record<string, number> = {
 };
 const GLYPH_SHOWCASE_MOBILE = 16;
 // Exact desktop selected-glyph overrides (px); take precedence over GLYPH_SHOWCASE_DESKTOP.
-const GLYPH_SHOWCASE_DESKTOP_PX: Record<string, number> = { Galanite: 373, Kuriren: 289 };
+const GLYPH_SHOWCASE_DESKTOP_PX: Record<string, number> = {
+  BIP: 231.5, Brus: 240, Cheiron: 270, Crypto: 319, Dukat: 248.5, Ella: 275.5, Facit: 326, Galanite: 280,
+  Kuriren: 289, "Last Call": 293, "LCD Über": 294, Liljan: 354, Mormor: 408, Sonja: 312, Svek: 320, XOXO: 243.5,
+};
+// Exact phone-portrait selected-glyph sizes (px); faces not listed keep GLYPH_SHOWCASE_MOBILE.
+const GLYPH_SHOWCASE_PORTRAIT_PX: Record<string, number> = {
+  BIP: 189, Brus: 157.5, Cheiron: 154, Crypto: 179.5, Dukat: 152.5, Ella: 151, Galanite: 154, Kuriren: 160.5,
+  "Last Call": 192.5, "LCD Über": 160, Liljan: 202, Mormor: 165.5, Sonja: 192.5, Svek: 203.5, XOXO: 151,
+};
 // Exact phone-landscape selected-glyph sizes (px).
 const GLYPH_SHOWCASE_LANDSCAPE_PX: Record<string, number> = {
-  BIP: 197, Brus: 217, Cheiron: 210, Crypto: 292, Dukat: 217, Ella: 224, Facit: 272, Galanite: 176,
-  Kuriren: 251, "Last Call": 224, "LCD Über": 238, Liljan: 306, Svek: 299, XOXO: 197, Sonja: 286, Mormor: 238,
+  BIP: 197, Brus: 133.5, Cheiron: 190.5, Crypto: 211.5, Dukat: 203.5, Ella: 208, Facit: 272, Galanite: 173.5,
+  Kuriren: 227, "Last Call": 214.5, "LCD Über": 211.5, Liljan: 230, Svek: 252.5, XOXO: 141.5, Sonja: 230.5, Mormor: 214.5,
 };
 // Exact About sizes (px) for phone portrait / phone landscape; override ABOUT_SIZE there.
 const ABOUT_SIZE_PORTRAIT_PX: Record<string, number> = {
@@ -1256,103 +1264,6 @@ const ABOUT_SIZE_PORTRAIT_PX: Record<string, number> = {
 const ABOUT_SIZE_LANDSCAPE_PX: Record<string, number> = {
   Cheiron: 14.5, Facit: 16, Galanite: 17.5, "Last Call": 14.5, "LCD Über": 18, Liljan: 17, Svek: 24.5, XOXO: 19,
 };
-
-// ── TEMPORARY design-only size tools ──────────────────────────────────────────
-// Self-contained: delete DESIGN_TOOLS_ENABLED, DesignSizePanel and its single
-// <DesignSizePanel …/> usage to remove. Nothing is applied until a slider moves,
-// so the site renders exactly as configured. Values persist in localStorage and
-// "Copy values" exports them (px) to bake into the size tables above.
-const DESIGN_TOOLS_ENABLED = true;
-type DesignMode = "desktop" | "portrait" | "landscape";
-type DesignKey = "about" | "glyph" | "ui" | "grid";
-const DESIGN_STORE_KEY = "otf-design-sizes";
-const DESIGN_SLIDERS: { key: DesignKey; label: string; probe: string; targets: string; min: number; max: number }[] = [
-  { key: "about", label: "About Size", probe: ".tf-about-text", targets: ".tf-about-text", min: 6, max: 48 },
-  { key: "glyph", label: "Selected Glyph Size", probe: ".tf-glyph-big", targets: ".tf-glyph-big", min: 40, max: 700 },
-  { key: "ui", label: "Glyph UI Size", probe: ".tf-glyph-meta", targets: ".tf-glyph-meta, .tf-glyph-cat-head", min: 6, max: 32 },
-  { key: "grid", label: "Grid Glyph Size", probe: ".tf-glyph-cell", targets: ".tf-glyph-cell", min: 6, max: 64 },
-];
-type DesignStore = Record<string, Partial<Record<DesignMode, Partial<Record<DesignKey, number>>>>>;
-const readDesignStore = (): DesignStore => { try { return JSON.parse(localStorage.getItem(DESIGN_STORE_KEY) || "{}"); } catch { return {}; } };
-
-function DesignSizePanel({ face, mode }: { face: string; mode: DesignMode }) {
-  const [store, setStore] = useState<DesignStore>(readDesignStore);
-  const [measured, setMeasured] = useState<Partial<Record<DesignKey, number>>>({});
-  const [collapsed, setCollapsed] = useState(false);
-  const [pos, setPos] = useState({ x: 12, y: 12 });
-  const drag = useRef<{ dx: number; dy: number } | null>(null);
-  const overrides = store[face]?.[mode] ?? {};
-
-  // Effective sizes as rendered right now (read from the DOM, so they always match
-  // the configured tables). Re-read when face/mode changes or an override is cleared.
-  useEffect(() => {
-    let raf = 0;
-    const read = () => {
-      const next: Partial<Record<DesignKey, number>> = {};
-      DESIGN_SLIDERS.forEach(({ key, probe }) => {
-        const el = document.querySelector<HTMLElement>(probe);
-        if (el) next[key] = Math.round(parseFloat(getComputedStyle(el).fontSize) * 2) / 2;
-      });
-      setMeasured((prev) => ({ ...next, ...Object.fromEntries(Object.entries(prev).filter(([k]) => next[k as DesignKey] == null)) }));
-    };
-    raf = requestAnimationFrame(read);
-    const t = window.setTimeout(read, 600); // after fonts / glyph panel settle
-    return () => { cancelAnimationFrame(raf); window.clearTimeout(t); };
-  }, [face, mode, JSON.stringify(overrides)]);
-
-  const save = (next: DesignStore) => { setStore(next); localStorage.setItem(DESIGN_STORE_KEY, JSON.stringify(next)); };
-  const setValue = (key: DesignKey, v: number | null) => {
-    const faceStore = { ...(store[face] ?? {}) };
-    const modeStore = { ...(faceStore[mode] ?? {}) };
-    if (v == null) delete modeStore[key]; else modeStore[key] = v;
-    faceStore[mode] = modeStore;
-    save({ ...store, [face]: faceStore });
-  };
-  // Overrides only for this face + mode; high specificity beats the media-query !important rules.
-  const css = DESIGN_SLIDERS.filter(({ key }) => overrides[key] != null)
-    .map(({ key, targets }) => targets.split(",").map((t) => `html body ${t.trim()}`).join(", ") + ` { font-size: ${overrides[key]}px !important; }`)
-    .join("\n");
-  const label = { desktop: "Desktop", portrait: "Mobile portrait", landscape: "Mobile landscape" }[mode];
-  const txt: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: 11, color: "#000" };
-
-  return createPortal(
-    <>
-      {css && <style>{css}</style>}
-      <div
-        role="region"
-        aria-label="Design size tools (temporary)"
-        style={{ position: "fixed", left: pos.x, top: pos.y, zIndex: 10000, width: collapsed ? "auto" : 250, maxWidth: "calc(100vw - 24px)", background: "rgba(255,255,255,0.97)", border: "1px solid #000", borderRadius: 6, boxShadow: "0 2px 10px rgba(0,0,0,0.15)", ...txt, touchAction: "none" }}
-      >
-        <div
-          onPointerDown={(e) => { if ((e.target as HTMLElement).closest("button")) return; drag.current = { dx: e.clientX - pos.x, dy: e.clientY - pos.y }; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); }}
-          onPointerMove={(e) => { if (!drag.current) return; setPos({ x: Math.max(0, Math.min(window.innerWidth - 60, e.clientX - drag.current.dx)), y: Math.max(0, Math.min(window.innerHeight - 30, e.clientY - drag.current.dy)) }); }}
-          onPointerUp={() => { drag.current = null; }}
-          style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", cursor: "move", borderBottom: collapsed ? "none" : "1px solid #000", userSelect: "none" }}
-        >
-          <strong style={{ flex: 1 }}>Design · {label}</strong>
-          <button type="button" onClick={() => setCollapsed((c) => !c)} aria-label={collapsed ? "Expand design tools" : "Collapse design tools"} style={{ ...txt, border: "1px solid #000", borderRadius: 4, background: "#fff", padding: "1px 6px", cursor: "pointer" }}>{collapsed ? "+" : "–"}</button>
-        </div>
-        {!collapsed && (
-          <div style={{ padding: "6px 8px 8px", display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ opacity: 0.6 }}>{face}</div>
-            {DESIGN_SLIDERS.map(({ key, label: l, min, max }) => {
-              const v = overrides[key] ?? measured[key];
-              return (
-                <label key={key} style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "center", gap: "2px 6px" }}>
-                  <span>{l}{overrides[key] != null && <button type="button" onClick={(e) => { e.preventDefault(); setValue(key, null); }} title="Reset to configured size" style={{ ...txt, marginLeft: 6, border: "none", background: "none", textDecoration: "underline", cursor: "pointer", padding: 0 }}>reset</button>}</span>
-                  <span style={{ fontVariantNumeric: "tabular-nums" }}>{v != null ? `${v}px` : "–"}</span>
-                  <input type="range" min={Math.min(min, v ?? min)} max={Math.max(max, v ?? max)} step={0.5} value={v ?? min} disabled={v == null} onChange={(e) => setValue(key, Number(e.target.value))} style={{ gridColumn: "1 / -1", width: "100%" }} />
-                </label>
-              );
-            })}
-            <button type="button" onClick={() => navigator.clipboard?.writeText(JSON.stringify(store, null, 2))} style={{ ...txt, border: "1px solid #000", borderRadius: 4, background: "#fff", padding: "3px 6px", cursor: "pointer" }}>Copy values</button>
-          </div>
-        )}
-      </div>
-    </>,
-    document.body
-  );
-}
 
 function SiteFooter({ color = "#000" }: { color?: string }) {
   return (
@@ -1423,9 +1334,11 @@ function AboutVideo({ src }: { src: string }) {
     v.play().catch(() => {});
     if (touch) showThenHide();
   };
-  const iconVisible = touch ? shown : hovered;
-  const controlsVisible = !touch || shown;
-  const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation", opacity: controlsVisible ? 1 : 0, visibility: controlsVisible ? "visible" : "hidden", pointerEvents: controlsVisible ? "auto" : "none", transition: controlsVisible ? "opacity 0.15s ease" : "opacity 0.2s ease, visibility 0s linear 0.2s" };
+  // Desktop: everything follows hover. Touch: tap-reveal with 2.5s auto-hide.
+  const controlsVisible = touch ? shown : hovered;
+  const iconVisible = controlsVisible;
+  const fade = controlsVisible ? "opacity 0.15s ease" : "opacity 0.15s ease, visibility 0s linear 0.15s";
+  const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation", opacity: controlsVisible ? 1 : 0, visibility: controlsVisible ? "visible" : "hidden", pointerEvents: controlsVisible ? "auto" : "none", transition: fade };
   return (
     // Height follows the file's own aspect ratio (width 100%, height auto): no crop, no letterbox.
     <div
@@ -2211,16 +2124,33 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const [top, setTop] = useState("");
   // rem — initial size per typeface: desktop uses previewSize, ≤768px uses
   // mobilePreviewSize. Chosen once on open; the Size slider owns it afterwards.
-  const [size, setSize] = useState(() =>
-    face?.name === "Crypto" && isPortraitMobile()
+  // Default preview size for the current mode, and a slider range centred on it
+  // (thumb at exactly 50%). Phone landscape starts at the top of that range.
+  const previewDefaults = () => {
+    const d = face?.name === "Crypto" && isPortraitMobile()
       ? 2.5 // 40px, phone portrait only
       : window.matchMedia(MOBILE_MQ).matches
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
-      : face?.previewSize ?? 16
-  );
-  // Size slider range centred on this face's default size: min/max are
-  // symmetric around it, so the thumb starts at exactly 50% of the track.
-  const [sizeRange] = useState(() => ({ min: size * 0.25, max: size * 1.75, step: (size * 1.5) / 100 }));
+      : face?.previewSize ?? 16;
+    const range = { min: d * 0.25, max: d * 1.75, step: (d * 1.5) / 100 };
+    return { range, size: window.matchMedia(LANDSCAPE_MQ).matches ? range.max : d };
+  };
+  const [size, setSizeState] = useState(() => previewDefaults().size);
+  const [sizeRange, setSizeRange] = useState(() => previewDefaults().range);
+  // Once the user moves the slider, orientation changes no longer reset it.
+  const sizeTouched = useRef(false);
+  const setSize = (v: number) => { sizeTouched.current = true; setSizeState(v); };
+  useEffect(() => {
+    const mqs = [window.matchMedia(MOBILE_MQ), window.matchMedia(LANDSCAPE_MQ)];
+    const onChange = () => {
+      if (sizeTouched.current) return;
+      const d = previewDefaults();
+      setSizeRange(d.range);
+      setSizeState(d.size);
+    };
+    mqs.forEach((m) => m.addEventListener("change", onChange));
+    return () => mqs.forEach((m) => m.removeEventListener("change", onChange));
+  }, [name]);
   const [font, setFont] = useState<opentype.Font | null>(null);
   // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
   // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
@@ -2759,7 +2689,6 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
-      {DESIGN_TOOLS_ENABLED && <DesignSizePanel face={face.name} mode={isLandscape ? "landscape" : isMobile ? "portrait" : "desktop"} />}
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
@@ -2962,7 +2891,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
                 : regularLabel
             ) : (nativeAxes?.some((a) => a.onOff) ? <>{nativeAxes.map((a) => renderAxis(a, true))}</> : variableControls ?? regularLabel)}
             glyphListSize={name === "Svek" ? `${(isMobile ? ABOUT_SIZE[face.name]?.mobile : ABOUT_SIZE[face.name]?.desktop) ?? 0.95}rem` : undefined}
-            mobileGlyphSize={`${GLYPH_SHOWCASE_MOBILE}rem`}
+            mobileGlyphSize={GLYPH_SHOWCASE_PORTRAIT_PX[face.name] != null ? `${GLYPH_SHOWCASE_PORTRAIT_PX[face.name]}px` : `${GLYPH_SHOWCASE_MOBILE}rem`}
             desktopGlyphSize={GLYPH_SHOWCASE_DESKTOP_PX[face.name] != null ? `${GLYPH_SHOWCASE_DESKTOP_PX[face.name]}px` : `${GLYPH_SHOWCASE_DESKTOP[face.name] ?? 28}rem`}
             landscapeGlyphSize={GLYPH_SHOWCASE_LANDSCAPE_PX[face.name] != null ? `${GLYPH_SHOWCASE_LANDSCAPE_PX[face.name]}px` : undefined}
           />
@@ -3652,11 +3581,11 @@ export default function App() {
   else if (page.id === "contact")  content = <FaqPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "eula")     content = <EulaPage onNavigate={navigate} {...staticEyesProps} />;
   else if (page.id === "bundle")   content = <BundlePage onNavigate={navigate} {...staticEyesProps} />;
-  else if (page.id === "typeface") content = <TypefacePage name={page.name} onNavigate={navigate} {...staticEyesProps} />;
+  else if (page.id === "typeface") content = <TypefacePage key={page.name} name={page.name} onNavigate={navigate} {...staticEyesProps} />;
   else content = (
     <div className={`shop-root${landingEntrance ? " landing-enter" : ""}`} style={{ overflowX: "clip", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
       <div style={{ background: "#fff", flexShrink: 0 }}>
-        <NavBar onNavigate={navigate} onBrand={() => navigate({ id: "home" })} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
+        <NavBar onNavigate={navigate} onBrand={() => { setEyesPhase(0); setEyesPos({ x: 0, y: 0 }); navigate({ id: "home" }); }} padding="2.5rem 4.5rem 1.5rem" {...foundryEyesProps} />
       </div>
       {/* overflow visible + raised layer so hovered stickers aren't cropped by the band edges */}
       <div ref={shopStageRef} className="shop-stage" style={{ flex: "1 0 auto", overflow: "visible", position: "relative", zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem 3rem" }}>
