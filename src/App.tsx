@@ -1397,6 +1397,24 @@ function AboutVideo({ src }: { src: string }) {
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("All");
   const [klassOpen, setKlassOpen] = useState(false);
+  // Mobile: the menu opens under the arrow (like the other mobile dropdowns), kept on-screen.
+  const klassArrowRef = useRef<HTMLSpanElement | null>(null);
+  const klassMenuRef = useRef<HTMLDivElement | null>(null);
+  const [klassMenuLeft, setKlassMenuLeft] = useState(0);
+  useLayoutEffect(() => {
+    if (!klassOpen) return;
+    const place = () => {
+      const arrow = klassArrowRef.current, menu = klassMenuRef.current;
+      if (!arrow || !menu || !window.matchMedia(MOBILE_MQ).matches) { setKlassMenuLeft(0); return; }
+      const parentLeft = (menu.offsetParent as HTMLElement | null)?.getBoundingClientRect().left ?? 0;
+      const margin = 12;
+      const maxLeft = window.innerWidth - margin - menu.offsetWidth - parentLeft;
+      setKlassMenuLeft(Math.max(margin - parentLeft, Math.min(arrow.getBoundingClientRect().left - parentLeft, maxLeft)));
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [klassOpen]);
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
   if (title === "ABOUT") {
@@ -1436,10 +1454,10 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
               style={{ display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", color: "#000", padding: 0, minHeight: 44, cursor: "pointer", fontFamily: "Arial, sans-serif", fontSize: "1.6rem", fontWeight: "bold", whiteSpace: "nowrap", touchAction: "manipulation" }}
             >
               <span>{klassFilter === "All" ? "All Designers" : klassLabel(klassFilter)}</span>
-              <span aria-hidden="true" style={{ display: "inline-block", width: "1.4rem", textAlign: "center", fontSize: "1.8rem", fontWeight: "normal", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
+              <span ref={klassArrowRef} aria-hidden="true" style={{ display: "inline-block", width: "1.4rem", textAlign: "center", fontSize: "1.8rem", fontWeight: "normal", lineHeight: 1, transform: `rotate(${klassOpen ? -90 : 90}deg)`, transition: "transform 0.15s ease" }}>›</span>
             </button>
             {klassOpen && (
-              <div role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 5, minWidth: 128, background: "#fff", color: "#000", border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
+              <div ref={klassMenuRef} role="menu" style={{ position: "absolute", top: "calc(100% + 8px)", left: klassMenuLeft, zIndex: 5, minWidth: 128, background: "#fff", color: "#000", border: "1.5px solid rgba(128,128,128,0.6)", borderRadius: 8, padding: 4, boxShadow: "0 6px 18px rgba(0,0,0,0.18)" }}>
                 {DESIGNER_CLASSES.map((c) => (
                   <button
                     key={c}
