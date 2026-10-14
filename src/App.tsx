@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type React from "react";
 import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
-import promoVideo from "./imports/Otf_Promofilm.mp4";
 import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
 import galleryImg1 from "./imports/gallery-1.jpg";
@@ -460,7 +459,7 @@ const DESIGNER_CONTACTS: Record<string, { site?: string; email?: string; social?
   "Alva Kinneholm": { email: "a.kinneholm@gmail.com" },
   "Lovisa Åkerblom": { email: "lovisaakerblom@gmail.com", social: "lovisakerblom" },
   "Silje Nordback": { email: "Silje.nordback@gmail.com", social: "celiagracesokorai" },
-  "Hannah Mårtensson": { email: "hannah.martensson@edu.beckmans.se", social: null },
+  "Hannah Mårtensson": { email: "Hannah.s.martensson@gmail.com", social: "hanbannyfarts" },
   "Tindra Berglund": { site: "tindraberglund.com", email: "tindraberglund02@gmail.com", social: "tindrasara" },
 };
 
@@ -1271,15 +1270,18 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
   );
 }
 
-// About-page video: the first video uploaded to src/imports is bundled as a
-// local asset (hashed into dist/assets on build, so it deploys with the site).
-const ABOUT_VIDEO_SRC = promoVideo;
+// About video: src/imports/Otf_Promofilm.mp4, bundled by Vite exactly like a
+// direct import. Resolved this way so the build still succeeds while the file
+// is missing from this project (the About page then shows its placeholder).
+const ABOUT_VIDEO_SRC: string =
+  import.meta.glob<string>("./imports/Otf_Promofilm.mp4", { eager: true, import: "default" })["./imports/Otf_Promofilm.mp4"] ?? "";
 
 // Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
 // About page, so every visit starts muted again.
 function AboutVideo({ src }: { src: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
@@ -1287,7 +1289,7 @@ function AboutVideo({ src }: { src: string }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { v.pause(); return; }
     v.play().catch(() => { /* autoplay blocked: stays on first frame */ });
   }, []);
-  const toggle = () => {
+  const toggleSound = () => {
     const v = ref.current;
     if (!v) return;
     const next = !muted;
@@ -1296,22 +1298,55 @@ function AboutVideo({ src }: { src: string }) {
     // Unmuting is a user gesture, so playback may start here if autoplay was blocked.
     if (!next && v.paused) v.play().catch(() => {});
   };
+  const togglePlay = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  };
+  const restart = () => {
+    const v = ref.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  };
+  const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation" };
   return (
-    <div style={{ position: "relative", aspectRatio: "16 / 9", background: "#000", overflow: "hidden" }}>
-      <video ref={ref} src={src} muted autoPlay loop playsInline preload="auto" disablePictureInPicture aria-label="OTF License video" style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }} />
-      <button
-        type="button"
-        className="about-video-sound"
-        onClick={toggle}
-        aria-label={muted ? "Turn sound on" : "Turn sound off"}
-        aria-pressed={!muted}
-        style={{ position: "absolute", right: 10, bottom: 10, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation" }}
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
-          {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
-        </svg>
-      </button>
+    // Height follows the file's own aspect ratio (width 100%, height auto): no crop, no letterbox.
+    <div style={{ position: "relative", lineHeight: 0 }}>
+      <video
+        ref={ref}
+        src={src}
+        muted
+        autoPlay
+        loop
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        role="button"
+        tabIndex={0}
+        aria-label={playing ? "Pause OTF License video" : "Play OTF License video"}
+        aria-pressed={playing}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onClick={togglePlay}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); } }}
+        style={{ display: "block", width: "100%", height: "auto", cursor: "pointer" }}
+      />
+      <div style={{ position: "absolute", right: 10, bottom: 10, display: "flex", gap: 8 }}>
+        <button type="button" className="about-video-restart" onClick={restart} aria-label="Restart video" style={ctrl}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
+            <path d="M4 3.5v4.5h4.5" />
+          </svg>
+        </button>
+        <button type="button" className="about-video-sound" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-pressed={!muted} style={ctrl}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+            {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
@@ -1336,7 +1371,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
 
 
           </div>
-          {/* Right column — About video. Set ABOUT_VIDEO_SRC to connect the asset. */}
+          {/* Right column — About video. */}
           <div className="about-video" style={{ padding: "0 4rem 0 1rem" }}>
             {ABOUT_VIDEO_SRC ? (
               <AboutVideo src={ABOUT_VIDEO_SRC} />
@@ -3379,7 +3414,7 @@ export default function App() {
 
   // Document title + description/Open Graph metadata per page.
   useEffect(() => {
-    const homeDesc = "OTF License is an independent type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
+    const homeDesc = "OTF License is a type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
     let title = "OTF License — Beckmans Type Foundry";
     let desc = homeDesc;
     if (page.id === "about") title = "About — OTF License";
