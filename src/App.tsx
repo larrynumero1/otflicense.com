@@ -302,6 +302,9 @@ const VARIABLE_FONT_PRESETS: Record<string, VFPreset[]> = {
 };
 type VFAxis = { label: string; tag: string; min: number; max: number; default: number; onOff?: boolean };
 // Mobile UI: portrait phones/narrow windows, plus phone landscape (short + touch).
+// Homepage switches from the fitted desktop composition to column grids below 1200px
+// (keep in sync with index.css).
+const SHOP_GRID_MQ = "(max-width: 1199px)";
 const MOBILE_MQ = "(max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
 // Phone landscape only — Glyphs switches to the desktop two-column layout here.
 const LANDSCAPE_MQ = "(orientation: landscape) and (max-height: 500px) and (pointer: coarse)";
@@ -1267,8 +1270,52 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
   );
 }
 
-// About-page video; drop an imported asset or URL here to enable playback.
-const ABOUT_VIDEO_SRC = "";
+// About-page video: the first video uploaded to src/imports is bundled as a
+// local asset (hashed into dist/assets on build, so it deploys with the site).
+const ABOUT_VIDEO_SRC: string = Object.values(
+  import.meta.glob<string>("./imports/*.{mp4,MP4,webm,WEBM,mov,MOV,m4v,M4V}", { eager: true, query: "?url", import: "default" })
+)[0] ?? "";
+
+// Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
+// About page, so every visit starts muted again.
+function AboutVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  const [muted, setMuted] = useState(true);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { v.pause(); return; }
+    v.play().catch(() => { /* autoplay blocked: stays on first frame */ });
+  }, []);
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    const next = !muted;
+    v.muted = next;
+    setMuted(next);
+    // Unmuting is a user gesture, so playback may start here if autoplay was blocked.
+    if (!next && v.paused) v.play().catch(() => {});
+  };
+  return (
+    <div style={{ position: "relative", aspectRatio: "16 / 9", background: "#000", overflow: "hidden" }}>
+      <video ref={ref} src={src} muted autoPlay loop playsInline preload="auto" disablePictureInPicture aria-label="OTF License video" style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }} />
+      <button
+        type="button"
+        className="about-video-sound"
+        onClick={toggle}
+        aria-label={muted ? "Turn sound on" : "Turn sound off"}
+        aria-pressed={!muted}
+        style={{ position: "absolute", right: 10, bottom: 10, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation" }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+          {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
+        </svg>
+      </button>
+    </div>
+  );
+}
 
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("All");
@@ -1293,7 +1340,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
           {/* Right column — About video. Set ABOUT_VIDEO_SRC to connect the asset. */}
           <div className="about-video" style={{ padding: "0 4rem 0 1rem" }}>
             {ABOUT_VIDEO_SRC ? (
-              <video src={ABOUT_VIDEO_SRC} controls playsInline preload="metadata" style={{ display: "block", width: "100%", height: "auto", background: "#000" }} />
+              <AboutVideo src={ABOUT_VIDEO_SRC} />
             ) : (
               <div style={{ aspectRatio: "16 / 9", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: "#000" }}>Video coming soon</div>
             )}
@@ -2007,6 +2054,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
       ? face?.mobilePreviewSize ?? face?.previewSize ?? 16
       : face?.previewSize ?? 16
   );
+  // Size slider range centred on this face's default size: min/max are
+  // symmetric around it, so the thumb starts at exactly 50% of the track.
+  const [sizeRange] = useState(() => ({ min: size * 0.25, max: size * 1.75, step: (size * 1.5) / 100 }));
   const [font, setFont] = useState<opentype.Font | null>(null);
   // Code-point coverage read from the native WOFF2 fonts (via fontkit) for the
   // Glyphs panel, since opentype.js cannot parse WOFF2. Null for otf/ttf faces,
@@ -2368,7 +2418,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   const sizeControl = (
     <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
       <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
-      <input type="range" min={3} max={16} step={0.5} value={size} onChange={(e) => setSize(Number(e.target.value))} className="size-slider" />
+      <input type="range" min={sizeRange.min} max={sizeRange.max} step={sizeRange.step} value={size} onChange={(e) => setSize(Number(e.target.value))} className="size-slider" />
     </div>
   );
   const spaceControl = (
@@ -2556,9 +2606,9 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
               <span style={{ fontFamily: "Arial, sans-serif", fontSize: "0.9rem", color: panelText }}>Size</span>
               <input
                 type="range"
-                min={3}
-                max={16}
-                step={0.5}
+                min={sizeRange.min}
+                max={sizeRange.max}
+                step={sizeRange.step}
                 value={size}
                 onChange={(e) => setSize(Number(e.target.value))}
                 className="size-slider"
@@ -3331,7 +3381,7 @@ export default function App() {
   // Document title + description/Open Graph metadata per page.
   useEffect(() => {
     const homeDesc = "OTF License is an independent type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
-    let title = "OTF License — Independent Type Foundry";
+    let title = "OTF License — Beckmans Type Foundry";
     let desc = homeDesc;
     if (page.id === "about") title = "About — OTF License";
     else if (page.id === "contact") title = "Licensing — OTF License";
@@ -3353,6 +3403,7 @@ export default function App() {
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", desc);
     setMeta("property", "og:site_name", "OTF License");
+    setMeta("name", "twitter:title", title);
   }, [page]);
 
   // Desktop sticker composition: measure the real (rotated + scaled) artwork
@@ -3367,7 +3418,8 @@ export default function App() {
     const fit = () => {
       grid.style.transform = "";
       grid.style.transformOrigin = "";
-      if (window.matchMedia(MOBILE_MQ).matches) return;
+      // Mobile and the intermediate 4/3-column grids flow naturally (no fit-scaling).
+      if (window.matchMedia(MOBILE_MQ).matches || window.matchMedia(SHOP_GRID_MQ).matches) return;
       // Computed from layout boxes + known rotation/scale (not getBoundingClientRect),
       // so the intro pop-in animation can't skew the measurement. Stage coordinates.
       let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;

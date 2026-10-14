@@ -515,53 +515,6 @@ html {
     max-width: 100%;
   }
 
-  /* Nav: logo on its own row, the three buttons on one row beneath it. */
-  .tf-nav {
-    position: static !important;
-    flex-shrink: 0;
-    overflow: visible !important;
-    display: grid !important;
-    grid-template-columns: auto auto auto;
-    justify-content: space-between;
-    align-items: center;
-    row-gap: 1rem !important;
-    column-gap: 0.25rem !important;
-    padding: max(1.25rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 0.5rem max(1rem, env(safe-area-inset-left)) !important;
-  }
-  .tf-nav .nav-left {
-    display: contents !important;
-  }
-  .tf-nav .nav-logo {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    grid-column: 1 / -1;
-    grid-row: 1;
-    justify-self: center;
-    display: flex !important;
-    gap: 0.6rem !important;
-    height: auto !important;
-    line-height: normal !important;
-    overflow: visible !important;
-  }
-  .tf-nav .nav-logo > img:first-child {
-    height: 3rem !important;
-    width: auto !important;
-    max-width: none;
-  }
-  /* Keep the header eyes inside the viewport so nothing widens the page. */
-  .tf-nav .nav-eyes {
-    margin-top: 0.6rem !important;
-    height: 1.4rem !important;
-  }
-  .tf-nav .nav-text-btn {
-    min-width: 0 !important;
-    height: 34px !important;
-    padding: 0 0.3rem !important;
-    font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
-  }
-
   /* Sticker page: loose LEFT → RIGHT zig-zag in shop order, page scrolls.
      Each sticker keeps its desktop scale (--s) and rests at its hover tilt. */
   .shop-root {
@@ -842,8 +795,56 @@ html {
   }
 }
 
-/* Mobile header: centred logo + eyes, hamburger on the right. */
-@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+/* Header: the desktop row (About + Licensing | logo | Mega Bundle, ~1150px incl.
+   padding) switches to the hamburger header below 1200px, before anything overlaps. */
+@media (max-width: 1199px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  /* Nav: logo on its own row, the three buttons on one row beneath it. */
+  .tf-nav {
+    position: static !important;
+    flex-shrink: 0;
+    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: auto auto auto;
+    justify-content: space-between;
+    align-items: center;
+    row-gap: 1rem !important;
+    column-gap: 0.25rem !important;
+    padding: max(1.25rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 0.5rem max(1rem, env(safe-area-inset-left)) !important;
+  }
+  .tf-nav .nav-left {
+    display: contents !important;
+  }
+  .tf-nav .nav-logo {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    display: flex !important;
+    gap: 0.6rem !important;
+    height: auto !important;
+    line-height: normal !important;
+    overflow: visible !important;
+  }
+  .tf-nav .nav-logo > img:first-child {
+    height: 3rem !important;
+    width: auto !important;
+    max-width: none;
+  }
+  /* Keep the header eyes inside the viewport so nothing widens the page. */
+  .tf-nav .nav-eyes {
+    margin-top: 0.6rem !important;
+    height: 1.4rem !important;
+  }
+  .tf-nav .nav-text-btn {
+    min-width: 0 !important;
+    height: 34px !important;
+    padding: 0 0.3rem !important;
+    font-size: clamp(0.55rem, 2.6vw, 0.85rem) !important;
+  }
+
   .tf-nav {
     position: relative !important;
     grid-template-columns: 1fr auto 1fr !important;
@@ -921,6 +922,54 @@ html {
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
+}
+/* Tablet / narrow desktop: side insets match the page content. */
+@media (min-width: 769px) and (max-width: 1199px) and (min-height: 501px), (min-width: 769px) and (max-width: 1199px) and (pointer: fine) {
+  .tf-nav {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+  }
+}
+
+/* Homepage between mobile and wide desktop: the composition reflows into a
+   structured grid (4 columns, then 3) instead of shrinking. Stickers keep their
+   artwork, scale, rotation and hover tilt; the cell is a fixed share of a column. */
+@media (min-width: 769px) and (max-width: 1199px) and (min-height: 501px), (min-width: 769px) and (max-width: 1199px) and (pointer: fine) {
+  .shop-root {
+    height: auto !important;
+  }
+  .shop-stage {
+    padding: 3rem 3rem 5rem !important;
+  }
+  .shop-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center !important;
+    column-gap: 2rem;
+    row-gap: 1.5rem !important;
+    max-width: 1080px;
+  }
+  .shop-row {
+    display: contents !important;
+  }
+  .shop-grid .cell {
+    width: 52% !important;
+    margin: 0 !important;
+    padding: 18% 0;
+    justify-content: center;
+    transform: none !important;
+  }
+}
+@media (min-width: 769px) and (max-width: 999px) and (min-height: 501px), (min-width: 769px) and (max-width: 999px) and (pointer: fine) {
+  .shop-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 760px;
+  }
+}
+
+/* Mobile header: centred logo + eyes, hamburger on the right. */
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
   /* Homepage gets the same fixed bottom marquee as the other mobile pages. */
   .shop-bottom-marquee {
     position: fixed !important;
