@@ -1397,7 +1397,7 @@ function AboutVideo({ src }: { src: string }) {
 function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: string; onNavigate: (p: Page) => void; showEyes?: boolean; onEyesHover?: () => void }) {
   const [klassFilter, setKlassFilter] = useState<string>("All");
   const [klassOpen, setKlassOpen] = useState(false);
-  // Mobile: the menu opens under the arrow (like the other mobile dropdowns), kept on-screen.
+  // All sizes: the menu opens under the arrow (like the other dropdowns), kept on-screen.
   const klassArrowRef = useRef<HTMLSpanElement | null>(null);
   const klassMenuRef = useRef<HTMLDivElement | null>(null);
   const [klassMenuLeft, setKlassMenuLeft] = useState(0);
@@ -1405,7 +1405,7 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
     if (!klassOpen) return;
     const place = () => {
       const arrow = klassArrowRef.current, menu = klassMenuRef.current;
-      if (!arrow || !menu || !window.matchMedia(MOBILE_MQ).matches) { setKlassMenuLeft(0); return; }
+      if (!arrow || !menu) return;
       const parentLeft = (menu.offsetParent as HTMLElement | null)?.getBoundingClientRect().left ?? 0;
       const margin = 12;
       const maxLeft = window.innerWidth - margin - menu.offsetWidth - parentLeft;
@@ -1413,7 +1413,8 @@ function SimplePage({ title, onNavigate, showEyes, onEyesHover }: { title: strin
     };
     place();
     window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
+    window.addEventListener("orientationchange", place);
+    return () => { window.removeEventListener("resize", place); window.removeEventListener("orientationchange", place); };
   }, [klassOpen]);
   const shownDesigners = klassFilter === "" || klassFilter === "All" ? designers : designers.filter((d) => d.klass === klassFilter);
 
