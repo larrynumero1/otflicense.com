@@ -1282,6 +1282,7 @@ function AboutVideo({ src }: { src: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(false);
+  const [hovered, setHovered] = useState(false);
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
@@ -1313,7 +1314,7 @@ function AboutVideo({ src }: { src: string }) {
   const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation" };
   return (
     // Height follows the file's own aspect ratio (width 100%, height auto): no crop, no letterbox.
-    <div style={{ position: "relative", lineHeight: 0 }}>
+    <div style={{ position: "relative", lineHeight: 0 }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <video
         ref={ref}
         src={src}
@@ -1333,20 +1334,29 @@ function AboutVideo({ src }: { src: string }) {
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); } }}
         style={{ display: "block", width: "100%", height: "auto", cursor: "pointer" }}
       />
-      <div style={{ position: "absolute", right: 10, bottom: 10, display: "flex", gap: 8 }}>
-        <button type="button" className="about-video-restart" onClick={restart} aria-label="Restart video" style={ctrl}>
+      {/* Hover hint: pause bars while playing, play triangle while paused. Never takes pointer events. */}
+      <svg
+        aria-hidden="true"
+        width="56"
+        height="56"
+        viewBox="0 0 24 24"
+        fill="#fff"
+        style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", pointerEvents: "none", opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.35))" }}
+      >
+        {playing ? <><rect x="6" y="4.5" width="4" height="15" rx="0.5" /><rect x="14" y="4.5" width="4" height="15" rx="0.5" /></> : <path d="M7 4.5v15l12.5-7.5z" />}
+      </svg>
+      <button type="button" className="about-video-restart" onClick={restart} aria-label="Restart video" style={{ ...ctrl, position: "absolute", left: 10, bottom: 10 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
             <path d="M4 3.5v4.5h4.5" />
           </svg>
         </button>
-        <button type="button" className="about-video-sound" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-pressed={!muted} style={ctrl}>
+      <button type="button" className="about-video-sound" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-pressed={!muted} style={{ ...ctrl, position: "absolute", right: 10, bottom: 10 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
             {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
           </svg>
         </button>
-      </div>
     </div>
   );
 }
@@ -3415,7 +3425,9 @@ export default function App() {
   // Document title + description/Open Graph metadata per page.
   useEffect(() => {
     const homeDesc = "OTF License is a type foundry started by the Visual Communication Class of 2027 at Beckmans College of Design in Stockholm.";
-    let title = "OTF License — Beckmans Type Foundry";
+    // Homepage: short tab title; the longer descriptive title is for search/social.
+    let title = "OTF License";
+    let shareTitle = "OTF License - Beckmans Type Foundry";
     let desc = homeDesc;
     if (page.id === "about") title = "About — OTF License";
     else if (page.id === "contact") title = "Licensing — OTF License";
@@ -3427,6 +3439,7 @@ export default function App() {
       title = `${label} — OTF License`;
       if (face) desc = `${label} is a ${face.klass} typeface designed by ${face.designer} at OTF License.`;
     }
+    if (page.id !== "home" && page.id !== "foundry") shareTitle = title;
     document.title = title;
     const setMeta = (attr: "name" | "property", key: string, value: string) => {
       let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -3434,10 +3447,11 @@ export default function App() {
       el.content = value;
     };
     setMeta("name", "description", desc);
-    setMeta("property", "og:title", title);
+    setMeta("property", "og:title", shareTitle);
     setMeta("property", "og:description", desc);
     setMeta("property", "og:site_name", "OTF License");
-    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:title", shareTitle);
+    setMeta("name", "twitter:description", desc);
   }, [page]);
 
   // Desktop sticker composition: measure the real (rotated + scaled) artwork
