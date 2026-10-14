@@ -1257,6 +1257,103 @@ const ABOUT_SIZE_LANDSCAPE_PX: Record<string, number> = {
   Cheiron: 14.5, Facit: 16, Galanite: 17.5, "Last Call": 14.5, "LCD Über": 18, Liljan: 17, Svek: 24.5, XOXO: 19,
 };
 
+// ── TEMPORARY design-only size tools ──────────────────────────────────────────
+// Self-contained: delete DESIGN_TOOLS_ENABLED, DesignSizePanel and its single
+// <DesignSizePanel …/> usage to remove. Nothing is applied until a slider moves,
+// so the site renders exactly as configured. Values persist in localStorage and
+// "Copy values" exports them (px) to bake into the size tables above.
+const DESIGN_TOOLS_ENABLED = true;
+type DesignMode = "desktop" | "portrait" | "landscape";
+type DesignKey = "about" | "glyph" | "ui" | "grid";
+const DESIGN_STORE_KEY = "otf-design-sizes";
+const DESIGN_SLIDERS: { key: DesignKey; label: string; probe: string; targets: string; min: number; max: number }[] = [
+  { key: "about", label: "About Size", probe: ".tf-about-text", targets: ".tf-about-text", min: 6, max: 48 },
+  { key: "glyph", label: "Selected Glyph Size", probe: ".tf-glyph-big", targets: ".tf-glyph-big", min: 40, max: 700 },
+  { key: "ui", label: "Glyph UI Size", probe: ".tf-glyph-meta", targets: ".tf-glyph-meta, .tf-glyph-cat-head", min: 6, max: 32 },
+  { key: "grid", label: "Grid Glyph Size", probe: ".tf-glyph-cell", targets: ".tf-glyph-cell", min: 6, max: 64 },
+];
+type DesignStore = Record<string, Partial<Record<DesignMode, Partial<Record<DesignKey, number>>>>>;
+const readDesignStore = (): DesignStore => { try { return JSON.parse(localStorage.getItem(DESIGN_STORE_KEY) || "{}"); } catch { return {}; } };
+
+function DesignSizePanel({ face, mode }: { face: string; mode: DesignMode }) {
+  const [store, setStore] = useState<DesignStore>(readDesignStore);
+  const [measured, setMeasured] = useState<Partial<Record<DesignKey, number>>>({});
+  const [collapsed, setCollapsed] = useState(false);
+  const [pos, setPos] = useState({ x: 12, y: 12 });
+  const drag = useRef<{ dx: number; dy: number } | null>(null);
+  const overrides = store[face]?.[mode] ?? {};
+
+  // Effective sizes as rendered right now (read from the DOM, so they always match
+  // the configured tables). Re-read when face/mode changes or an override is cleared.
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      const next: Partial<Record<DesignKey, number>> = {};
+      DESIGN_SLIDERS.forEach(({ key, probe }) => {
+        const el = document.querySelector<HTMLElement>(probe);
+        if (el) next[key] = Math.round(parseFloat(getComputedStyle(el).fontSize) * 2) / 2;
+      });
+      setMeasured((prev) => ({ ...next, ...Object.fromEntries(Object.entries(prev).filter(([k]) => next[k as DesignKey] == null)) }));
+    };
+    raf = requestAnimationFrame(read);
+    const t = window.setTimeout(read, 600); // after fonts / glyph panel settle
+    return () => { cancelAnimationFrame(raf); window.clearTimeout(t); };
+  }, [face, mode, JSON.stringify(overrides)]);
+
+  const save = (next: DesignStore) => { setStore(next); localStorage.setItem(DESIGN_STORE_KEY, JSON.stringify(next)); };
+  const setValue = (key: DesignKey, v: number | null) => {
+    const faceStore = { ...(store[face] ?? {}) };
+    const modeStore = { ...(faceStore[mode] ?? {}) };
+    if (v == null) delete modeStore[key]; else modeStore[key] = v;
+    faceStore[mode] = modeStore;
+    save({ ...store, [face]: faceStore });
+  };
+  // Overrides only for this face + mode; high specificity beats the media-query !important rules.
+  const css = DESIGN_SLIDERS.filter(({ key }) => overrides[key] != null)
+    .map(({ key, targets }) => targets.split(",").map((t) => `html body ${t.trim()}`).join(", ") + ` { font-size: ${overrides[key]}px !important; }`)
+    .join("\n");
+  const label = { desktop: "Desktop", portrait: "Mobile portrait", landscape: "Mobile landscape" }[mode];
+  const txt: React.CSSProperties = { fontFamily: "Arial, sans-serif", fontSize: 11, color: "#000" };
+
+  return createPortal(
+    <>
+      {css && <style>{css}</style>}
+      <div
+        role="region"
+        aria-label="Design size tools (temporary)"
+        style={{ position: "fixed", left: pos.x, top: pos.y, zIndex: 10000, width: collapsed ? "auto" : 250, maxWidth: "calc(100vw - 24px)", background: "rgba(255,255,255,0.97)", border: "1px solid #000", borderRadius: 6, boxShadow: "0 2px 10px rgba(0,0,0,0.15)", ...txt, touchAction: "none" }}
+      >
+        <div
+          onPointerDown={(e) => { if ((e.target as HTMLElement).closest("button")) return; drag.current = { dx: e.clientX - pos.x, dy: e.clientY - pos.y }; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); }}
+          onPointerMove={(e) => { if (!drag.current) return; setPos({ x: Math.max(0, Math.min(window.innerWidth - 60, e.clientX - drag.current.dx)), y: Math.max(0, Math.min(window.innerHeight - 30, e.clientY - drag.current.dy)) }); }}
+          onPointerUp={() => { drag.current = null; }}
+          style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", cursor: "move", borderBottom: collapsed ? "none" : "1px solid #000", userSelect: "none" }}
+        >
+          <strong style={{ flex: 1 }}>Design · {label}</strong>
+          <button type="button" onClick={() => setCollapsed((c) => !c)} aria-label={collapsed ? "Expand design tools" : "Collapse design tools"} style={{ ...txt, border: "1px solid #000", borderRadius: 4, background: "#fff", padding: "1px 6px", cursor: "pointer" }}>{collapsed ? "+" : "–"}</button>
+        </div>
+        {!collapsed && (
+          <div style={{ padding: "6px 8px 8px", display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ opacity: 0.6 }}>{face}</div>
+            {DESIGN_SLIDERS.map(({ key, label: l, min, max }) => {
+              const v = overrides[key] ?? measured[key];
+              return (
+                <label key={key} style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "center", gap: "2px 6px" }}>
+                  <span>{l}{overrides[key] != null && <button type="button" onClick={(e) => { e.preventDefault(); setValue(key, null); }} title="Reset to configured size" style={{ ...txt, marginLeft: 6, border: "none", background: "none", textDecoration: "underline", cursor: "pointer", padding: 0 }}>reset</button>}</span>
+                  <span style={{ fontVariantNumeric: "tabular-nums" }}>{v != null ? `${v}px` : "–"}</span>
+                  <input type="range" min={Math.min(min, v ?? min)} max={Math.max(max, v ?? max)} step={0.5} value={v ?? min} disabled={v == null} onChange={(e) => setValue(key, Number(e.target.value))} style={{ gridColumn: "1 / -1", width: "100%" }} />
+                </label>
+              );
+            })}
+            <button type="button" onClick={() => navigator.clipboard?.writeText(JSON.stringify(store, null, 2))} style={{ ...txt, border: "1px solid #000", borderRadius: 4, background: "#fff", padding: "3px 6px", cursor: "pointer" }}>Copy values</button>
+          </div>
+        )}
+      </div>
+    </>,
+    document.body
+  );
+}
+
 function SiteFooter({ color = "#000" }: { color?: string }) {
   return (
     <footer className="site-footer" style={{ color }}>
@@ -1278,17 +1375,31 @@ const ABOUT_VIDEO_SRC: string =
 
 // Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
 // About page, so every visit starts muted again.
+// Touch devices (no hover): tap to pause/resume, controls revealed on tap.
+const TOUCH_MQ = "(hover: none), (pointer: coarse)";
+const CONTROLS_HIDE_MS = 2500;
+
 function AboutVideo({ src }: { src: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [touch] = useState(() => window.matchMedia(TOUCH_MQ).matches);
+  // Touch only: whether centre icon + Restart + Sound are shown. Desktop ignores it.
+  const [shown, setShown] = useState(false);
+  const hideTimer = useRef<number | null>(null);
+  const hasPlayed = useRef(false);
+  const clearHide = () => { if (hideTimer.current != null) { window.clearTimeout(hideTimer.current); hideTimer.current = null; } };
+  const showThenHide = () => { clearHide(); setShown(true); hideTimer.current = window.setTimeout(() => { hideTimer.current = null; setShown(false); }, CONTROLS_HIDE_MS); };
+  const showPinned = () => { clearHide(); setShown(true); };
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
     v.muted = true;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { v.pause(); return; }
-    v.play().catch(() => { /* autoplay blocked: stays on first frame */ });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { v.pause(); if (touch) setShown(true); return; }
+    // Autoplay blocked: stay on the first frame; on touch, reveal the controls so Play is discoverable.
+    v.play().catch(() => { if (touch) setShown(true); });
+    return clearHide;
   }, []);
   const toggleSound = () => {
     const v = ref.current;
@@ -1296,25 +1407,34 @@ function AboutVideo({ src }: { src: string }) {
     const next = !muted;
     v.muted = next;
     setMuted(next);
-    // Unmuting is a user gesture, so playback may start here if autoplay was blocked.
-    if (!next && v.paused) v.play().catch(() => {});
+    // Only kick off playback if autoplay never started; never resumes a user pause.
+    if (!next && v.paused && !hasPlayed.current) v.play().catch(() => {});
   };
   const togglePlay = () => {
     const v = ref.current;
     if (!v) return;
-    if (v.paused) v.play().catch(() => {});
-    else v.pause();
+    if (v.paused) { v.play().catch(() => {}); if (touch) showThenHide(); }
+    else { v.pause(); if (touch) showPinned(); }
   };
   const restart = () => {
     const v = ref.current;
     if (!v) return;
     v.currentTime = 0;
     v.play().catch(() => {});
+    if (touch) showThenHide();
   };
-  const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation" };
+  const iconVisible = touch ? shown : hovered;
+  const controlsVisible = !touch || shown;
+  const ctrl: React.CSSProperties = { width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", borderRadius: "50%", background: "#fff", color: "#000", cursor: "pointer", touchAction: "manipulation", opacity: controlsVisible ? 1 : 0, visibility: controlsVisible ? "visible" : "hidden", pointerEvents: controlsVisible ? "auto" : "none", transition: controlsVisible ? "opacity 0.15s ease" : "opacity 0.2s ease, visibility 0s linear 0.2s" };
   return (
     // Height follows the file's own aspect ratio (width 100%, height auto): no crop, no letterbox.
-    <div style={{ position: "relative", lineHeight: 0 }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <div
+      style={{ position: "relative", lineHeight: 0 }}
+      onMouseEnter={touch ? undefined : () => setHovered(true)}
+      onMouseLeave={touch ? undefined : () => setHovered(false)}
+      // Keyboard users: focusing the player reveals the controls on touch layouts.
+      onFocus={touch ? showPinned : undefined}
+    >
       <video
         ref={ref}
         src={src}
@@ -1328,35 +1448,35 @@ function AboutVideo({ src }: { src: string }) {
         tabIndex={0}
         aria-label={playing ? "Pause OTF License video" : "Play OTF License video"}
         aria-pressed={playing}
-        onPlay={() => setPlaying(true)}
+        onPlay={() => { hasPlayed.current = true; setPlaying(true); }}
         onPause={() => setPlaying(false)}
         onClick={togglePlay}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePlay(); } }}
         style={{ display: "block", width: "100%", height: "auto", cursor: "pointer" }}
       />
-      {/* Hover hint: pause bars while playing, play triangle while paused. Never takes pointer events. */}
+      {/* Centre hint: pause bars while playing, play triangle while paused. Never takes pointer events. */}
       <svg
         aria-hidden="true"
         width="56"
         height="56"
         viewBox="0 0 24 24"
         fill="#fff"
-        style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", pointerEvents: "none", opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.35))" }}
+        style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", pointerEvents: "none", opacity: iconVisible ? 1 : 0, transition: "opacity 0.15s ease", filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.35))" }}
       >
         {playing ? <><rect x="6" y="4.5" width="4" height="15" rx="0.5" /><rect x="14" y="4.5" width="4" height="15" rx="0.5" /></> : <path d="M7 4.5v15l12.5-7.5z" />}
       </svg>
-      <button type="button" className="about-video-restart" onClick={restart} aria-label="Restart video" style={{ ...ctrl, position: "absolute", left: 10, bottom: 10 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
-            <path d="M4 3.5v4.5h4.5" />
-          </svg>
-        </button>
-      <button type="button" className="about-video-sound" onClick={toggleSound} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-pressed={!muted} style={{ ...ctrl, position: "absolute", right: 10, bottom: 10 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
-            {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
-          </svg>
-        </button>
+      <button type="button" className="about-video-restart" onClick={(e) => { e.stopPropagation(); restart(); }} aria-label="Restart video" tabIndex={controlsVisible ? 0 : -1} style={{ ...ctrl, position: "absolute", left: 10, bottom: 10 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
+          <path d="M4 3.5v4.5h4.5" />
+        </svg>
+      </button>
+      <button type="button" className="about-video-sound" onClick={(e) => { e.stopPropagation(); toggleSound(); }} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-pressed={!muted} tabIndex={controlsVisible ? 0 : -1} style={{ ...ctrl, position: "absolute", right: 10, bottom: 10 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+          {muted ? <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" /> : <><path d="M16 9a4 4 0 0 1 0 6" /><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11" /></>}
+        </svg>
+      </button>
     </div>
   );
 }
@@ -2639,6 +2759,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
   return (
     <div className="min-h-screen flex flex-col" style={{ background: pageBg }}>
       <NavBar onNavigate={onNavigate} bg={pageBg} fg={pageText} logoHeight="3rem" starColor={face.bg} linkScale={0.7} showEyes={showEyes} onEyesHover={onEyesHover} />
+      {DESIGN_TOOLS_ENABLED && <DesignSizePanel face={face.name} mode={isLandscape ? "landscape" : isMobile ? "portrait" : "desktop"} />}
       <div className="tf-page flex-1 flex flex-col px-10" style={{ gap: 12, paddingTop: "2.5rem", paddingBottom: "3rem" }}>
         {/* Top column — big editable preview, controls pinned at the top */}
         <div className="tf-preview" style={{ position: "relative", background: panelBg, minHeight: "52vh", display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "4.5rem", paddingBottom: "2.5rem", transition: "background 0.25s ease" }}>
