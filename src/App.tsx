@@ -3,7 +3,7 @@ import type React from "react";
 import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
 import * as fontkit from "fontkit";
-import specCheiron from "./imports/simoncheiron_spec.png";
+import specCheiron from "./imports/sticker_cheiron.png";
 import galleryXoxo1 from "./imports/xoxo1.png";
 import galleryXoxo2 from "./imports/xoxo2.png";
 import galleryXoxo3 from "./imports/xoxo3.png";
@@ -148,26 +148,26 @@ import galleryBip3 from "./imports/bip3.png";
 import galleryBip4 from "./imports/bip4.png";
 import transitionSvgRaw from "./imports/transition-asset.svg?raw";
 
-import logo from "./imports/Logo_OTF_ny.png";
-import specDukat from "./imports/alvadukat_spec.png";
-import specElla from "./imports/casparella_spec.png";
-import specLastCall from "./imports/emmalastcall_spec.png";
-import specXOXO from "./imports/emmaxoxo_spec.png";
-import specLiljan from "./imports/enyaliljan_spec.png";
-import specKurir from "./imports/fahedkuriren_spec.png";
-import specGalanite from "./imports/hannahgalanite_spec.png";
-import specFacit from "./imports/jesperfacit_spec.png";
-import specMormor from "./imports/lawrencemormor_spec.png";
-import specBrus from "./imports/linnbrus_spec.png";
-import specCrypto from "./imports/lovisacrypto_spec.png";
-import specUber from "./imports/siljelcduber_spec.png";
-import specSvek from "./imports/tindrasvek_spec.png";
-import specSonja from "./imports/vesonja_spec.png";
-import specBip from "./imports/vivibip_spec.png";
-import introGif from "./imports/intro.gif";
-import eyesSvg from "./imports/eyes.svg";
-import headerEyesSvg from "./imports/OTF_EYES-2.svg";
-import variableFontSticker from "./imports/Variable_Font_Sticker.png";
+import logo from "./imports/otf_logo.png";
+import specDukat from "./imports/sticker_dukat.png";
+import specElla from "./imports/sticker_ella.png";
+import specLastCall from "./imports/sticker_lastcall.png";
+import specXOXO from "./imports/sticker_xoxo.png";
+import specLiljan from "./imports/sticker_liljan.png";
+import specKurir from "./imports/sticker_kuriren.png";
+import specGalanite from "./imports/sticker_galanite.png";
+import specFacit from "./imports/sticker_facit.png";
+import specMormor from "./imports/sticker_mormor.png";
+import specBrus from "./imports/sticker_brus.png";
+import specCrypto from "./imports/sticker_cryptomono.png";
+import specUber from "./imports/sticker_lcduber.png";
+import specSvek from "./imports/sticker_svek.png";
+import specSonja from "./imports/sticker_sonja.png";
+import specBip from "./imports/sticker_bip.png";
+import introGif from "./imports/otf_intro.gif";
+import eyesSvg from "./imports/otf_eyes2.svg";
+import headerEyesSvg from "./imports/otf_eyes1.svg";
+import variableFontSticker from "./imports/sticker_variablesticker.png";
 
 type Page =
   | { id: "home" }
@@ -1274,11 +1274,11 @@ function SiteFooter({ color = "#000" }: { color?: string }) {
   );
 }
 
-// About video: src/imports/Otf_Promofilm.mp4, bundled by Vite exactly like a
+// About video: src/imports/otf_promofilm.mp4, bundled by Vite exactly like a
 // direct import. Resolved this way so the build still succeeds while the file
 // is missing from this project (the About page then shows its placeholder).
 const ABOUT_VIDEO_SRC: string =
-  import.meta.glob<string>("./imports/Otf_Promofilm.mp4", { eager: true, import: "default" })["./imports/Otf_Promofilm.mp4"] ?? "";
+  import.meta.glob<string>("./imports/otf_promofilm.mp4", { eager: true, import: "default" })["./imports/otf_promofilm.mp4"] ?? "";
 
 // Muted, looping, inline autoplay with a discreet sound toggle. Remounts with the
 // About page, so every visit starts muted again.
