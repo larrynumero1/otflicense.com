@@ -4,9 +4,6 @@ import { createPortal } from "react-dom";
 import * as opentype from "opentype.js";
 import * as fontkit from "fontkit";
 import specCheiron from "./imports/simoncheiron_spec.png";
-import galleryImg1 from "./imports/gallery-1.jpg";
-import galleryImg2 from "./imports/gallery-2.jpg";
-import galleryImg3 from "./imports/gallery-3.jpg";
 import galleryXoxo1 from "./imports/xoxo1.png";
 import galleryXoxo2 from "./imports/xoxo2.png";
 import galleryXoxo3 from "./imports/xoxo3.png";
@@ -151,7 +148,6 @@ import galleryBip3 from "./imports/bip3.png";
 import galleryBip4 from "./imports/bip4.png";
 import transitionSvgRaw from "./imports/transition-asset.svg?raw";
 
-const GALLERY_IMAGES = [galleryImg1, galleryImg2, galleryImg3];
 import logo from "./imports/Logo_OTF_ny.png";
 import specDukat from "./imports/alvadukat_spec.png";
 import specElla from "./imports/casparella_spec.png";
@@ -2885,7 +2881,7 @@ function TypefacePage({ name, onNavigate, showEyes, onEyesHover }: { name: strin
 
           {/* Image field — right */}
           <div className="tf-gallery" style={{ position: "relative", overflow: "hidden", background: panelBg, transition: "background 0.25s ease" }}>
-            <WipCarousel panelText={panelText} images={face.gallery ?? GALLERY_IMAGES} />
+            <WipCarousel panelText={panelText} images={face.gallery ?? []} />
           </div>
         </div>
 
